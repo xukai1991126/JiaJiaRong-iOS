@@ -24,6 +24,9 @@
 @property (nonatomic, strong) NSString *cityCode;
 @property (nonatomic, strong) NSString *loanAmount;
 
+// 折叠面板状态管理
+@property (nonatomic, strong) NSMutableSet *expandedSections;
+
 // 身份证弹窗相关
 @property (nonatomic, strong) UIView *overlayView;
 @property (nonatomic, strong) UIView *idPopupView;
@@ -90,6 +93,9 @@
     self.selectedOptions = [NSMutableDictionary dictionary];
     self.cityName = @"请选择城市";
     self.loanAmount = @"";
+    
+    // 初始化折叠状态管理 - 默认所有面板都折叠
+    self.expandedSections = [NSMutableSet set];
     
     // 创建TableView
     self.tableView = [[UITableView alloc] initWithFrame:CGRectZero style:UITableViewStyleGrouped];
@@ -417,27 +423,30 @@
     } else if (indexPath.section == 1) {
         return 100; // 城市选择 + 提示
     } else if (indexPath.section == 2) {
-        // 表单选项 - 根据选项数量动态计算高度
+        // 表单选项 - 根据展开/折叠状态计算高度
         if (indexPath.row < self.formData.count) {
             NSDictionary *item = self.formData[indexPath.row];
-            NSArray *options = item[@"conditionList"];
             NSString *field = item[@"field"];
+            BOOL isExpanded = [self.expandedSections containsObject:field];
             
-            CGFloat baseHeight = 50 + 30 + 15; // 标题行 + 提示文本 + 间距
-            CGFloat buttonHeight = 35;
-            CGFloat rowSpacing = 12;
-            
-            NSInteger columns = 2; // 默认2列
-            if ([field isEqualToString:@"occupation"] || [field isEqualToString:@"monthlyIncome"] || [field isEqualToString:@"stageNum"]) {
-                columns = 3; // 职业、月收入、贷款期限使用3列
+            if (isExpanded) {
+                // 展开状态：计算完整高度
+                NSArray *options = item[@"conditionList"];
+                CGFloat baseHeight = 50 + 30 + 15; // 标题行 + 提示文本 + 间距
+                CGFloat buttonHeight = 35;
+                CGFloat rowSpacing = 12;
+                
+                NSInteger columns = (options.count == 2) ? 2 : 3;
+                NSInteger rows = (options.count + columns - 1) / columns;
+                CGFloat optionsHeight = rows * buttonHeight + (rows - 1) * rowSpacing;
+                
+                return baseHeight + optionsHeight + 15; // 底部间距
+            } else {
+                // 折叠状态：只显示标题和值
+                return 80; // 标题行 + 值行 + 间距
             }
-            
-            NSInteger rows = (options.count + columns - 1) / columns;
-            CGFloat optionsHeight = rows * buttonHeight + (rows - 1) * rowSpacing;
-            
-            return baseHeight + optionsHeight + 15; // 底部间距
         }
-        return 100;
+        return 80;
     } else if (indexPath.section == 3) {
         return 120; // 贷款金额 + 按钮
     }
@@ -622,12 +631,15 @@
         
         return cell;
     } else if (indexPath.section == 2) {
-        // 表单选项 - 使用折叠面板样式
+        // 表单选项 - 折叠面板样式
         if (indexPath.row < self.formData.count) {
             NSDictionary *item = self.formData[indexPath.row];
             NSString *fieldName = item[@"fieldName"];
             NSString *field = item[@"field"];
             NSArray *options = item[@"conditionList"];
+            
+            // 检查当前面板是否展开
+            BOOL isExpanded = [self.expandedSections containsObject:field];
             
             UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"FormCell"];
             if (!cell) {
@@ -641,7 +653,7 @@
                 [subview removeFromSuperview];
             }
             
-            // 标题行
+            // 标题行 - 可点击的折叠头部
             UIView *headerView = [[UIView alloc] init];
             headerView.backgroundColor = [UIColor whiteColor];
             [cell.contentView addSubview:headerView];
@@ -657,8 +669,9 @@
             titleLabel.textColor = [UIColor colorWithRed:0.1 green:0.1 blue:0.1 alpha:1.0];
             [headerView addSubview:titleLabel];
             
+            // 箭头图标
             UIImageView *arrowIcon = [[UIImageView alloc] init];
-            arrowIcon.image = [UIImage systemImageNamed:@"chevron.up"];
+            arrowIcon.image = [UIImage systemImageNamed:isExpanded ? @"chevron.up" : @"chevron.down"];
             arrowIcon.tintColor = [UIColor colorWithRed:0.6 green:0.6 blue:0.6 alpha:1.0];
             [headerView addSubview:arrowIcon];
             
@@ -673,37 +686,62 @@
                 make.width.height.mas_equalTo(16);
             }];
             
-            // 选择提示
-            UILabel *hintLabel = [[UILabel alloc] init];
-            NSString *selectedValue = self.selectedOptions[field][@"name"];
-            hintLabel.text = selectedValue ? selectedValue : [NSString stringWithFormat:@"请选择%@", fieldName];
-            hintLabel.font = [UIFont systemFontOfSize:14];
-            hintLabel.textColor = selectedValue ? [UIColor colorWithRed:0.1 green:0.1 blue:0.1 alpha:1.0] : [UIColor colorWithRed:0.6 green:0.6 blue:0.6 alpha:1.0];
-            [cell.contentView addSubview:hintLabel];
+            // 添加点击手势
+            UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(toggleSection:)];
+            [headerView addGestureRecognizer:tapGesture];
             
-            [hintLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-                make.left.equalTo(cell.contentView).offset(15);
-                make.top.equalTo(headerView.mas_bottom).offset(8);
-            }];
+            // 使用tag传递section信息
+            headerView.tag = 1000 + indexPath.row;
             
-            // 选项按钮区域
-            UIView *optionsView = [[UIView alloc] init];
-            [cell.contentView addSubview:optionsView];
-            
-            [optionsView mas_makeConstraints:^(MASConstraintMaker *make) {
-                make.left.right.equalTo(cell.contentView);
-                make.top.equalTo(hintLabel.mas_bottom).offset(15);
-                make.bottom.equalTo(cell.contentView).offset(-15);
-            }];
-            
-            // 根据选项数量设置布局
-            NSInteger optionCount = options.count;
-            if (optionCount == 2) {
-                // 两个选项：左对齐
-                [self createOptionsForView:optionsView options:options field:field columns:2];
+            if (isExpanded) {
+                // 展开状态：显示选择提示和选项按钮
+                
+                // 选择提示
+                UILabel *hintLabel = [[UILabel alloc] init];
+                NSString *selectedValue = self.selectedOptions[field][@"name"];
+                hintLabel.text = selectedValue ? selectedValue : [NSString stringWithFormat:@"请选择%@", fieldName];
+                hintLabel.font = [UIFont systemFontOfSize:14];
+                hintLabel.textColor = selectedValue ? [UIColor colorWithRed:0.1 green:0.1 blue:0.1 alpha:1.0] : [UIColor colorWithRed:0.6 green:0.6 blue:0.6 alpha:1.0];
+                [cell.contentView addSubview:hintLabel];
+                
+                [hintLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+                    make.left.equalTo(cell.contentView).offset(15);
+                    make.top.equalTo(headerView.mas_bottom).offset(8);
+                }];
+                
+                // 选项按钮区域
+                UIView *optionsView = [[UIView alloc] init];
+                [cell.contentView addSubview:optionsView];
+                
+                [optionsView mas_makeConstraints:^(MASConstraintMaker *make) {
+                    make.left.right.equalTo(cell.contentView);
+                    make.top.equalTo(hintLabel.mas_bottom).offset(15);
+                    make.bottom.equalTo(cell.contentView).offset(-15);
+                }];
+                
+                // 根据选项数量设置布局
+                NSInteger optionCount = options.count;
+                if (optionCount == 2) {
+                    // 两个选项：左对齐
+                    [self createOptionsForView:optionsView options:options field:field columns:2];
+                } else {
+                    // 三个及以上选项：一行三个
+                    [self createOptionsForView:optionsView options:options field:field columns:3];
+                }
             } else {
-                // 三个及以上选项：一行三个
-                [self createOptionsForView:optionsView options:options field:field columns:3];
+                // 折叠状态：只显示已选择的值
+                UILabel *valueLabel = [[UILabel alloc] init];
+                NSString *selectedValue = self.selectedOptions[field][@"name"];
+                valueLabel.text = selectedValue ?: @"";
+                valueLabel.font = [UIFont systemFontOfSize:14];
+                valueLabel.textColor = selectedValue ? [UIColor colorWithRed:0.1 green:0.1 blue:0.1 alpha:1.0] : [UIColor colorWithRed:0.6 green:0.6 blue:0.6 alpha:1.0];
+                [cell.contentView addSubview:valueLabel];
+                
+                [valueLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+                    make.left.equalTo(cell.contentView).offset(15);
+                    make.top.equalTo(headerView.mas_bottom).offset(8);
+                    make.bottom.equalTo(cell.contentView).offset(-15);
+                }];
             }
             
             return cell;
@@ -805,6 +843,27 @@
 
 #pragma mark - Action Methods
 
+- (void)toggleSection:(UITapGestureRecognizer *)gesture {
+    UIView *headerView = gesture.view;
+    NSInteger row = headerView.tag - 1000;
+    
+    if (row >= 0 && row < self.formData.count) {
+        NSDictionary *item = self.formData[row];
+        NSString *field = item[@"field"];
+        
+        // 切换展开/折叠状态
+        if ([self.expandedSections containsObject:field]) {
+            [self.expandedSections removeObject:field];
+        } else {
+            [self.expandedSections addObject:field];
+        }
+        
+        // 刷新对应的cell
+        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row inSection:2];
+        [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+    }
+}
+
 - (void)selectOption:(UIButton *)button {
     NSString *field = objc_getAssociatedObject(button, @"field");
     NSDictionary *option = objc_getAssociatedObject(button, @"option");
@@ -813,13 +872,16 @@
     self.formValues[field] = option[@"key"];
     self.selectedOptions[field] = option;
     
+    // 选择后自动折叠面板
+    [self.expandedSections removeObject:field];
+    
     // 刷新对应的cell
     NSInteger sectionIndex = 2;
     for (NSInteger i = 0; i < self.formData.count; i++) {
         NSDictionary *item = self.formData[i];
         if ([item[@"field"] isEqualToString:field]) {
             NSIndexPath *indexPath = [NSIndexPath indexPathForRow:i inSection:sectionIndex];
-            [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
+            [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
             break;
         }
     }
