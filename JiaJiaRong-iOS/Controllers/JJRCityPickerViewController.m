@@ -451,17 +451,16 @@
 
 - (void)createHotCityGridInCell:(UITableViewCell *)cell {
     if (!self.hotCities || self.hotCities.count == 0) {
-        NSLog(@"热门城市数据为空");
         return;
     }
-    
-    NSLog(@"热门城市数据: %@", self.hotCities);
     
     UIView *containerView = [[UIView alloc] init];
     [cell.contentView addSubview:containerView];
     
+    // 增加右侧间距，避免与字母索引重叠
     [containerView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.right.equalTo(cell.contentView).inset(15);
+        make.left.equalTo(cell.contentView).offset(15);
+        make.right.equalTo(cell.contentView).offset(-45); // 原来是-15，现在是-45，增加了30px间距
         make.top.equalTo(cell.contentView).offset(10);
         make.bottom.equalTo(cell.contentView).offset(-10);
     }];
@@ -469,29 +468,16 @@
     NSInteger columns = 3;
     CGFloat buttonHeight = 35;
     CGFloat spacing = 10;
+    
+    // 根据容器实际宽度计算按钮宽度
     CGFloat screenWidth = [UIScreen mainScreen].bounds.size.width;
-    CGFloat containerWidth = screenWidth - 30; // 减去左右边距
+    CGFloat containerWidth = screenWidth - 15 - 45; // 左边距15 + 右边距45
     CGFloat buttonWidth = (containerWidth - (columns - 1) * spacing) / columns;
     
     NSInteger totalRows = (self.hotCities.count + columns - 1) / columns;
     
-    // 过滤有效的城市数据
-    NSMutableArray *validCities = [NSMutableArray array];
-    for (NSDictionary *city in self.hotCities) {
-        if (city[@"name"] && [city[@"name"] length] > 0) {
-            [validCities addObject:city];
-        }
-    }
-    
-    NSLog(@"有效城市数量: %ld", (long)validCities.count);
-    
-    for (NSInteger i = 0; i < validCities.count; i++) {
-        NSDictionary *city = validCities[i];
-        
-        NSInteger row = i / columns;
-        NSInteger col = i % columns;
-        
-        NSLog(@"城市 %ld: %@ - 行:%ld 列:%ld", (long)i, city[@"name"], (long)row, (long)col);
+    for (NSInteger i = 0; i < self.hotCities.count; i++) {
+        NSDictionary *city = self.hotCities[i];
         
         UIButton *cityButton = [[UIButton alloc] init];
         [cityButton setTitle:city[@"name"] forState:UIControlStateNormal];
@@ -503,27 +489,22 @@
         [cityButton addTarget:self action:@selector(hotCityButtonTapped:) forControlEvents:UIControlEventTouchUpInside];
         [containerView addSubview:cityButton];
         
-        CGFloat leftOffset = col * (buttonWidth + spacing);
-        CGFloat topOffset = row * (buttonHeight + spacing);
-        
-        NSLog(@"按钮位置 - left: %.1f, top: %.1f, width: %.1f", leftOffset, topOffset, buttonWidth);
+        NSInteger row = i / columns;
+        NSInteger col = i % columns;
         
         [cityButton mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.top.equalTo(containerView).offset(topOffset);
-            make.left.equalTo(containerView).offset(leftOffset);
+            make.top.equalTo(containerView).offset(row * (buttonHeight + spacing));
+            make.left.equalTo(containerView).offset(col * (buttonWidth + spacing));
             make.width.mas_equalTo(buttonWidth);
             make.height.mas_equalTo(buttonHeight);
         }];
     }
     
     // 设置容器高度
-    NSInteger actualRows = (validCities.count + columns - 1) / columns;
-    CGFloat totalHeight = actualRows * buttonHeight + (actualRows - 1) * spacing;
+    CGFloat totalHeight = totalRows * buttonHeight + (totalRows - 1) * spacing;
     [containerView mas_updateConstraints:^(MASConstraintMaker *make) {
         make.height.mas_equalTo(totalHeight);
     }];
-    
-    NSLog(@"容器高度: %.1f", totalHeight);
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
