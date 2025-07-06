@@ -10,6 +10,8 @@
 #import "JJRNetworkService.h"
 #import "JJRUserManager.h"
 #import "JJRIdCardViewController.h"
+#import "JJRInputView.h"
+#import "JJRCityPickerViewController.h"
 #import <Masonry/Masonry.h>
 #import <YYKit/YYKit.h>
 #import <objc/runtime.h>
@@ -919,27 +921,32 @@
     // 获取热门城市数据
     [[JJRNetworkService sharedInstance] getHotCitiesWithSuccess:^(NSDictionary *responseObject) {
         if ([responseObject[@"code"] integerValue] == 0) {
-            // 简化实现：使用 UIAlertController 选择城市
-            UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"选择城市" message:nil preferredStyle:UIAlertControllerStyleActionSheet];
-            
-            NSArray *cities = responseObject[@"data"];
-            for (NSDictionary *city in cities) {
-                UIAlertAction *action = [UIAlertAction actionWithTitle:city[@"name"] style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-                    self.cityName = city[@"name"];
-                    self.cityCode = city[@"code"];
-                    [self.tableView reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:0 inSection:1]] withRowAnimation:UITableViewRowAnimationNone];
-                }];
-                [alert addAction:action];
-            }
-            
-            UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil];
-            [alert addAction:cancelAction];
-            
-            [self presentViewController:alert animated:YES completion:nil];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                JJRCityPickerViewController *cityPicker = [[JJRCityPickerViewController alloc] init];
+                cityPicker.hotCities = responseObject[@"data"];
+                cityPicker.currentCityName = self.cityName;
+                cityPicker.modalPresentationStyle = UIModalPresentationPageSheet;
+                
+                // 设置选择回调
+                __weak typeof(self) weakSelf = self;
+                cityPicker.citySelectedBlock = ^(NSString *cityName, NSString *cityCode) {
+                    weakSelf.cityName = cityName;
+                    weakSelf.cityCode = cityCode;
+                    [weakSelf.tableView reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:0 inSection:1]] withRowAnimation:UITableViewRowAnimationNone];
+                };
+                
+                [self presentViewController:cityPicker animated:YES completion:nil];
+            });
         }
     } failure:^(NSError *error) {
         NSLog(@"获取城市数据失败: %@", error);
     }];
+}
+
+- (void)cityPickerDidSelectCity:(NSDictionary *)city {
+    self.cityName = city[@"name"];
+    self.cityCode = city[@"code"];
+    [self.tableView reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:0 inSection:1]] withRowAnimation:UITableViewRowAnimationNone];
 }
 
 - (void)showIdPopup {
