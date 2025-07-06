@@ -427,7 +427,18 @@
         if (indexPath.row < self.formData.count) {
             NSDictionary *item = self.formData[indexPath.row];
             NSString *field = item[@"field"];
-            BOOL isExpanded = [self.expandedSections containsObject:field];
+            
+            // 检查当前面板是否展开
+            // 如果没有选择值，默认展开；如果有选择值，根据expandedSections来判断
+            NSString *selectedValue = self.selectedOptions[field][@"name"];
+            BOOL isExpanded;
+            if (!selectedValue || selectedValue.length == 0) {
+                // 没有选择值，默认展开
+                isExpanded = YES;
+            } else {
+                // 有选择值，根据expandedSections来判断
+                isExpanded = [self.expandedSections containsObject:field];
+            }
             
             if (isExpanded) {
                 // 展开状态：计算完整高度
@@ -442,8 +453,8 @@
                 
                 return baseHeight + optionsHeight + 15; // 底部间距
             } else {
-                // 折叠状态：只显示标题和值
-                return 80; // 标题行 + 值行 + 间距
+                // 折叠状态：只显示标题行
+                return 50; // 只有标题行的高度
             }
         }
         return 80;
@@ -639,7 +650,16 @@
             NSArray *options = item[@"conditionList"];
             
             // 检查当前面板是否展开
-            BOOL isExpanded = [self.expandedSections containsObject:field];
+            // 如果没有选择值，默认展开；如果有选择值，根据expandedSections来判断
+            NSString *selectedValue = self.selectedOptions[field][@"name"];
+            BOOL isExpanded;
+            if (!selectedValue || selectedValue.length == 0) {
+                // 没有选择值，默认展开
+                isExpanded = YES;
+            } else {
+                // 有选择值，根据expandedSections来判断
+                isExpanded = [self.expandedSections containsObject:field];
+            }
             
             UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"FormCell"];
             if (!cell) {
@@ -669,6 +689,15 @@
             titleLabel.textColor = [UIColor colorWithRed:0.1 green:0.1 blue:0.1 alpha:1.0];
             [headerView addSubview:titleLabel];
             
+            // 选中值标签
+            UILabel *selectedValueLabel = [[UILabel alloc] init];
+            NSString *labelSelectedValue = self.selectedOptions[field][@"name"];
+            selectedValueLabel.text = labelSelectedValue ?: @"";
+            selectedValueLabel.font = [UIFont systemFontOfSize:14];
+            selectedValueLabel.textColor = labelSelectedValue ? [UIColor colorWithRed:0.1 green:0.1 blue:0.1 alpha:1.0] : [UIColor colorWithRed:0.6 green:0.6 blue:0.6 alpha:1.0];
+            selectedValueLabel.textAlignment = NSTextAlignmentRight;
+            [headerView addSubview:selectedValueLabel];
+            
             // 箭头图标
             UIImageView *arrowIcon = [[UIImageView alloc] init];
             arrowIcon.image = [UIImage systemImageNamed:isExpanded ? @"chevron.up" : @"chevron.down"];
@@ -686,6 +715,12 @@
                 make.width.height.mas_equalTo(16);
             }];
             
+            [selectedValueLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+                make.right.equalTo(arrowIcon.mas_left).offset(-8);
+                make.centerY.equalTo(headerView);
+                make.left.greaterThanOrEqualTo(titleLabel.mas_right).offset(10);
+            }];
+            
             // 添加点击手势
             UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(toggleSection:)];
             [headerView addGestureRecognizer:tapGesture];
@@ -698,10 +733,10 @@
                 
                 // 选择提示
                 UILabel *hintLabel = [[UILabel alloc] init];
-                NSString *selectedValue = self.selectedOptions[field][@"name"];
-                hintLabel.text = selectedValue ? selectedValue : [NSString stringWithFormat:@"请选择%@", fieldName];
+                NSString *hintSelectedValue = self.selectedOptions[field][@"name"];
+                hintLabel.text = hintSelectedValue ? hintSelectedValue : [NSString stringWithFormat:@"请选择%@", fieldName];
                 hintLabel.font = [UIFont systemFontOfSize:14];
-                hintLabel.textColor = selectedValue ? [UIColor colorWithRed:0.1 green:0.1 blue:0.1 alpha:1.0] : [UIColor colorWithRed:0.6 green:0.6 blue:0.6 alpha:1.0];
+                hintLabel.textColor = hintSelectedValue ? [UIColor colorWithRed:0.1 green:0.1 blue:0.1 alpha:1.0] : [UIColor colorWithRed:0.6 green:0.6 blue:0.6 alpha:1.0];
                 [cell.contentView addSubview:hintLabel];
                 
                 [hintLabel mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -729,19 +764,8 @@
                     [self createOptionsForView:optionsView options:options field:field columns:3];
                 }
             } else {
-                // 折叠状态：只显示已选择的值
-                UILabel *valueLabel = [[UILabel alloc] init];
-                NSString *selectedValue = self.selectedOptions[field][@"name"];
-                valueLabel.text = selectedValue ?: @"";
-                valueLabel.font = [UIFont systemFontOfSize:14];
-                valueLabel.textColor = selectedValue ? [UIColor colorWithRed:0.1 green:0.1 blue:0.1 alpha:1.0] : [UIColor colorWithRed:0.6 green:0.6 blue:0.6 alpha:1.0];
-                [cell.contentView addSubview:valueLabel];
-                
-                [valueLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-                    make.left.equalTo(cell.contentView).offset(15);
-                    make.top.equalTo(headerView.mas_bottom).offset(8);
-                    make.bottom.equalTo(cell.contentView).offset(-15);
-                }];
+                // 折叠状态：只显示标题行，不显示选中的值
+                // 不添加任何额外的视图，只保留标题行
             }
             
             return cell;
