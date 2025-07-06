@@ -1,0 +1,6 @@
+module Pods_JiaJiaRong_iOS {
+  umbrella header "Pods-JiaJiaRong-iOS-umbrella.h"
+
+  export *
+  module * { export * }
+}

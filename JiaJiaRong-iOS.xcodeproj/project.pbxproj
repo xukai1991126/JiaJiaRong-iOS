@@ -1,0 +1,689 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		C615DF589306E82BBA1A2177 /* libPods-JiaJiaRong-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D9790782680663DA1951483 /* libPods-JiaJiaRong-iOS.a */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		A93256572E1943630098BEB3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A93256332E19435E0098BEB3 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A932563A2E19435E0098BEB3;
+			remoteInfo = "JiaJiaRong-iOS";
+		};
+		A93256612E1943640098BEB3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A93256332E19435E0098BEB3 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A932563A2E19435E0098BEB3;
+			remoteInfo = "JiaJiaRong-iOS";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		2CF4C8AC14FC6F3483B660E4 /* Pods-JiaJiaRong-iOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JiaJiaRong-iOS.debug.xcconfig"; path = "Target Support Files/Pods-JiaJiaRong-iOS/Pods-JiaJiaRong-iOS.debug.xcconfig"; sourceTree = "<group>"; };
+		5D9790782680663DA1951483 /* libPods-JiaJiaRong-iOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-JiaJiaRong-iOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A932563B2E19435E0098BEB3 /* JiaJiaRong-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "JiaJiaRong-iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A93256562E1943630098BEB3 /* JiaJiaRong-iOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "JiaJiaRong-iOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A93256602E1943640098BEB3 /* JiaJiaRong-iOSUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "JiaJiaRong-iOSUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B8A094DEF3A2EBAEC9014C47 /* Pods-JiaJiaRong-iOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JiaJiaRong-iOS.release.xcconfig"; path = "Target Support Files/Pods-JiaJiaRong-iOS/Pods-JiaJiaRong-iOS.release.xcconfig"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		A93256682E1943640098BEB3 /* Exceptions for "JiaJiaRong-iOS" folder in "JiaJiaRong-iOS" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = A932563A2E19435E0098BEB3 /* JiaJiaRong-iOS */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		A932563D2E19435E0098BEB3 /* JiaJiaRong-iOS */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				A93256682E1943640098BEB3 /* Exceptions for "JiaJiaRong-iOS" folder in "JiaJiaRong-iOS" target */,
+			);
+			path = "JiaJiaRong-iOS";
+			sourceTree = "<group>";
+		};
+		A93256592E1943630098BEB3 /* JiaJiaRong-iOSTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "JiaJiaRong-iOSTests";
+			sourceTree = "<group>";
+		};
+		A93256632E1943640098BEB3 /* JiaJiaRong-iOSUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "JiaJiaRong-iOSUITests";
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		A93256382E19435E0098BEB3 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C615DF589306E82BBA1A2177 /* libPods-JiaJiaRong-iOS.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A93256532E1943630098BEB3 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A932565D2E1943640098BEB3 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		A93256322E19435E0098BEB3 = {
+			isa = PBXGroup;
+			children = (
+				A932563D2E19435E0098BEB3 /* JiaJiaRong-iOS */,
+				A93256592E1943630098BEB3 /* JiaJiaRong-iOSTests */,
+				A93256632E1943640098BEB3 /* JiaJiaRong-iOSUITests */,
+				A932563C2E19435E0098BEB3 /* Products */,
+				AF6EBFBFC854120058105E0E /* Pods */,
+				AFA2AF4D97E3D48049FF52D9 /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		A932563C2E19435E0098BEB3 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A932563B2E19435E0098BEB3 /* JiaJiaRong-iOS.app */,
+				A93256562E1943630098BEB3 /* JiaJiaRong-iOSTests.xctest */,
+				A93256602E1943640098BEB3 /* JiaJiaRong-iOSUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		AF6EBFBFC854120058105E0E /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				2CF4C8AC14FC6F3483B660E4 /* Pods-JiaJiaRong-iOS.debug.xcconfig */,
+				B8A094DEF3A2EBAEC9014C47 /* Pods-JiaJiaRong-iOS.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
+		AFA2AF4D97E3D48049FF52D9 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				5D9790782680663DA1951483 /* libPods-JiaJiaRong-iOS.a */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		A932563A2E19435E0098BEB3 /* JiaJiaRong-iOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A93256692E1943640098BEB3 /* Build configuration list for PBXNativeTarget "JiaJiaRong-iOS" */;
+			buildPhases = (
+				981071C10D809EA90A8172E7 /* [CP] Check Pods Manifest.lock */,
+				A93256372E19435E0098BEB3 /* Sources */,
+				A93256382E19435E0098BEB3 /* Frameworks */,
+				A93256392E19435E0098BEB3 /* Resources */,
+				C54EA7611903057262D02A1F /* [CP] Copy Pods Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				A932563D2E19435E0098BEB3 /* JiaJiaRong-iOS */,
+			);
+			name = "JiaJiaRong-iOS";
+			productName = "JiaJiaRong-iOS";
+			productReference = A932563B2E19435E0098BEB3 /* JiaJiaRong-iOS.app */;
+			productType = "com.apple.product-type.application";
+		};
+		A93256552E1943630098BEB3 /* JiaJiaRong-iOSTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A932566E2E1943640098BEB3 /* Build configuration list for PBXNativeTarget "JiaJiaRong-iOSTests" */;
+			buildPhases = (
+				A93256522E1943630098BEB3 /* Sources */,
+				A93256532E1943630098BEB3 /* Frameworks */,
+				A93256542E1943630098BEB3 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				A93256582E1943630098BEB3 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				A93256592E1943630098BEB3 /* JiaJiaRong-iOSTests */,
+			);
+			name = "JiaJiaRong-iOSTests";
+			productName = "JiaJiaRong-iOSTests";
+			productReference = A93256562E1943630098BEB3 /* JiaJiaRong-iOSTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		A932565F2E1943640098BEB3 /* JiaJiaRong-iOSUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A93256712E1943640098BEB3 /* Build configuration list for PBXNativeTarget "JiaJiaRong-iOSUITests" */;
+			buildPhases = (
+				A932565C2E1943640098BEB3 /* Sources */,
+				A932565D2E1943640098BEB3 /* Frameworks */,
+				A932565E2E1943640098BEB3 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				A93256622E1943640098BEB3 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				A93256632E1943640098BEB3 /* JiaJiaRong-iOSUITests */,
+			);
+			name = "JiaJiaRong-iOSUITests";
+			productName = "JiaJiaRong-iOSUITests";
+			productReference = A93256602E1943640098BEB3 /* JiaJiaRong-iOSUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		A93256332E19435E0098BEB3 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastUpgradeCheck = 1620;
+				TargetAttributes = {
+					A932563A2E19435E0098BEB3 = {
+						CreatedOnToolsVersion = 16.2;
+					};
+					A93256552E1943630098BEB3 = {
+						CreatedOnToolsVersion = 16.2;
+						TestTargetID = A932563A2E19435E0098BEB3;
+					};
+					A932565F2E1943640098BEB3 = {
+						CreatedOnToolsVersion = 16.2;
+						TestTargetID = A932563A2E19435E0098BEB3;
+					};
+				};
+			};
+			buildConfigurationList = A93256362E19435E0098BEB3 /* Build configuration list for PBXProject "JiaJiaRong-iOS" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = A93256322E19435E0098BEB3;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = A932563C2E19435E0098BEB3 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				A932563A2E19435E0098BEB3 /* JiaJiaRong-iOS */,
+				A93256552E1943630098BEB3 /* JiaJiaRong-iOSTests */,
+				A932565F2E1943640098BEB3 /* JiaJiaRong-iOSUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		A93256392E19435E0098BEB3 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A93256542E1943630098BEB3 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A932565E2E1943640098BEB3 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		981071C10D809EA90A8172E7 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-JiaJiaRong-iOS-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		C54EA7611903057262D02A1F /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-JiaJiaRong-iOS/Pods-JiaJiaRong-iOS-resources-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-JiaJiaRong-iOS/Pods-JiaJiaRong-iOS-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-JiaJiaRong-iOS/Pods-JiaJiaRong-iOS-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		A93256372E19435E0098BEB3 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A93256522E1943630098BEB3 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A932565C2E1943640098BEB3 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		A93256582E1943630098BEB3 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A932563A2E19435E0098BEB3 /* JiaJiaRong-iOS */;
+			targetProxy = A93256572E1943630098BEB3 /* PBXContainerItemProxy */;
+		};
+		A93256622E1943640098BEB3 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A932563A2E19435E0098BEB3 /* JiaJiaRong-iOS */;
+			targetProxy = A93256612E1943640098BEB3 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		A932566A2E1943640098BEB3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 2CF4C8AC14FC6F3483B660E4 /* Pods-JiaJiaRong-iOS.debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = J6Q5PP3ZS4;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/JiaJiaRong-iOS/Tool/SDK/Required",
+					"$(PROJECT_DIR)/JiaJiaRong-iOS/Tool/SDK/ShareSDK/Support/Optional",
+					"$(PROJECT_DIR)/JiaJiaRong-iOS/Tool/SDK/ShareSDK/Support/PlatformConnector",
+					"$(PROJECT_DIR)/JiaJiaRong-iOS/Tool/SDK/ShareSDK/Support/PlatformSDK/QQSDK",
+					"$(PROJECT_DIR)/JiaJiaRong-iOS/Tool/SDK/ShareSDK/Support/Required",
+					"$(PROJECT_DIR)/JiaJiaRong-iOS/Tool/SDK/ShareSDK",
+					"$(PROJECT_DIR)/JiaJiaRong-iOS/Tool/SDK",
+					"$(PROJECT_DIR)/JiaJiaRong-iOS/Utils/SDK/Required",
+					"$(PROJECT_DIR)/JiaJiaRong-iOS/Utils/SDK/ShareSDK/Support/Optional",
+					"$(PROJECT_DIR)/JiaJiaRong-iOS/Utils/SDK/ShareSDK/Support/PlatformConnector",
+					"$(PROJECT_DIR)/JiaJiaRong-iOS/Utils/SDK/ShareSDK/Support/PlatformSDK/QQSDK",
+					"$(PROJECT_DIR)/JiaJiaRong-iOS/Utils/SDK/ShareSDK/Support/Required",
+					"$(PROJECT_DIR)/JiaJiaRong-iOS/Utils/SDK/ShareSDK",
+					"$(PROJECT_DIR)/JiaJiaRong-iOS/Utils/SDK",
+				);
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "JiaJiaRong-iOS/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "家家融";
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UIMainStoryboardFile = Main;
+				INFOPLIST_KEY_UIRequiredDeviceCapabilities = armv7;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/JiaJiaRong-iOS/Tool/SDK/ShareSDK/Support/PlatformSDK/WeChatSDK",
+					"$(PROJECT_DIR)/JiaJiaRong-iOS/Tool/XBZChatKeyBoard/Lame",
+					"$(PROJECT_DIR)/JiaJiaRong-iOS/Utils/SDK/ShareSDK/Support/PlatformSDK/WeChatSDK",
+					"$(PROJECT_DIR)/JiaJiaRong-iOS/Utils/XBZChatKeyBoard/Lame",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jjr.sdk;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		A932566B2E1943640098BEB3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = B8A094DEF3A2EBAEC9014C47 /* Pods-JiaJiaRong-iOS.release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = J6Q5PP3ZS4;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/JiaJiaRong-iOS/Tool/SDK/Required",
+					"$(PROJECT_DIR)/JiaJiaRong-iOS/Tool/SDK/ShareSDK/Support/Optional",
+					"$(PROJECT_DIR)/JiaJiaRong-iOS/Tool/SDK/ShareSDK/Support/PlatformConnector",
+					"$(PROJECT_DIR)/JiaJiaRong-iOS/Tool/SDK/ShareSDK/Support/PlatformSDK/QQSDK",
+					"$(PROJECT_DIR)/JiaJiaRong-iOS/Tool/SDK/ShareSDK/Support/Required",
+					"$(PROJECT_DIR)/JiaJiaRong-iOS/Tool/SDK/ShareSDK",
+					"$(PROJECT_DIR)/JiaJiaRong-iOS/Tool/SDK",
+					"$(PROJECT_DIR)/JiaJiaRong-iOS/Utils/SDK/Required",
+					"$(PROJECT_DIR)/JiaJiaRong-iOS/Utils/SDK/ShareSDK/Support/Optional",
+					"$(PROJECT_DIR)/JiaJiaRong-iOS/Utils/SDK/ShareSDK/Support/PlatformConnector",
+					"$(PROJECT_DIR)/JiaJiaRong-iOS/Utils/SDK/ShareSDK/Support/PlatformSDK/QQSDK",
+					"$(PROJECT_DIR)/JiaJiaRong-iOS/Utils/SDK/ShareSDK/Support/Required",
+					"$(PROJECT_DIR)/JiaJiaRong-iOS/Utils/SDK/ShareSDK",
+					"$(PROJECT_DIR)/JiaJiaRong-iOS/Utils/SDK",
+				);
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "JiaJiaRong-iOS/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "家家融";
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UIMainStoryboardFile = Main;
+				INFOPLIST_KEY_UIRequiredDeviceCapabilities = armv7;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/JiaJiaRong-iOS/Tool/SDK/ShareSDK/Support/PlatformSDK/WeChatSDK",
+					"$(PROJECT_DIR)/JiaJiaRong-iOS/Tool/XBZChatKeyBoard/Lame",
+					"$(PROJECT_DIR)/JiaJiaRong-iOS/Utils/SDK/ShareSDK/Support/PlatformSDK/WeChatSDK",
+					"$(PROJECT_DIR)/JiaJiaRong-iOS/Utils/XBZChatKeyBoard/Lame",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jjr.sdk;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		A932566C2E1943640098BEB3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		A932566D2E1943640098BEB3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		A932566F2E1943640098BEB3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 84TBLFRR39;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "xukai.JiaJiaRong-iOSTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/JiaJiaRong-iOS.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/JiaJiaRong-iOS";
+			};
+			name = Debug;
+		};
+		A93256702E1943640098BEB3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 84TBLFRR39;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "xukai.JiaJiaRong-iOSTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/JiaJiaRong-iOS.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/JiaJiaRong-iOS";
+			};
+			name = Release;
+		};
+		A93256722E1943640098BEB3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 84TBLFRR39;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "xukai.JiaJiaRong-iOSUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = "JiaJiaRong-iOS";
+			};
+			name = Debug;
+		};
+		A93256732E1943640098BEB3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 84TBLFRR39;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "xukai.JiaJiaRong-iOSUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = "JiaJiaRong-iOS";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		A93256362E19435E0098BEB3 /* Build configuration list for PBXProject "JiaJiaRong-iOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A932566C2E1943640098BEB3 /* Debug */,
+				A932566D2E1943640098BEB3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A93256692E1943640098BEB3 /* Build configuration list for PBXNativeTarget "JiaJiaRong-iOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A932566A2E1943640098BEB3 /* Debug */,
+				A932566B2E1943640098BEB3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A932566E2E1943640098BEB3 /* Build configuration list for PBXNativeTarget "JiaJiaRong-iOSTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A932566F2E1943640098BEB3 /* Debug */,
+				A93256702E1943640098BEB3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A93256712E1943640098BEB3 /* Build configuration list for PBXNativeTarget "JiaJiaRong-iOSUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A93256722E1943640098BEB3 /* Debug */,
+				A93256732E1943640098BEB3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = A93256332E19435E0098BEB3 /* Project object */;
+}
