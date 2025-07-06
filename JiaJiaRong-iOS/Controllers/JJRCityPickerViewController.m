@@ -20,10 +20,54 @@
 }
 
 - (void)setupData {
-    // 加载城市数据 - 这里使用简化的数据结构
-    self.indexLetters = @[@"*", @"A", @"B", @"C", @"D", @"E", @"F", @"G", @"H", @"I", @"J", @"K", @"L", @"M", @"N", @"O", @"P", @"Q", @"R", @"S", @"T", @"U", @"V", @"W", @"X", @"Y", @"Z"];
+    // 加载与uni-app相同的本地city.json数据
+    [self loadCityDataFromLocalFile];
     
-    // 简化的城市数据
+    self.indexLetters = @[@"*", @"A", @"B", @"C", @"D", @"E", @"F", @"G", @"H", @"I", @"J", @"K", @"L", @"M", @"N", @"O", @"P", @"Q", @"R", @"S", @"T", @"U", @"V", @"W", @"X", @"Y", @"Z"];
+}
+
+- (void)loadCityDataFromLocalFile {
+    // 获取city.json文件路径
+    NSString *filePath = [[NSBundle mainBundle] pathForResource:@"city" ofType:@"json"];
+    
+    if (!filePath) {
+        NSLog(@"找不到city.json文件");
+        [self setupFallbackData];
+        return;
+    }
+    
+    // 读取文件内容
+    NSData *data = [NSData dataWithContentsOfFile:filePath];
+    if (!data) {
+        NSLog(@"无法读取city.json文件");
+        [self setupFallbackData];
+        return;
+    }
+    
+    // 解析JSON数据
+    NSError *error;
+    NSDictionary *jsonDict = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:&error];
+    
+    if (error || !jsonDict) {
+        NSLog(@"解析city.json失败: %@", error);
+        [self setupFallbackData];
+        return;
+    }
+    
+    // 获取城市数据
+    NSArray *cityArray = jsonDict[@"city"];
+    if (!cityArray) {
+        NSLog(@"city.json格式错误，找不到city数组");
+        [self setupFallbackData];
+        return;
+    }
+    
+    self.cityData = cityArray;
+    NSLog(@"成功加载城市数据，共%lu个字母分组", (unsigned long)self.cityData.count);
+}
+
+- (void)setupFallbackData {
+    // 备用数据，如果无法加载本地文件时使用
     self.cityData = @[
         @{
             @"initial": @"A",
@@ -42,101 +86,6 @@
                 @{@"code": @"130600", @"name": @"保定"},
                 @{@"code": @"610300", @"name": @"宝鸡"},
                 @{@"code": @"150200", @"name": @"包头"}
-            ]
-        },
-        @{
-            @"initial": @"C",
-            @"list": @[
-                @{@"code": @"130900", @"name": @"沧州"},
-                @{@"code": @"220100", @"name": @"长春"},
-                @{@"code": @"430100", @"name": @"长沙"},
-                @{@"code": @"320400", @"name": @"常州"},
-                @{@"code": @"500000", @"name": @"重庆"},
-                @{@"code": @"510100", @"name": @"成都"}
-            ]
-        },
-        @{
-            @"initial": @"D",
-            @"list": @[
-                @{@"code": @"210200", @"name": @"大连"},
-                @{@"code": @"140200", @"name": @"大同"},
-                @{@"code": @"511700", @"name": @"达州"},
-                @{@"code": @"623000", @"name": @"甘南"}
-            ]
-        },
-        @{
-            @"initial": @"G",
-            @"list": @[
-                @{@"code": @"440100", @"name": @"广州"},
-                @{@"code": @"450100", @"name": @"南宁"},
-                @{@"code": @"520100", @"name": @"贵阳"}
-            ]
-        },
-        @{
-            @"initial": @"H",
-            @"list": @[
-                @{@"code": @"330100", @"name": @"杭州"},
-                @{@"code": @"230100", @"name": @"哈尔滨"},
-                @{@"code": @"340100", @"name": @"合肥"}
-            ]
-        },
-        @{
-            @"initial": @"J",
-            @"list": @[
-                @{@"code": @"370100", @"name": @"济南"},
-                @{@"code": @"320100", @"name": @"南京"}
-            ]
-        },
-        @{
-            @"initial": @"K",
-            @"list": @[
-                @{@"code": @"530100", @"name": @"昆明"}
-            ]
-        },
-        @{
-            @"initial": @"N",
-            @"list": @[
-                @{@"code": @"320100", @"name": @"南京"},
-                @{@"code": @"360100", @"name": @"南昌"},
-                @{@"code": @"450100", @"name": @"南宁"}
-            ]
-        },
-        @{
-            @"initial": @"S",
-            @"list": @[
-                @{@"code": @"310000", @"name": @"上海"},
-                @{@"code": @"440300", @"name": @"深圳"},
-                @{@"code": @"320500", @"name": @"苏州"},
-                @{@"code": @"140100", @"name": @"太原"}
-            ]
-        },
-        @{
-            @"initial": @"T",
-            @"list": @[
-                @{@"code": @"120000", @"name": @"天津"},
-                @{@"code": @"140100", @"name": @"太原"}
-            ]
-        },
-        @{
-            @"initial": @"W",
-            @"list": @[
-                @{@"code": @"430000", @"name": @"武汉"},
-                @{@"code": @"320200", @"name": @"无锡"}
-            ]
-        },
-        @{
-            @"initial": @"X",
-            @"list": @[
-                @{@"code": @"610100", @"name": @"西安"},
-                @{@"code": @"350200", @"name": @"厦门"}
-            ]
-        },
-        @{
-            @"initial": @"Z",
-            @"list": @[
-                @{@"code": @"330600", @"name": @"绍兴"},
-                @{@"code": @"410100", @"name": @"郑州"},
-                @{@"code": @"500000", @"name": @"重庆"}
             ]
         }
     ];

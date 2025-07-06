@@ -22,7 +22,6 @@
 @implementation JJRPasswordForgetViewController
 
 - (void)viewDidLoad {
-    @weakify(self);
     [super viewDidLoad];
     [self setupUI];
     [self setupConstraints];
