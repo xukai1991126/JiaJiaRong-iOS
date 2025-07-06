@@ -115,6 +115,37 @@
             NSArray *fieldData = responseObject[@"data"];
             [self.formData addObjectsFromArray:fieldData];
             
+            // 添加职业选项
+            NSDictionary *occupation = @{
+                @"conditionList": @[
+                    @{@"key": @"1", @"name": @"公务员"},
+                    @{@"key": @"2", @"name": @"上班族"},
+                    @{@"key": @"3", @"name": @"自由职业"},
+                    @{@"key": @"4", @"name": @"个体户"},
+                    @{@"key": @"5", @"name": @"企业主"}
+                ],
+                @"field": @"occupation",
+                @"fieldName": @"职业"
+            };
+            [self.formData addObject:occupation];
+            
+            // 添加月收入选项
+            NSDictionary *monthlyIncome = @{
+                @"conditionList": @[
+                    @{@"key": @"0", @"name": @"无"},
+                    @{@"key": @"1", @"name": @"0~4000"},
+                    @{@"key": @"2", @"name": @"4000~8000"},
+                    @{@"key": @"3", @"name": @"8000~12000"},
+                    @{@"key": @"4", @"name": @"12000~16000"},
+                    @{@"key": @"5", @"name": @"16000~20000"},
+                    @{@"key": @"6", @"name": @"20000~25000"},
+                    @{@"key": @"7", @"name": @">25000"}
+                ],
+                @"field": @"monthlyIncome",
+                @"fieldName": @"月收入"
+            };
+            [self.formData addObject:monthlyIncome];
+            
             // 添加贷款期限选项
             NSDictionary *loanPeriod = @{
                 @"conditionList": @[
@@ -140,7 +171,95 @@
         }
     } failure:^(NSError *error) {
         NSLog(@"加载表单数据失败: %@", error);
+        
+        // 如果网络请求失败，使用默认数据
+        [self loadDefaultFormData];
     }];
+}
+
+- (void)loadDefaultFormData {
+    // 默认表单数据，匹配uni-app的字段
+    NSArray *defaultData = @[
+        @{
+            @"conditionList": @[
+                @{@"key": @"1", @"name": @"有"},
+                @{@"key": @"0", @"name": @"无"}
+            ],
+            @"field": @"house",
+            @"fieldName": @"房"
+        },
+        @{
+            @"conditionList": @[
+                @{@"key": @"1", @"name": @"有"},
+                @{@"key": @"0", @"name": @"无"}
+            ],
+            @"field": @"car",
+            @"fieldName": @"车"
+        },
+        @{
+            @"conditionList": @[
+                @{@"key": @"1", @"name": @"有"},
+                @{@"key": @"0", @"name": @"无"}
+            ],
+            @"field": @"socialSecurity",
+            @"fieldName": @"社保"
+        },
+        @{
+            @"conditionList": @[
+                @{@"key": @"1", @"name": @"有"},
+                @{@"key": @"0", @"name": @"无"}
+            ],
+            @"field": @"providentFund",
+            @"fieldName": @"公积金"
+        },
+        @{
+            @"conditionList": @[
+                @{@"key": @"1", @"name": @"公务员"},
+                @{@"key": @"2", @"name": @"上班族"},
+                @{@"key": @"3", @"name": @"自由职业"},
+                @{@"key": @"4", @"name": @"个体户"},
+                @{@"key": @"5", @"name": @"企业主"}
+            ],
+            @"field": @"occupation",
+            @"fieldName": @"职业"
+        },
+        @{
+            @"conditionList": @[
+                @{@"key": @"0", @"name": @"无"},
+                @{@"key": @"1", @"name": @"0~4000"},
+                @{@"key": @"2", @"name": @"4000~8000"},
+                @{@"key": @"3", @"name": @"8000~12000"},
+                @{@"key": @"4", @"name": @"12000~16000"},
+                @{@"key": @"5", @"name": @"16000~20000"},
+                @{@"key": @"6", @"name": @"20000~25000"},
+                @{@"key": @"7", @"name": @">25000"}
+            ],
+            @"field": @"monthlyIncome",
+            @"fieldName": @"月收入"
+        },
+        @{
+            @"conditionList": @[
+                @{@"key": @"3", @"name": @"3期"},
+                @{@"key": @"6", @"name": @"6期"},
+                @{@"key": @"12", @"name": @"12期"},
+                @{@"key": @"24", @"name": @"24期"},
+                @{@"key": @"36", @"name": @"36期"}
+            ],
+            @"field": @"stageNum",
+            @"fieldName": @"贷款期限"
+        }
+    ];
+    
+    [self.formData addObjectsFromArray:defaultData];
+    
+    // 初始化表单值
+    for (NSDictionary *item in self.formData) {
+        self.formValues[item[@"field"]] = @"";
+    }
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.tableView reloadData];
+    });
 }
 
 - (void)setupIdPopup {
@@ -325,18 +444,31 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     if (indexPath.section == 0) {
-        return 100; // 步骤区域
+        return 120; // 步骤区域
     } else if (indexPath.section == 1) {
         return 100; // 城市选择 + 提示
     } else if (indexPath.section == 2) {
-        // 表单选项 - 动态高度
+        // 表单选项 - 根据选项数量动态计算高度
         if (indexPath.row < self.formData.count) {
             NSDictionary *item = self.formData[indexPath.row];
             NSArray *options = item[@"conditionList"];
-            NSInteger rows = (options.count + 2) / 3; // 每行3个选项
-            return 60 + rows * 50; // 标题高度 + 选项高度
+            NSString *field = item[@"field"];
+            
+            CGFloat baseHeight = 50 + 30 + 15; // 标题行 + 提示文本 + 间距
+            CGFloat buttonHeight = 35;
+            CGFloat rowSpacing = 12;
+            
+            NSInteger columns = 2; // 默认2列
+            if ([field isEqualToString:@"occupation"] || [field isEqualToString:@"monthlyIncome"] || [field isEqualToString:@"stageNum"]) {
+                columns = 3; // 职业、月收入、贷款期限使用3列
+            }
+            
+            NSInteger rows = (options.count + columns - 1) / columns;
+            CGFloat optionsHeight = rows * buttonHeight + (rows - 1) * rowSpacing;
+            
+            return baseHeight + optionsHeight + 15; // 底部间距
         }
-        return 60;
+        return 100;
     } else if (indexPath.section == 3) {
         return 120; // 贷款金额 + 按钮
     }
@@ -353,7 +485,7 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     if (indexPath.section == 0) {
-        // 步骤区域
+        // 步骤区域 - 移动到页面中间位置
         UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"StepCell"];
         if (!cell) {
             cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"StepCell"];
@@ -366,12 +498,12 @@
             
             [stepView mas_makeConstraints:^(MASConstraintMaker *make) {
                 make.centerX.equalTo(cell.contentView);
-                make.top.equalTo(cell.contentView).offset(25);
-                make.bottom.equalTo(cell.contentView).offset(-10);
+                make.centerY.equalTo(cell.contentView);
                 make.height.mas_equalTo(49);
+                make.width.mas_equalTo(300);
             }];
             
-            // 步骤1图片
+            // 步骤1图片 - 高亮状态
             UIImageView *step1 = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"img_83692599799e"]];
             step1.contentMode = UIViewContentModeScaleAspectFit;
             [stepView addSubview:step1];
@@ -388,9 +520,9 @@
             [stepView addSubview:dashLine];
             
             [dashLine mas_makeConstraints:^(MASConstraintMaker *make) {
-                make.left.equalTo(step1.mas_right).offset(5);
+                make.left.equalTo(step1.mas_right).offset(10);
+                make.right.equalTo(stepView).offset(-59);
                 make.centerY.equalTo(stepView);
-                make.width.mas_equalTo(140);
                 make.height.mas_equalTo(2);
             }];
             
@@ -400,15 +532,18 @@
             shapeLayer.lineWidth = 2;
             shapeLayer.lineDashPattern = @[@4, @4];
             shapeLayer.fillColor = [UIColor clearColor].CGColor;
-            
-            UIBezierPath *path = [UIBezierPath bezierPath];
-            [path moveToPoint:CGPointMake(0, 1)];
-            [path addLineToPoint:CGPointMake(140, 1)];
-            shapeLayer.path = path.CGPath;
-            
+            shapeLayer.name = @"dashLine";
             [dashLine.layer addSublayer:shapeLayer];
             
-            // 步骤2图片
+            // 延迟设置虚线路径
+            dispatch_async(dispatch_get_main_queue(), ^{
+                UIBezierPath *path = [UIBezierPath bezierPath];
+                [path moveToPoint:CGPointMake(0, 1)];
+                [path addLineToPoint:CGPointMake(dashLine.frame.size.width, 1)];
+                shapeLayer.path = path.CGPath;
+            });
+            
+            // 步骤2图片 - 灰色状态
             UIImageView *step2 = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"img_3599d1c6faa3"]];
             step2.contentMode = UIViewContentModeScaleAspectFit;
             [stepView addSubview:step2];
@@ -422,38 +557,63 @@
         
         return cell;
     } else if (indexPath.section == 1) {
-        // 城市选择
+        // 城市选择区域
         UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"CityCell"];
         if (!cell) {
             cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"CityCell"];
             cell.backgroundColor = [UIColor whiteColor];
-            cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+            cell.selectionStyle = UITableViewCellSelectionStyleNone;
+            
+            // 城市选择行
+            UIView *cityRow = [[UIView alloc] init];
+            cityRow.backgroundColor = [UIColor whiteColor];
+            [cell.contentView addSubview:cityRow];
+            
+            [cityRow mas_makeConstraints:^(MASConstraintMaker *make) {
+                make.left.right.top.equalTo(cell.contentView);
+                make.height.mas_equalTo(56);
+            }];
             
             UILabel *titleLabel = [[UILabel alloc] init];
             titleLabel.text = @"所在城市";
-            titleLabel.font = [UIFont systemFontOfSize:14];
+            titleLabel.font = [UIFont systemFontOfSize:16];
             titleLabel.textColor = [UIColor colorWithRed:0.1 green:0.1 blue:0.1 alpha:1.0];
             titleLabel.tag = 200;
-            [cell.contentView addSubview:titleLabel];
+            [cityRow addSubview:titleLabel];
             
             UILabel *valueLabel = [[UILabel alloc] init];
-            valueLabel.font = [UIFont systemFontOfSize:14];
+            valueLabel.font = [UIFont systemFontOfSize:16];
             valueLabel.textColor = [UIColor colorWithRed:0.1 green:0.1 blue:0.1 alpha:1.0];
             valueLabel.textAlignment = NSTextAlignmentRight;
             valueLabel.tag = 201;
-            [cell.contentView addSubview:valueLabel];
+            [cityRow addSubview:valueLabel];
+            
+            UIImageView *arrowIcon = [[UIImageView alloc] init];
+            arrowIcon.image = [UIImage systemImageNamed:@"chevron.right"];
+            arrowIcon.tintColor = [UIColor colorWithRed:0.6 green:0.6 blue:0.6 alpha:1.0];
+            [cityRow addSubview:arrowIcon];
             
             [titleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-                make.left.equalTo(cell.contentView).offset(15);
-                make.centerY.equalTo(cell.contentView).offset(-10);
+                make.left.equalTo(cityRow).offset(15);
+                make.centerY.equalTo(cityRow);
+            }];
+            
+            [arrowIcon mas_makeConstraints:^(MASConstraintMaker *make) {
+                make.right.equalTo(cityRow).offset(-15);
+                make.centerY.equalTo(cityRow);
+                make.width.height.mas_equalTo(16);
             }];
             
             [valueLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-                make.right.equalTo(cell.contentView).offset(-30);
-                make.centerY.equalTo(cell.contentView).offset(-10);
+                make.right.equalTo(arrowIcon.mas_left).offset(-8);
+                make.centerY.equalTo(cityRow);
             }];
             
-            // 添加提示信息
+            // 添加点击手势
+            UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(showCitySelection)];
+            [cityRow addGestureRecognizer:tapGesture];
+            
+            // 提示信息
             UIView *tipView = [[UIView alloc] init];
             tipView.backgroundColor = [UIColor whiteColor];
             tipView.tag = 202;
@@ -461,8 +621,8 @@
             
             [tipView mas_makeConstraints:^(MASConstraintMaker *make) {
                 make.left.right.equalTo(cell.contentView);
-                make.top.equalTo(cell.contentView).offset(40);
-                make.height.mas_equalTo(40);
+                make.top.equalTo(cityRow.mas_bottom);
+                make.height.mas_equalTo(44);
             }];
             
             UIImageView *infoIcon = [[UIImageView alloc] init];
@@ -493,9 +653,12 @@
         
         return cell;
     } else if (indexPath.section == 2) {
-        // 表单选项
+        // 表单选项 - 使用折叠面板样式
         if (indexPath.row < self.formData.count) {
             NSDictionary *item = self.formData[indexPath.row];
+            NSString *fieldName = item[@"fieldName"];
+            NSString *field = item[@"field"];
+            NSArray *options = item[@"conditionList"];
             
             UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"FormCell"];
             if (!cell) {
@@ -509,72 +672,74 @@
                 [subview removeFromSuperview];
             }
             
-            // 标题
+            // 标题行
+            UIView *headerView = [[UIView alloc] init];
+            headerView.backgroundColor = [UIColor whiteColor];
+            [cell.contentView addSubview:headerView];
+            
+            [headerView mas_makeConstraints:^(MASConstraintMaker *make) {
+                make.left.right.top.equalTo(cell.contentView);
+                make.height.mas_equalTo(50);
+            }];
+            
             UILabel *titleLabel = [[UILabel alloc] init];
-            titleLabel.text = item[@"fieldName"];
-            titleLabel.font = [UIFont systemFontOfSize:15];
-            titleLabel.textColor = [UIColor colorWithRed:0.19 green:0.19 blue:0.2 alpha:1.0];
-            [cell.contentView addSubview:titleLabel];
+            titleLabel.text = fieldName;
+            titleLabel.font = [UIFont systemFontOfSize:16];
+            titleLabel.textColor = [UIColor colorWithRed:0.1 green:0.1 blue:0.1 alpha:1.0];
+            [headerView addSubview:titleLabel];
+            
+            UIImageView *arrowIcon = [[UIImageView alloc] init];
+            arrowIcon.image = [UIImage systemImageNamed:@"chevron.up"];
+            arrowIcon.tintColor = [UIColor colorWithRed:0.6 green:0.6 blue:0.6 alpha:1.0];
+            [headerView addSubview:arrowIcon];
             
             [titleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+                make.left.equalTo(headerView).offset(15);
+                make.centerY.equalTo(headerView);
+            }];
+            
+            [arrowIcon mas_makeConstraints:^(MASConstraintMaker *make) {
+                make.right.equalTo(headerView).offset(-15);
+                make.centerY.equalTo(headerView);
+                make.width.height.mas_equalTo(16);
+            }];
+            
+            // 选择提示
+            UILabel *hintLabel = [[UILabel alloc] init];
+            NSString *selectedValue = self.selectedOptions[field][@"name"];
+            hintLabel.text = selectedValue ? selectedValue : [NSString stringWithFormat:@"请选择%@", fieldName];
+            hintLabel.font = [UIFont systemFontOfSize:14];
+            hintLabel.textColor = selectedValue ? [UIColor colorWithRed:0.1 green:0.1 blue:0.1 alpha:1.0] : [UIColor colorWithRed:0.6 green:0.6 blue:0.6 alpha:1.0];
+            [cell.contentView addSubview:hintLabel];
+            
+            [hintLabel mas_makeConstraints:^(MASConstraintMaker *make) {
                 make.left.equalTo(cell.contentView).offset(15);
-                make.top.equalTo(cell.contentView).offset(15);
+                make.top.equalTo(headerView.mas_bottom).offset(8);
             }];
             
-            // 选项值显示
-            UILabel *valueLabel = [[UILabel alloc] init];
-            NSString *selectedValue = self.selectedOptions[item[@"field"]][@"name"];
-            valueLabel.text = selectedValue ?: [NSString stringWithFormat:@"请选择%@", item[@"fieldName"]];
-            valueLabel.font = [UIFont systemFontOfSize:14];
-            valueLabel.textColor = selectedValue ? [UIColor colorWithRed:0.19 green:0.19 blue:0.2 alpha:1.0] : [UIColor colorWithRed:0.6 green:0.6 blue:0.6 alpha:1.0];
-            [cell.contentView addSubview:valueLabel];
+            // 选项按钮区域
+            UIView *optionsView = [[UIView alloc] init];
+            [cell.contentView addSubview:optionsView];
             
-            [valueLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-                make.left.equalTo(titleLabel);
-                make.top.equalTo(titleLabel.mas_bottom).offset(5);
+            [optionsView mas_makeConstraints:^(MASConstraintMaker *make) {
+                make.left.right.equalTo(cell.contentView);
+                make.top.equalTo(hintLabel.mas_bottom).offset(15);
+                make.bottom.equalTo(cell.contentView).offset(-15);
             }];
             
-            // 选项按钮
-            NSArray *options = item[@"conditionList"];
-            CGFloat buttonWidth = (CGRectGetWidth(self.view.frame) - 60) / 3; // 3列布局，减去左右边距和间距
-            
-            for (NSInteger i = 0; i < options.count; i++) {
-                NSDictionary *option = options[i];
-                
-                UIButton *optionButton = [[UIButton alloc] init];
-                [optionButton setTitle:option[@"name"] forState:UIControlStateNormal];
-                [optionButton setTitleColor:[UIColor colorWithRed:0.46 green:0.46 blue:0.46 alpha:1.0] forState:UIControlStateNormal];
-                [optionButton setTitleColor:[UIColor whiteColor] forState:UIControlStateSelected];
-                optionButton.titleLabel.font = [UIFont systemFontOfSize:14];
-                optionButton.backgroundColor = [UIColor whiteColor];
-                optionButton.layer.cornerRadius = 20;
-                optionButton.layer.borderWidth = 1;
-                optionButton.layer.borderColor = [UIColor colorWithRed:0.46 green:0.46 blue:0.46 alpha:1.0].CGColor;
-                
-                // 检查是否已选中
-                NSDictionary *selectedOption = self.selectedOptions[item[@"field"]];
-                if (selectedOption && [selectedOption[@"key"] isEqualToString:option[@"key"]]) {
-                    optionButton.selected = YES;
-                    optionButton.backgroundColor = [UIColor colorWithRed:0.23 green:0.31 blue:0.87 alpha:1.0];
-                    optionButton.layer.borderColor = [UIColor clearColor].CGColor;
-                }
-                
-                // 使用 objc_setAssociatedObject 绑定数据
-                objc_setAssociatedObject(optionButton, @"field", item[@"field"], OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-                objc_setAssociatedObject(optionButton, @"option", option, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-                
-                [optionButton addTarget:self action:@selector(selectOption:) forControlEvents:UIControlEventTouchUpInside];
-                [cell.contentView addSubview:optionButton];
-                
-                NSInteger row = i / 3;
-                NSInteger col = i % 3;
-                
-                [optionButton mas_makeConstraints:^(MASConstraintMaker *make) {
-                    make.left.equalTo(cell.contentView).offset(15 + col * (buttonWidth + 10));
-                    make.top.equalTo(valueLabel.mas_bottom).offset(15 + row * 35);
-                    make.width.mas_equalTo(buttonWidth);
-                    make.height.mas_equalTo(28);
-                }];
+            // 根据不同字段类型设置不同的布局
+            if ([field isEqualToString:@"occupation"]) {
+                // 职业：3列布局，第三行2个
+                [self createOptionsForView:optionsView options:options field:field columns:3];
+            } else if ([field isEqualToString:@"monthlyIncome"]) {
+                // 月收入：3列布局
+                [self createOptionsForView:optionsView options:options field:field columns:3];
+            } else if ([field isEqualToString:@"stageNum"]) {
+                // 贷款期限：3列布局，第二行2个
+                [self createOptionsForView:optionsView options:options field:field columns:3];
+            } else {
+                // 其他字段：2列布局
+                [self createOptionsForView:optionsView options:options field:field columns:2];
             }
             
             return cell;
@@ -591,16 +756,16 @@
             
             UILabel *titleLabel = [[UILabel alloc] init];
             titleLabel.text = @"贷款金额";
-            titleLabel.font = [UIFont systemFontOfSize:15];
-            titleLabel.textColor = [UIColor colorWithRed:0.19 green:0.19 blue:0.2 alpha:1.0];
+            titleLabel.font = [UIFont systemFontOfSize:16];
+            titleLabel.textColor = [UIColor colorWithRed:0.1 green:0.1 blue:0.1 alpha:1.0];
             titleLabel.tag = 300;
             [cell.contentView addSubview:titleLabel];
             
             UITextField *amountField = [[UITextField alloc] init];
             amountField.placeholder = @"请输入贷款金额";
-            amountField.font = [UIFont systemFontOfSize:14];
-            amountField.textColor = [UIColor colorWithRed:0.19 green:0.19 blue:0.2 alpha:1.0];
-            amountField.borderStyle = UITextBorderStyleRoundedRect;
+            amountField.font = [UIFont systemFontOfSize:16];
+            amountField.textColor = [UIColor colorWithRed:0.1 green:0.1 blue:0.1 alpha:1.0];
+            amountField.textAlignment = NSTextAlignmentRight;
             amountField.keyboardType = UIKeyboardTypeNumberPad;
             amountField.tag = 301;
             [amountField addTarget:self action:@selector(amountChanged:) forControlEvents:UIControlEventEditingChanged];
@@ -609,7 +774,7 @@
             UIButton *nextButton = [[UIButton alloc] init];
             [nextButton setTitle:@"下一步" forState:UIControlStateNormal];
             [nextButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-            nextButton.titleLabel.font = [UIFont systemFontOfSize:14];
+            nextButton.titleLabel.font = [UIFont systemFontOfSize:16];
             nextButton.backgroundColor = [UIColor colorWithRed:0.23 green:0.31 blue:0.87 alpha:1.0];
             nextButton.layer.cornerRadius = 25;
             nextButton.tag = 302;
@@ -619,20 +784,20 @@
             [titleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
                 make.left.equalTo(cell.contentView).offset(15);
                 make.top.equalTo(cell.contentView).offset(15);
-                make.width.mas_equalTo(100);
             }];
             
             [amountField mas_makeConstraints:^(MASConstraintMaker *make) {
-                make.left.equalTo(titleLabel.mas_right).offset(10);
                 make.right.equalTo(cell.contentView).offset(-15);
                 make.centerY.equalTo(titleLabel);
-                make.height.mas_equalTo(35);
+                make.width.mas_equalTo(200);
+                make.height.mas_equalTo(40);
             }];
             
             [nextButton mas_makeConstraints:^(MASConstraintMaker *make) {
-                make.left.right.equalTo(cell.contentView).inset(16);
-                make.top.equalTo(amountField.mas_bottom).offset(20);
+                make.left.right.equalTo(cell.contentView).inset(15);
+                make.top.equalTo(titleLabel.mas_bottom).offset(20);
                 make.height.mas_equalTo(50);
+                make.bottom.equalTo(cell.contentView).offset(-15);
             }];
         }
         
@@ -811,6 +976,63 @@
             });
         }];
     });
+}
+
+#pragma mark - Helper Methods
+
+- (void)createOptionsForView:(UIView *)containerView options:(NSArray *)options field:(NSString *)field columns:(NSInteger)columns {
+    CGFloat containerWidth = CGRectGetWidth(self.view.frame) - 30; // 减去左右边距
+    CGFloat buttonSpacing = 10;
+    CGFloat buttonWidth = (containerWidth - (columns - 1) * buttonSpacing) / columns;
+    CGFloat buttonHeight = 35;
+    CGFloat rowSpacing = 12;
+    
+    for (NSInteger i = 0; i < options.count; i++) {
+        NSDictionary *option = options[i];
+        
+        UIButton *optionButton = [[UIButton alloc] init];
+        [optionButton setTitle:option[@"name"] forState:UIControlStateNormal];
+        [optionButton setTitleColor:[UIColor colorWithRed:0.4 green:0.4 blue:0.4 alpha:1.0] forState:UIControlStateNormal];
+        [optionButton setTitleColor:[UIColor whiteColor] forState:UIControlStateSelected];
+        optionButton.titleLabel.font = [UIFont systemFontOfSize:14];
+        optionButton.backgroundColor = [UIColor whiteColor];
+        optionButton.layer.cornerRadius = 18;
+        optionButton.layer.borderWidth = 1;
+        optionButton.layer.borderColor = [UIColor colorWithRed:0.9 green:0.9 blue:0.9 alpha:1.0].CGColor;
+        
+        // 检查是否已选中
+        NSDictionary *selectedOption = self.selectedOptions[field];
+        if (selectedOption && [selectedOption[@"key"] isEqualToString:option[@"key"]]) {
+            optionButton.selected = YES;
+            optionButton.backgroundColor = [UIColor colorWithRed:0.23 green:0.31 blue:0.87 alpha:1.0];
+            optionButton.layer.borderColor = [UIColor colorWithRed:0.23 green:0.31 blue:0.87 alpha:1.0].CGColor;
+        }
+        
+        // 使用 objc_setAssociatedObject 绑定数据
+        objc_setAssociatedObject(optionButton, @"field", field, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+        objc_setAssociatedObject(optionButton, @"option", option, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+        
+        [optionButton addTarget:self action:@selector(selectOption:) forControlEvents:UIControlEventTouchUpInside];
+        [containerView addSubview:optionButton];
+        
+        NSInteger row = i / columns;
+        NSInteger col = i % columns;
+        
+        [optionButton mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.left.equalTo(containerView).offset(15 + col * (buttonWidth + buttonSpacing));
+            make.top.equalTo(containerView).offset(row * (buttonHeight + rowSpacing));
+            make.width.mas_equalTo(buttonWidth);
+            make.height.mas_equalTo(buttonHeight);
+        }];
+    }
+    
+    // 设置容器高度
+    NSInteger totalRows = (options.count + columns - 1) / columns;
+    CGFloat totalHeight = totalRows * buttonHeight + (totalRows - 1) * rowSpacing;
+    
+    [containerView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.height.mas_equalTo(totalHeight);
+    }];
 }
 
 @end
