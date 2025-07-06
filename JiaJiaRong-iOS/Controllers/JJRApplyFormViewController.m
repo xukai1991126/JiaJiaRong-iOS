@@ -115,38 +115,7 @@
             NSArray *fieldData = responseObject[@"data"];
             [self.formData addObjectsFromArray:fieldData];
             
-            // 添加职业选项
-            NSDictionary *occupation = @{
-                @"conditionList": @[
-                    @{@"key": @"1", @"name": @"公务员"},
-                    @{@"key": @"2", @"name": @"上班族"},
-                    @{@"key": @"3", @"name": @"自由职业"},
-                    @{@"key": @"4", @"name": @"个体户"},
-                    @{@"key": @"5", @"name": @"企业主"}
-                ],
-                @"field": @"occupation",
-                @"fieldName": @"职业"
-            };
-            [self.formData addObject:occupation];
-            
-            // 添加月收入选项
-            NSDictionary *monthlyIncome = @{
-                @"conditionList": @[
-                    @{@"key": @"0", @"name": @"无"},
-                    @{@"key": @"1", @"name": @"0~4000"},
-                    @{@"key": @"2", @"name": @"4000~8000"},
-                    @{@"key": @"3", @"name": @"8000~12000"},
-                    @{@"key": @"4", @"name": @"12000~16000"},
-                    @{@"key": @"5", @"name": @"16000~20000"},
-                    @{@"key": @"6", @"name": @"20000~25000"},
-                    @{@"key": @"7", @"name": @">25000"}
-                ],
-                @"field": @"monthlyIncome",
-                @"fieldName": @"月收入"
-            };
-            [self.formData addObject:monthlyIncome];
-            
-            // 添加贷款期限选项
+            // 只添加贷款期限选项，其他数据从服务器获取
             NSDictionary *loanPeriod = @{
                 @"conditionList": @[
                     @{@"key": @"3", @"name": @"3期"},
@@ -727,19 +696,14 @@
                 make.bottom.equalTo(cell.contentView).offset(-15);
             }];
             
-            // 根据不同字段类型设置不同的布局
-            if ([field isEqualToString:@"occupation"]) {
-                // 职业：3列布局，第三行2个
-                [self createOptionsForView:optionsView options:options field:field columns:3];
-            } else if ([field isEqualToString:@"monthlyIncome"]) {
-                // 月收入：3列布局
-                [self createOptionsForView:optionsView options:options field:field columns:3];
-            } else if ([field isEqualToString:@"stageNum"]) {
-                // 贷款期限：3列布局，第二行2个
-                [self createOptionsForView:optionsView options:options field:field columns:3];
-            } else {
-                // 其他字段：2列布局
+            // 根据选项数量设置布局
+            NSInteger optionCount = options.count;
+            if (optionCount == 2) {
+                // 两个选项：左对齐
                 [self createOptionsForView:optionsView options:options field:field columns:2];
+            } else {
+                // 三个及以上选项：一行三个
+                [self createOptionsForView:optionsView options:options field:field columns:3];
             }
             
             return cell;
@@ -763,10 +727,30 @@
             
             UITextField *amountField = [[UITextField alloc] init];
             amountField.placeholder = @"请输入贷款金额";
-            amountField.font = [UIFont systemFontOfSize:16];
+            amountField.font = [UIFont systemFontOfSize:14];
             amountField.textColor = [UIColor colorWithRed:0.1 green:0.1 blue:0.1 alpha:1.0];
-            amountField.textAlignment = NSTextAlignmentRight;
+            amountField.textAlignment = NSTextAlignmentLeft; // 改为左对齐，更符合输入习惯
             amountField.keyboardType = UIKeyboardTypeNumberPad;
+            amountField.backgroundColor = [UIColor colorWithRed:0.96 green:0.96 blue:0.96 alpha:1.0];
+            amountField.layer.cornerRadius = 8;
+            amountField.layer.borderWidth = 1;
+            amountField.layer.borderColor = [UIColor colorWithRed:0.9 green:0.9 blue:0.9 alpha:1.0].CGColor;
+            
+            // 设置placeholder颜色
+            if (@available(iOS 13.0, *)) {
+                amountField.attributedPlaceholder = [[NSAttributedString alloc] initWithString:@"请输入贷款金额" 
+                                                                                    attributes:@{NSForegroundColorAttributeName: [UIColor colorWithRed:0.6 green:0.6 blue:0.6 alpha:1.0]}];
+            }
+            
+            // 添加左右内边距
+            UIView *leftPaddingView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 12, 0)];
+            amountField.leftView = leftPaddingView;
+            amountField.leftViewMode = UITextFieldViewModeAlways;
+            
+            UIView *rightPaddingView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 12, 0)];
+            amountField.rightView = rightPaddingView;
+            amountField.rightViewMode = UITextFieldViewModeAlways;
+            
             amountField.tag = 301;
             [amountField addTarget:self action:@selector(amountChanged:) forControlEvents:UIControlEventEditingChanged];
             [cell.contentView addSubview:amountField];
@@ -983,7 +967,21 @@
 - (void)createOptionsForView:(UIView *)containerView options:(NSArray *)options field:(NSString *)field columns:(NSInteger)columns {
     CGFloat containerWidth = CGRectGetWidth(self.view.frame) - 30; // 减去左右边距
     CGFloat buttonSpacing = 10;
-    CGFloat buttonWidth = (containerWidth - (columns - 1) * buttonSpacing) / columns;
+    CGFloat buttonWidth;
+    NSInteger actualColumns;
+    
+    // 统一按钮宽度：都按照三列布局计算宽度
+    buttonWidth = (containerWidth - 2 * buttonSpacing) / 3; // 三列布局的单个按钮宽度
+    
+    // 根据选项数量调整布局
+    if (options.count == 2) {
+        // 两个选项时：左对齐，使用和三列一样的宽度
+        actualColumns = 2;
+    } else {
+        // 三个及以上选项时：一行放三个
+        actualColumns = 3;
+    }
+    
     CGFloat buttonHeight = 35;
     CGFloat rowSpacing = 12;
     
@@ -1015,11 +1013,14 @@
         [optionButton addTarget:self action:@selector(selectOption:) forControlEvents:UIControlEventTouchUpInside];
         [containerView addSubview:optionButton];
         
-        NSInteger row = i / columns;
-        NSInteger col = i % columns;
+        NSInteger row = i / actualColumns;
+        NSInteger col = i % actualColumns;
+        
+        // 左对齐布局，按钮宽度统一
+        CGFloat leftOffset = 15 + col * (buttonWidth + buttonSpacing);
         
         [optionButton mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.left.equalTo(containerView).offset(15 + col * (buttonWidth + buttonSpacing));
+            make.left.equalTo(containerView).offset(leftOffset);
             make.top.equalTo(containerView).offset(row * (buttonHeight + rowSpacing));
             make.width.mas_equalTo(buttonWidth);
             make.height.mas_equalTo(buttonHeight);
@@ -1027,7 +1028,7 @@
     }
     
     // 设置容器高度
-    NSInteger totalRows = (options.count + columns - 1) / columns;
+    NSInteger totalRows = (options.count + actualColumns - 1) / actualColumns;
     CGFloat totalHeight = totalRows * buttonHeight + (totalRows - 1) * rowSpacing;
     
     [containerView mas_makeConstraints:^(MASConstraintMaker *make) {
