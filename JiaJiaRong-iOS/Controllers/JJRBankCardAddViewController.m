@@ -8,6 +8,7 @@
 
 #import "JJRBankCardAddViewController.h"
 #import "JJRNetworkService.h"
+#import "WebViewController.h"
 #import <Masonry/Masonry.h>
 #import <YYKit/YYKit.h>
 #import "ZJGeneraMacros.h"
@@ -319,8 +320,8 @@
 
 - (void)handleAgreementTap {
     // 跳转到协议页面
-    // 这里可以实现协议页面的跳转
     NSLog(@"点击用户服务协议");
+    [self showAgreementWithType:@"user" title:@"用户服务协议"];
 }
 
 - (void)handleSubmitBankCard {
@@ -332,6 +333,13 @@
     
     if (!self.mobileTextField.text || self.mobileTextField.text.length == 0) {
         [self showToast:@"请输入预留手机号"];
+        return;
+    }
+    
+    // 银行卡号格式验证（去掉空格后验证）
+    NSString *cleanBankNo = [self.bankNoTextField.text stringByReplacingOccurrencesOfString:@" " withString:@""];
+    if (cleanBankNo.length < 16 || cleanBankNo.length > 19) {
+        [self showToast:@"请输入正确的银行卡号"];
         return;
     }
     
@@ -353,26 +361,40 @@
 }
 
 - (void)submitBankCard {
+    // 去掉银行卡号中的空格
+    NSString *cleanBankNo = [self.bankNoTextField.text stringByReplacingOccurrencesOfString:@" " withString:@""];
+    
     // 加密手机号（这里需要实现和uni-app一样的加密逻辑）
     NSString *encryptedMobile = [self encryptMobile:self.mobileTextField.text];
     NSString *md5Mobile = [self encryptMobileMd5:self.mobileTextField.text];
     
     NSDictionary *params = @{
-        @"bankNo": self.bankNoTextField.text,
+        @"bankNo": cleanBankNo,  // 使用去掉空格的银行卡号
         @"mobile": encryptedMobile,
         @"md5": md5Mobile
     };
     
     [[JJRNetworkService sharedInstance] POST:JJR_BANK_CARD_ADD params:params success:^(NSDictionary *responseObject) {
-        [self showToast:@"绑定成功"];
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            // 清空表单
-            self.bankNoTextField.text = @"";
-            self.mobileTextField.text = @"";
-            [self.navigationController popViewControllerAnimated:YES];
-        });
+        // 正确处理API响应
+        NSNumber *code = responseObject[@"code"];
+        NSDictionary *err = responseObject[@"err"];
+        
+        if ([code intValue] == 0) {
+            // 成功
+            [self showToast:@"绑定成功"];
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                // 清空表单
+                self.bankNoTextField.text = @"";
+                self.mobileTextField.text = @"";
+                [self.navigationController popViewControllerAnimated:YES];
+            });
+        } else {
+            // 失败，显示服务器返回的错误信息
+            NSString *errorMsg = err[@"msg"] ?: @"绑定失败，请重试";
+            [self showToast:errorMsg];
+        }
     } failure:^(NSError *error) {
-        [self showToast:@"绑定失败，请重试"];
+        [self showToast:@"网络错误，请重试"];
     }];
 }
 
@@ -396,6 +418,17 @@
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         [toast dismissViewControllerAnimated:YES completion:nil];
     });
+}
+
+- (void)showAgreementWithType:(NSString *)type title:(NSString *)title {
+    // 创建WebViewController来显示协议内容
+    WebViewController *webVC = [[WebViewController alloc] init];
+    webVC.agreementType = type;
+    webVC.title = title;
+    webVC.hidesBottomBarWhenPushed = YES;
+    
+    // 推送到导航控制器
+    [self.navigationController pushViewController:webVC animated:YES];
 }
 
 @end 
