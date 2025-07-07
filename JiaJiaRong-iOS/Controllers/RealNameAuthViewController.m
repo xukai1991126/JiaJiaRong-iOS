@@ -1,22 +1,17 @@
 #import "RealNameAuthViewController.h"
-#import "NetworkService.h"
+#import "JJRNetworkService.h"
+#import "JJRRealNameAuthModel.h"
+#import "JJRAPIDefines.h"
 #import <Masonry/Masonry.h>
 
-@interface RealNameAuthViewController ()
+@interface RealNameAuthViewController () <UITableViewDataSource, UITableViewDelegate>
 
-@property (nonatomic, strong) UIScrollView *scrollView;
-@property (nonatomic, strong) UIView *contentView;
 @property (nonatomic, strong) UIView *headerView;
-@property (nonatomic, strong) UILabel *titleLabel;
-@property (nonatomic, strong) UILabel *subtitleLabel;
-@property (nonatomic, strong) UIView *formView;
-@property (nonatomic, strong) UITextField *nameTextField;
-@property (nonatomic, strong) UITextField *idCardTextField;
-@property (nonatomic, strong) UIView *uploadView;
-@property (nonatomic, strong) UIButton *uploadButton;
-@property (nonatomic, strong) UILabel *uploadLabel;
-@property (nonatomic, strong) UIButton *submitButton;
-@property (nonatomic, strong) NSString *uploadedImageUrl;
+@property (nonatomic, strong) UIImageView *iconImageView;
+@property (nonatomic, strong) UILabel *statusLabel;
+@property (nonatomic, strong) UITableView *tableView;
+@property (nonatomic, strong) JJRRealNameAuthModel *authInfo;
+@property (nonatomic, strong) NSArray *itemTitles;
 
 @end
 
@@ -24,450 +19,245 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    [self setupNavigationBar];
     [self setupUI];
-    [self checkAuthStatus];
+    [self fetchUserInfo];
+}
+
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    // 确保状态栏样式更新
+    [self setNeedsStatusBarAppearanceUpdate];
+}
+
+- (void)setupNavigationBar {
+    // 设置导航栏为白色背景
+    if (@available(iOS 15.0, *)) {
+        UINavigationBarAppearance *appearance = [[UINavigationBarAppearance alloc] init];
+        [appearance configureWithOpaqueBackground];
+        appearance.backgroundColor = [UIColor whiteColor];
+        appearance.titleTextAttributes = @{NSForegroundColorAttributeName: [UIColor blackColor]};
+        // 隐藏导航栏下面的分隔线
+        appearance.shadowColor = [UIColor clearColor];
+        appearance.shadowImage = [[UIImage alloc] init];
+        self.navigationController.navigationBar.standardAppearance = appearance;
+        self.navigationController.navigationBar.scrollEdgeAppearance = appearance;
+    } else {
+        self.navigationController.navigationBar.barTintColor = [UIColor whiteColor];
+        self.navigationController.navigationBar.titleTextAttributes = @{NSForegroundColorAttributeName: [UIColor blackColor]};
+        // 隐藏导航栏下面的分隔线
+        [self.navigationController.navigationBar setShadowImage:[[UIImage alloc] init]];
+    }
+    self.navigationController.navigationBar.translucent = NO;
+}
+
+- (UIStatusBarStyle)preferredStatusBarStyle {
+    // 浅色背景使用深色状态栏文字
+    return UIStatusBarStyleDefault;
 }
 
 - (void)setupUI {
+    // 设置背景色：#F7F7F7 (与uni-app一致)
     self.view.backgroundColor = [UIColor colorWithRed:247.0/255.0 green:247.0/255.0 blue:247.0/255.0 alpha:1.0];
     self.title = @"实名认证";
     
-    // 滚动视图
-    self.scrollView = [[UIScrollView alloc] init];
-    [self.view addSubview:self.scrollView];
+    // 初始化数据
+    self.itemTitles = @[@"姓名", @"身份证号", @"证件照有效期"];
     
-    self.contentView = [[UIView alloc] init];
-    [self.scrollView addSubview:self.contentView];
-    
-    // 头部视图
+    // 创建顶部状态区域 (与uni-app的.sm-wrapper一致)
     self.headerView = [[UIView alloc] init];
-    self.headerView.backgroundColor = [UIColor colorWithRed:59.0/255.0 green:79.0/255.0 blue:222.0/255.0 alpha:1.0];
-    self.headerView.layer.cornerRadius = 16;
-    [self.contentView addSubview:self.headerView];
+    [self.view addSubview:self.headerView];
     
-    // 标题
-    self.titleLabel = [[UILabel alloc] init];
-    self.titleLabel.text = @"实名认证";
-    self.titleLabel.font = [UIFont boldSystemFontOfSize:20];
-    self.titleLabel.textColor = [UIColor whiteColor];
-    [self.headerView addSubview:self.titleLabel];
+    // 图标 (与uni-app的.icon一致)
+    self.iconImageView = [[UIImageView alloc] init];
+    // 使用从uni-app拷贝过来的图片
+    self.iconImageView.image = [UIImage imageNamed:@"img_521b8c1b1cc6"];
+    self.iconImageView.contentMode = UIViewContentModeScaleAspectFit;
+    [self.headerView addSubview:self.iconImageView];
     
-    // 副标题
-    self.subtitleLabel = [[UILabel alloc] init];
-    self.subtitleLabel.text = @"请填写真实身份信息";
-    self.subtitleLabel.font = [UIFont systemFontOfSize:14];
-    self.subtitleLabel.textColor = [UIColor whiteColor];
-    [self.headerView addSubview:self.subtitleLabel];
+    // 状态文本 (与uni-app的.text一致)
+    self.statusLabel = [[UILabel alloc] init];
+    self.statusLabel.text = @"未实名认证"; // 默认文本
+    self.statusLabel.font = [UIFont systemFontOfSize:16]; // 32rpx -> 16pt (与uni-app一致)
+    self.statusLabel.textColor = [UIColor colorWithRed:3.0/255.0 green:3.0/255.0 blue:3.0/255.0 alpha:1.0]; // #030303 (与uni-app一致)
+    [self.headerView addSubview:self.statusLabel];
     
-    // 表单视图
-    self.formView = [[UIView alloc] init];
-    self.formView.backgroundColor = [UIColor whiteColor];
-    self.formView.layer.cornerRadius = 12;
-    [self.contentView addSubview:self.formView];
+    // 创建TableView (与uni-app的.card一致)
+    self.tableView = [[UITableView alloc] initWithFrame:CGRectZero style:UITableViewStyleGrouped];
+    self.tableView.delegate = self;
+    self.tableView.dataSource = self;
+    self.tableView.backgroundColor = [UIColor clearColor];
+    self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+    self.tableView.scrollEnabled = NO;
     
-    // 姓名输入框
-    UILabel *nameLabel = [[UILabel alloc] init];
-    nameLabel.text = @"真实姓名";
-    nameLabel.font = [UIFont systemFontOfSize:16];
-    nameLabel.textColor = [UIColor blackColor];
-    [self.formView addSubview:nameLabel];
+    // 去掉顶部和底部的额外间距
+    self.tableView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
     
-    self.nameTextField = [[UITextField alloc] init];
-    self.nameTextField.placeholder = @"请输入真实姓名";
-    self.nameTextField.font = [UIFont systemFontOfSize:16];
-    self.nameTextField.borderStyle = UITextBorderStyleRoundedRect;
-    [self.formView addSubview:self.nameTextField];
+    // iOS 15+ 设置sectionHeaderTopPadding为0
+    if (@available(iOS 15.0, *)) {
+        self.tableView.sectionHeaderTopPadding = 0;
+    }
     
-    // 身份证号输入框
-    UILabel *idCardLabel = [[UILabel alloc] init];
-    idCardLabel.text = @"身份证号";
-    idCardLabel.font = [UIFont systemFontOfSize:16];
-    idCardLabel.textColor = [UIColor blackColor];
-    [self.formView addSubview:idCardLabel];
-    
-    self.idCardTextField = [[UITextField alloc] init];
-    self.idCardTextField.placeholder = @"请输入身份证号码";
-    self.idCardTextField.font = [UIFont systemFontOfSize:16];
-    self.idCardTextField.borderStyle = UITextBorderStyleRoundedRect;
-    self.idCardTextField.keyboardType = UIKeyboardTypeASCIICapable;
-    [self.formView addSubview:self.idCardTextField];
-    
-    // 上传区域
-    self.uploadView = [[UIView alloc] init];
-    self.uploadView.backgroundColor = [UIColor colorWithRed:250.0/255.0 green:250.0/255.0 blue:250.0/255.0 alpha:1.0];
-    self.uploadView.layer.cornerRadius = 8;
-    self.uploadView.layer.borderWidth = 1;
-    self.uploadView.layer.borderColor = [UIColor colorWithRed:200.0/255.0 green:200.0/255.0 blue:200.0/255.0 alpha:1.0].CGColor;
-    [self.formView addSubview:self.uploadView];
-    
-    self.uploadButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [self.uploadButton setImage:[UIImage systemImageNamed:@"camera"] forState:UIControlStateNormal];
-    [self.uploadButton setTitleColor:[UIColor colorWithRed:59.0/255.0 green:79.0/255.0 blue:222.0/255.0 alpha:1.0] forState:UIControlStateNormal];
-    [self.uploadButton addTarget:self action:@selector(uploadButtonTapped) forControlEvents:UIControlEventTouchUpInside];
-    [self.uploadView addSubview:self.uploadButton];
-    
-    self.uploadLabel = [[UILabel alloc] init];
-    self.uploadLabel.text = @"点击上传身份证照片";
-    self.uploadLabel.font = [UIFont systemFontOfSize:14];
-    self.uploadLabel.textColor = [UIColor lightGrayColor];
-    self.uploadLabel.textAlignment = NSTextAlignmentCenter;
-    [self.uploadView addSubview:self.uploadLabel];
-    
-    // 提交按钮
-    self.submitButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [self.submitButton setTitle:@"提交认证" forState:UIControlStateNormal];
-    [self.submitButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    self.submitButton.titleLabel.font = [UIFont boldSystemFontOfSize:18];
-    self.submitButton.backgroundColor = [UIColor colorWithRed:59.0/255.0 green:79.0/255.0 blue:222.0/255.0 alpha:1.0];
-    self.submitButton.layer.cornerRadius = 25;
-    [self.submitButton addTarget:self action:@selector(submitButtonTapped) forControlEvents:UIControlEventTouchUpInside];
-    [self.contentView addSubview:self.submitButton];
+    [self.view addSubview:self.tableView];
     
     // 设置约束
-    [self.scrollView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.edges.equalTo(self.view);
-    }];
-    
-    [self.contentView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.edges.equalTo(self.scrollView);
-        make.width.equalTo(self.scrollView);
-    }];
-    
     [self.headerView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.contentView).offset(20);
-        make.left.right.equalTo(self.contentView).inset(20);
-        make.height.mas_equalTo(100);
+        make.top.equalTo(self.view.mas_safeAreaLayoutGuideTop).offset(16); // 添加一点顶部间距
+        make.left.right.equalTo(self.view);
+        make.height.mas_equalTo(50); // 减小高度，让整体更紧凑
     }];
     
-    [self.titleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(self.headerView).offset(20);
-        make.top.equalTo(self.headerView).offset(20);
+    [self.iconImageView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(self.headerView).offset(24); // 48rpx -> 24pt (与uni-app一致)
+        make.centerY.equalTo(self.headerView);
+        make.width.height.mas_equalTo(26); // 52rpx -> 26pt (与uni-app一致)
     }];
     
-    [self.subtitleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(self.headerView).offset(20);
-        make.top.equalTo(self.titleLabel.mas_bottom).offset(10);
+    [self.statusLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(self.iconImageView.mas_right).offset(6); // 12rpx -> 6pt (与uni-app一致)
+        make.centerY.equalTo(self.headerView);
+        make.right.lessThanOrEqualTo(self.headerView).offset(-24);
     }];
     
-    [self.formView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.headerView.mas_bottom).offset(20);
-        make.left.right.equalTo(self.contentView).inset(20);
-    }];
-    
-    [nameLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.left.equalTo(self.formView).offset(20);
-    }];
-    
-    [self.nameTextField mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(nameLabel.mas_bottom).offset(10);
-        make.left.right.equalTo(self.formView).inset(20);
-        make.height.mas_equalTo(44);
-    }];
-    
-    [idCardLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.nameTextField.mas_bottom).offset(20);
-        make.left.equalTo(self.formView).offset(20);
-    }];
-    
-    [self.idCardTextField mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(idCardLabel.mas_bottom).offset(10);
-        make.left.right.equalTo(self.formView).inset(20);
-        make.height.mas_equalTo(44);
-    }];
-    
-    [self.uploadView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.idCardTextField.mas_bottom).offset(20);
-        make.left.right.equalTo(self.formView).inset(20);
-        make.height.mas_equalTo(120);
-        make.bottom.equalTo(self.formView).offset(-20);
-    }];
-    
-    [self.uploadButton mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.centerX.equalTo(self.uploadView);
-        make.centerY.equalTo(self.uploadView).offset(-10);
-        make.width.height.mas_equalTo(40);
-    }];
-    
-    [self.uploadLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.centerX.equalTo(self.uploadView);
-        make.top.equalTo(self.uploadButton.mas_bottom).offset(10);
-    }];
-    
-    [self.submitButton mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.formView.mas_bottom).offset(30);
-        make.left.right.equalTo(self.contentView).inset(20);
-        make.height.mas_equalTo(50);
-        make.bottom.equalTo(self.contentView).offset(-20);
+    [self.tableView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.headerView.mas_bottom); // 减小间距，让列表更贴近header
+        make.left.right.bottom.equalTo(self.view);
     }];
 }
 
-- (void)checkAuthStatus {
-    [NetworkService showLoading];
+#pragma mark - Network
+
+- (void)fetchUserInfo {
+    NSLog(@"📡 开始获取用户信息...");
     
-    [[NetworkService sharedInstance] GET:@"/app/userinfo/auth/status" 
-                                   params:nil 
-                                 success:^(NSDictionary *response) {
-        [NetworkService hideLoading];
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self handleAuthStatus:response[@"data"] ?: @{}];
-        });
+    [[JJRNetworkService sharedInstance] POST:JJR_USER_INFO params:@{} success:^(NSDictionary *responseObject) {
+        NSLog(@"✅ 用户信息获取成功: %@", responseObject);
+        
+        NSDictionary *data = responseObject[@"data"] ?: @{};
+        JJRRealNameAuthModel *authInfo = [[JJRRealNameAuthModel alloc] init];
+        authInfo.name = data[@"name"] ?: @"";
+        authInfo.idNo = data[@"idNo"] ?: @"";
+        authInfo.validPeriod = data[@"validPeriod"] ?: @"";
+        
+        self.authInfo = authInfo;
+        [self updateUI];
+        
     } failure:^(NSError *error) {
-        [NetworkService hideLoading];
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self showAlert:@"获取认证状态失败"];
-        });
+        NSLog(@"❌ 获取用户信息失败: %@", error.localizedDescription);
+        [self showToast:@"获取用户信息失败"];
     }];
 }
 
-- (void)handleAuthStatus:(NSDictionary *)data {
-    NSInteger status = [data[@"status"] integerValue];
-    
-    if (status == 1) {
-        // 已认证
-        [self showAuthSuccess];
-    } else if (status == 2) {
-        // 认证中
-        [self showAuthPending];
+#pragma mark - UI Updates
+
+- (void)updateUI {
+    // 更新状态文本
+    if (self.authInfo.name && ![self.authInfo.name isEqualToString:@"未认证"]) {
+        self.statusLabel.text = @"已实名认证";
     } else {
-        // 未认证，显示表单
-        self.formView.hidden = NO;
-        self.submitButton.hidden = NO;
-    }
-}
-
-- (void)showAuthSuccess {
-    self.formView.hidden = YES;
-    self.submitButton.hidden = YES;
-    
-    UIView *successView = [[UIView alloc] init];
-    successView.backgroundColor = [UIColor whiteColor];
-    successView.layer.cornerRadius = 12;
-    [self.contentView addSubview:successView];
-    
-    UIImageView *successImageView = [[UIImageView alloc] init];
-    successImageView.image = [UIImage systemImageNamed:@"checkmark.circle.fill"];
-    successImageView.tintColor = [UIColor systemGreenColor];
-    [successView addSubview:successImageView];
-    
-    UILabel *successLabel = [[UILabel alloc] init];
-    successLabel.text = @"实名认证成功";
-    successLabel.font = [UIFont boldSystemFontOfSize:18];
-    successLabel.textColor = [UIColor blackColor];
-    successLabel.textAlignment = NSTextAlignmentCenter;
-    [successView addSubview:successLabel];
-    
-    UILabel *infoLabel = [[UILabel alloc] init];
-    infoLabel.text = @"您的身份信息已通过验证";
-    infoLabel.font = [UIFont systemFontOfSize:14];
-    infoLabel.textColor = [UIColor lightGrayColor];
-    infoLabel.textAlignment = NSTextAlignmentCenter;
-    [successView addSubview:infoLabel];
-    
-    [successView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.headerView.mas_bottom).offset(20);
-        make.left.right.equalTo(self.contentView).inset(20);
-        make.height.mas_equalTo(200);
-    }];
-    
-    [successImageView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.centerX.equalTo(successView);
-        make.top.equalTo(successView).offset(30);
-        make.width.height.mas_equalTo(60);
-    }];
-    
-    [successLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.centerX.equalTo(successView);
-        make.top.equalTo(successImageView.mas_bottom).offset(20);
-    }];
-    
-    [infoLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.centerX.equalTo(successView);
-        make.top.equalTo(successLabel.mas_bottom).offset(10);
-    }];
-}
-
-- (void)showAuthPending {
-    self.formView.hidden = YES;
-    self.submitButton.hidden = YES;
-    
-    UIView *pendingView = [[UIView alloc] init];
-    pendingView.backgroundColor = [UIColor whiteColor];
-    pendingView.layer.cornerRadius = 12;
-    [self.contentView addSubview:pendingView];
-    
-    UIImageView *pendingImageView = [[UIImageView alloc] init];
-    pendingImageView.image = [UIImage systemImageNamed:@"clock.fill"];
-    pendingImageView.tintColor = [UIColor systemOrangeColor];
-    [pendingView addSubview:pendingImageView];
-    
-    UILabel *pendingLabel = [[UILabel alloc] init];
-    pendingLabel.text = @"认证审核中";
-    pendingLabel.font = [UIFont boldSystemFontOfSize:18];
-    pendingLabel.textColor = [UIColor blackColor];
-    pendingLabel.textAlignment = NSTextAlignmentCenter;
-    [pendingView addSubview:pendingLabel];
-    
-    UILabel *infoLabel = [[UILabel alloc] init];
-    infoLabel.text = @"请耐心等待审核结果";
-    infoLabel.font = [UIFont systemFontOfSize:14];
-    infoLabel.textColor = [UIColor lightGrayColor];
-    infoLabel.textAlignment = NSTextAlignmentCenter;
-    [pendingView addSubview:infoLabel];
-    
-    [pendingView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.headerView.mas_bottom).offset(20);
-        make.left.right.equalTo(self.contentView).inset(20);
-        make.height.mas_equalTo(200);
-    }];
-    
-    [pendingImageView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.centerX.equalTo(pendingView);
-        make.top.equalTo(pendingView).offset(30);
-        make.width.height.mas_equalTo(60);
-    }];
-    
-    [pendingLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.centerX.equalTo(pendingView);
-        make.top.equalTo(pendingImageView.mas_bottom).offset(20);
-    }];
-    
-    [infoLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.centerX.equalTo(pendingView);
-        make.top.equalTo(pendingLabel.mas_bottom).offset(10);
-    }];
-}
-
-- (void)uploadButtonTapped {
-    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"选择图片来源" 
-                                                                   message:nil 
-                                                            preferredStyle:UIAlertControllerStyleActionSheet];
-    
-    UIAlertAction *cameraAction = [UIAlertAction actionWithTitle:@"拍照" 
-                                                           style:UIAlertActionStyleDefault 
-                                                         handler:^(UIAlertAction * _Nonnull action) {
-        [self showImagePickerWithSourceType:UIImagePickerControllerSourceTypeCamera];
-    }];
-    
-    UIAlertAction *photoLibraryAction = [UIAlertAction actionWithTitle:@"从相册选择" 
-                                                                 style:UIAlertActionStyleDefault 
-                                                               handler:^(UIAlertAction * _Nonnull action) {
-        [self showImagePickerWithSourceType:UIImagePickerControllerSourceTypePhotoLibrary];
-    }];
-    
-    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"取消" 
-                                                           style:UIAlertActionStyleCancel 
-                                                         handler:nil];
-    
-    [alert addAction:cameraAction];
-    [alert addAction:photoLibraryAction];
-    [alert addAction:cancelAction];
-    
-    [self presentViewController:alert animated:YES completion:nil];
-}
-
-- (void)showImagePickerWithSourceType:(UIImagePickerControllerSourceType)sourceType {
-    if (sourceType == UIImagePickerControllerSourceTypeCamera && ![UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]) {
-        [self showAlert:@"设备不支持拍照功能"];
-        return;
+        self.statusLabel.text = @"未实名认证";
     }
     
-    UIImagePickerController *picker = [[UIImagePickerController alloc] init];
-    picker.delegate = self;
-    picker.sourceType = sourceType;
-    picker.allowsEditing = YES;
-    
-    [self presentViewController:picker animated:YES completion:nil];
+    // 重新加载表格
+    [self.tableView reloadData];
 }
 
-- (void)submitButtonTapped {
-    if (self.nameTextField.text.length == 0) {
-        [self showAlert:@"请输入真实姓名"];
-        return;
+- (void)showToast:(NSString *)message {
+    UIAlertController *toast = [UIAlertController alertControllerWithTitle:nil message:message preferredStyle:UIAlertControllerStyleAlert];
+    [self presentViewController:toast animated:YES completion:nil];
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [toast dismissViewControllerAnimated:YES completion:nil];
+    });
+}
+
+#pragma mark - UITableViewDataSource
+
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+    return 1;
+}
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    return self.itemTitles.count;
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    static NSString *cellIdentifier = @"RealNameAuthCell";
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
+    
+    if (!cell) {
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:cellIdentifier];
+        cell.backgroundColor = [UIColor whiteColor];
+        cell.selectionStyle = UITableViewCellSelectionStyleNone;
+        
+        // 自定义分隔线
+        UIView *separatorLine = [[UIView alloc] init];
+        separatorLine.backgroundColor = [UIColor colorWithRed:242.0/255.0 green:242.0/255.0 blue:242.0/255.0 alpha:1.0]; // #F2F2F2 (与uni-app一致)
+        separatorLine.tag = 999;
+        [cell.contentView addSubview:separatorLine];
+        
+        [separatorLine mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.bottom.equalTo(cell.contentView);
+            make.left.right.equalTo(cell.contentView);
+            make.height.mas_equalTo(1); // 2rpx -> 1pt (与uni-app一致)
+        }];
     }
     
-    if (self.idCardTextField.text.length == 0) {
-        [self showAlert:@"请输入身份证号码"];
-        return;
+    // 配置cell内容
+    NSString *title = self.itemTitles[indexPath.row];
+    cell.textLabel.text = title;
+    cell.textLabel.font = [UIFont systemFontOfSize:14]; // 28rpx -> 14pt (与uni-app一致)
+    cell.textLabel.textColor = [UIColor colorWithRed:3.0/255.0 green:3.0/255.0 blue:3.0/255.0 alpha:1.0]; // #030303 (与uni-app一致)
+    
+    cell.detailTextLabel.font = [UIFont systemFontOfSize:14]; // 28rpx -> 14pt (与uni-app一致)
+    cell.detailTextLabel.textColor = [UIColor colorWithRed:3.0/255.0 green:3.0/255.0 blue:3.0/255.0 alpha:1.0]; // #030303 (与uni-app一致)
+    
+    // 设置详情文本
+    if (self.authInfo) {
+        switch (indexPath.row) {
+            case 0: // 姓名
+                cell.detailTextLabel.text = self.authInfo.name;
+                break;
+            case 1: // 身份证号
+                cell.detailTextLabel.text = self.authInfo.idNo;
+                break;
+            case 2: // 证件照有效期
+                cell.detailTextLabel.text = self.authInfo.validPeriod;
+                break;
+            default:
+                cell.detailTextLabel.text = @"";
+                break;
+        }
+    } else {
+        cell.detailTextLabel.text = @"";
     }
     
-    if (!self.uploadedImageUrl) {
-        [self showAlert:@"请上传身份证照片"];
-        return;
-    }
+    // 最后一行隐藏分隔线
+    UIView *separatorLine = [cell.contentView viewWithTag:999];
+    separatorLine.hidden = (indexPath.row == self.itemTitles.count - 1);
     
-    [self submitAuth];
+    return cell;
 }
 
-- (void)submitAuth {
-    [NetworkService showLoading];
-    
-    NSDictionary *params = @{
-        @"realName": self.nameTextField.text,
-        @"idCard": self.idCardTextField.text,
-        @"idCardImage": self.uploadedImageUrl
-    };
-    
-    [[NetworkService sharedInstance] POST:@"/app/userinfo/auth/submit" 
-                                   params:params 
-                                 success:^(NSDictionary *response) {
-        [NetworkService hideLoading];
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self showAlert:@"认证信息提交成功，请等待审核"];
-            [self.navigationController popViewControllerAnimated:YES];
-        });
-    } failure:^(NSError *error) {
-        [NetworkService hideLoading];
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self showAlert:@"提交失败，请重试"];
-        });
-    }];
+#pragma mark - UITableViewDelegate
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    return 64; // 32rpx * 2 + font height ≈ 64pt (与uni-app的padding一致)
 }
 
-#pragma mark - UIImagePickerControllerDelegate
-
-- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary<UIImagePickerControllerInfoKey,id> *)info {
-    UIImage *selectedImage = info[UIImagePickerControllerEditedImage];
-    
-    [picker dismissViewControllerAnimated:YES completion:^{
-        [self uploadImage:selectedImage];
-    }];
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
+    return CGFLOAT_MIN; // 使用最小可能值，完全去掉header间距
 }
 
-- (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker {
-    [picker dismissViewControllerAnimated:YES completion:nil];
+- (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section {
+    return CGFLOAT_MIN; // 使用最小可能值，完全去掉footer间距
 }
 
-- (void)uploadImage:(UIImage *)image {
-    [NetworkService showLoading];
-
-    
-    [[NetworkService sharedInstance] uploadImage:image
-                                        success:^(NSDictionary *response) {
-        [NetworkService hideLoading];
-        dispatch_async(dispatch_get_main_queue(), ^{
-            NSString *imageUrl = response[@"data"][@"url"];
-            self.uploadedImageUrl = imageUrl;
-            [self.uploadButton setImage:image forState:UIControlStateNormal];
-            self.uploadLabel.text = @"身份证照片已上传";
-            self.uploadLabel.textColor = [UIColor systemGreenColor];
-        });
-    } failure:^(NSError *error) {
-        [NetworkService hideLoading];
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self showAlert:@"图片上传失败，请重试"];
-        });
-    }];
+- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
+    return nil; // 返回nil确保没有header view
 }
 
-- (void)showAlert:(NSString *)message {
-    UIAlertController *alert = [UIAlertController alertControllerWithTitle:nil 
-                                                                   message:message 
-                                                            preferredStyle:UIAlertControllerStyleAlert];
-    UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"确定" 
-                                                       style:UIAlertActionStyleDefault 
-                                                     handler:nil];
-    [alert addAction:okAction];
-    [self presentViewController:alert animated:YES completion:nil];
+- (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section {
+    return nil; // 返回nil确保没有footer view
 }
 
 @end 
