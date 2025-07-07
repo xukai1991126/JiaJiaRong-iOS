@@ -63,7 +63,7 @@
 
 #pragma mark - 申请记录相关接口
 // 获取申请记录
-#define JJR_APPLY_RECORD @"/app/apply/record"
+#define JJR_APPLY_RECORD @"/app/userinfo/apply"
 
 // 获取还款计划
 #define JJR_REPAYMENT_PLAN @"/app/repayment/plan"

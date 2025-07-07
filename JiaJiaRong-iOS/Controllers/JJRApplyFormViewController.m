@@ -284,6 +284,10 @@
     popupImageView.contentMode = UIViewContentModeScaleAspectFit;
     [self.idPopupView addSubview:popupImageView];
     
+    
+    // 允许子视图超出父视图的边界
+    self.idPopupView.clipsToBounds = NO;
+    
     [popupImageView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.centerX.equalTo(self.idPopupView);
         make.top.equalTo(self.idPopupView).offset(-70);
@@ -387,7 +391,7 @@
     [self.submitButton setTitle:@"立即提交" forState:UIControlStateNormal];
     [self.submitButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     self.submitButton.titleLabel.font = [UIFont systemFontOfSize:17];
-    self.submitButton.backgroundColor = [UIColor colorWithRed:0.23 green:0.31 blue:0.87 alpha:1.0];
+    self.submitButton.backgroundColor = [UIColor colorWithHexString:@"#FF772C"];
     self.submitButton.layer.cornerRadius = 25;
     [self.submitButton addTarget:self action:@selector(submitForm) forControlEvents:UIControlEventTouchUpInside];
     [self.idPopupView addSubview:self.submitButton];

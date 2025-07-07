@@ -96,7 +96,7 @@
     
     for (int i = 0; i < 3; i++) {
         UIImageView *imageView = [[UIImageView alloc] init];
-        imageView.image = [UIImage imageNamed:@"step_circle"];
+        imageView.image = [UIImage imageNamed:@"step_inactive"];
         imageView.contentMode = UIViewContentModeScaleAspectFit;
         [self.stepContainer addSubview:imageView];
         [images addObject:imageView];
@@ -163,6 +163,7 @@
     self.faceImageView.layer.borderWidth = 1;
     self.faceImageView.layer.borderColor = [UIColor colorWithHexString:@"#E5E5E5"].CGColor;
     self.faceImageView.userInteractionEnabled = YES;
+    self.faceImageView.backgroundColor = [UIColor colorWithHexString:@"#F9F9F9"];
     UITapGestureRecognizer *faceTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(faceImageTapped)];
     [self.faceImageView addGestureRecognizer:faceTap];
     [self.uploadImageContainer addSubview:self.faceImageView];
@@ -182,6 +183,7 @@
     self.backImageView.layer.borderWidth = 1;
     self.backImageView.layer.borderColor = [UIColor colorWithHexString:@"#E5E5E5"].CGColor;
     self.backImageView.userInteractionEnabled = YES;
+    self.backImageView.backgroundColor = [UIColor colorWithHexString:@"#F9F9F9"];
     UITapGestureRecognizer *backTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(backImageTapped)];
     [self.backImageView addGestureRecognizer:backTap];
     [self.uploadImageContainer addSubview:self.backImageView];
@@ -228,10 +230,10 @@
     
     // 创建4个提示项
     NSArray *tips = @[
-        @{@"image": @"tips_good", @"text": @"正常识别", @"isGood": @YES},
-        @{@"image": @"tips_bad", @"text": @"边缘缺失", @"isGood": @NO},
-        @{@"image": @"tips_bad", @"text": @"模糊不清", @"isGood": @NO},
-        @{@"image": @"tips_bad", @"text": @"闪光过度", @"isGood": @NO}
+        @{@"image": @"idcard_tip_normal", @"text": @"正常识别", @"isGood": @YES},
+        @{@"image": @"idcard_tip_edge", @"text": @"边缘缺失", @"isGood": @NO},
+        @{@"image": @"idcard_tip_blur", @"text": @"模糊不清", @"isGood": @NO},
+        @{@"image": @"idcard_tip_flash", @"text": @"闪光过度", @"isGood": @NO}
     ];
     
     UIView *tipsRow = [[UIView alloc] init];
@@ -284,9 +286,26 @@
     self.faceVerifyContainer = [[UIView alloc] init];
     [self addSubview:self.faceVerifyContainer];
     
+    // 标题
+    UILabel *faceVerifyTitleLabel = [[UILabel alloc] init];
+    faceVerifyTitleLabel.text = @"即将进行人脸识别";
+    faceVerifyTitleLabel.font = [UIFont boldSystemFontOfSize:18];
+    faceVerifyTitleLabel.textColor = [UIColor colorWithHexString:@"#333333"];
+    faceVerifyTitleLabel.textAlignment = NSTextAlignmentCenter;
+    [self.faceVerifyContainer addSubview:faceVerifyTitleLabel];
+    
+    // 副标题
+    UILabel *faceVerifySubtitleLabel = [[UILabel alloc] init];
+    faceVerifySubtitleLabel.text = @"请衣着整齐，平视屏幕，请保持光线充足";
+    faceVerifySubtitleLabel.font = [UIFont systemFontOfSize:14];
+    faceVerifySubtitleLabel.textColor = [UIColor colorWithHexString:@"#666666"];
+    faceVerifySubtitleLabel.textAlignment = NSTextAlignmentCenter;
+    faceVerifySubtitleLabel.numberOfLines = 0;
+    [self.faceVerifyContainer addSubview:faceVerifySubtitleLabel];
+    
     // 人脸识别图片
     self.faceVerifyImageView = [[UIImageView alloc] init];
-    self.faceVerifyImageView.image = [UIImage imageNamed:@"face_verify_placeholder"];
+    self.faceVerifyImageView.image = [UIImage imageNamed:@"face_verify_image"];
     self.faceVerifyImageView.contentMode = UIViewContentModeScaleAspectFit;
     [self.faceVerifyContainer addSubview:self.faceVerifyImageView];
     
@@ -309,6 +328,31 @@
         }
     }];
     [self.faceVerifyContainer addSubview:self.faceVerifyButton];
+    
+    // 约束
+    [faceVerifyTitleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.faceVerifyContainer);
+        make.left.right.equalTo(self.faceVerifyContainer);
+        make.height.mas_equalTo(22);
+    }];
+    
+    [faceVerifySubtitleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(faceVerifyTitleLabel.mas_bottom).offset(10);
+        make.left.right.equalTo(self.faceVerifyContainer);
+        make.height.mas_equalTo(20);
+    }];
+    
+    [self.faceVerifyImageView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(faceVerifySubtitleLabel.mas_bottom).offset(30);
+        make.centerX.equalTo(self.faceVerifyContainer);
+        make.width.height.mas_equalTo(200);
+    }];
+    
+    [self.faceVerifyTipLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.faceVerifyImageView.mas_bottom).offset(20);
+        make.left.right.equalTo(self.faceVerifyContainer);
+        make.height.mas_equalTo(20);
+    }];
 }
 
 - (void)setupAgreementContainer {
@@ -585,6 +629,9 @@
 - (void)setStep:(JJRIdCardStep)step animated:(BOOL)animated {
     self.currentStep = step;
     
+    // 更新步骤指示器
+    [self updateStepIndicator:step];
+    
     // 隐藏所有容器
     self.uploadContainer.hidden = YES;
     self.faceVerifyContainer.hidden = YES;
@@ -603,6 +650,27 @@
         case JJRIdCardStepResult:
             self.resultContainer.hidden = NO;
             break;
+    }
+}
+
+- (void)updateStepIndicator:(JJRIdCardStep)step {
+    for (int i = 0; i < self.stepImages.count; i++) {
+        UIImageView *imageView = self.stepImages[i];
+        UILabel *numberLabel = self.stepNumbers[i];
+        
+        if (i < step) {
+            // 已完成的步骤
+            imageView.image = [UIImage imageNamed:@"step_active"];
+            numberLabel.hidden = YES;
+        } else if (i == step) {
+            // 当前步骤
+            imageView.image = [UIImage imageNamed:@"step_active"];
+            numberLabel.hidden = NO;
+        } else {
+            // 未完成的步骤
+            imageView.image = [UIImage imageNamed:@"step_inactive"];
+            numberLabel.hidden = NO;
+        }
     }
 }
 

@@ -2,6 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+    <key>UIUserInterfaceStyle</key>
+    <string>Light</string>
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSAllowsArbitraryLoads</key>
@@ -11,5 +13,9 @@
 	<true/>
 	<key>UIStatusBarStyle</key>
 	<string>UIStatusBarStyleLightContent</string>
+    <key>NSCameraUsageDescription</key>
+    <string>便于您使用该功能上传您的照片/图片及用于实名认证或人脸识别场景中读取和写入相册和文件内容。</string>
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>便于您使用该功能上传您的照片/图片及用于实名认证或人脸识别场景中读取和写入相册和文件内容。</string>
 </dict>
 </plist>
