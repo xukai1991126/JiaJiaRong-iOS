@@ -177,7 +177,7 @@
     [self.contentView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.attentionView.mas_bottom).offset(20); // 40rpx -> 20pt
         make.left.right.equalTo(self.view);
-        make.height.mas_equalTo(75);
+        make.bottom.equalTo(self.view.mas_safeAreaLayoutGuideBottom); // 让contentView填充剩余空间
     }];
     
     [self.listTitleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -190,14 +190,16 @@
         make.left.equalTo(self.listTitleLabel.mas_right).offset(15); // 30rpx -> 15pt
     }];
     
+    [self.addBankView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.right.equalTo(self.contentView).inset(15); // 30rpx -> 15pt
+        make.bottom.equalTo(self.contentView).offset(-20); // 距离底部20pt
+        make.height.mas_equalTo(75); // 150rpx -> 75pt
+    }];
+    
     [self.tableView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.listTitleLabel.mas_bottom).offset(15); // 30rpx -> 15pt
         make.left.right.equalTo(self.contentView).inset(15); // 30rpx -> 15pt
-    }];
-    
-    [self.addBankView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.right.equalTo(self.contentView).inset(15); // 30rpx -> 15pt
-        make.height.mas_equalTo(75); // 150rpx -> 75pt
+        make.bottom.equalTo(self.addBankView.mas_top).offset(-15); // 距离添加按钮15pt
     }];
 }
 
@@ -263,22 +265,29 @@
 
 - (void)fetchBankList {
     [[JJRNetworkService sharedInstance] POST:JJR_BANK_CARD_LIST params:@{} success:^(NSDictionary *responseObject) {
+        NSLog(@"✅ 银行卡列表数据: %@", responseObject);
+        
         NSArray *dataArray = responseObject[@"data"] ?: @[];
         [self.bankList removeAllObjects];
         
         for (NSDictionary *item in dataArray) {
             JJRBankCardModel *bankCard = [[JJRBankCardModel alloc] init];
-            bankCard.cardId = item[@"id"];
+            bankCard.cardId = [item[@"id"] stringValue]; // 确保ID转换为字符串
             bankCard.bankNo = item[@"bankNo"];
             bankCard.bankName = item[@"bankName"];
             bankCard.cardType = item[@"cardType"];
             bankCard.bankLogo = item[@"bankLogo"];
+            bankCard.bankCode = item[@"bankType"]; // API返回的是bankType
             bankCard.selected = NO;
             [self.bankList addObject:bankCard];
+            
+            NSLog(@"📱 银行卡信息: %@ - %@ - %@", bankCard.bankName, bankCard.cardType, bankCard.bankNo);
         }
         
+        NSLog(@"🔄 银行卡列表更新，共%ld张卡", (long)self.bankList.count);
         [self updateUI];
     } failure:^(NSError *error) {
+        NSLog(@"❌ 获取银行卡列表失败: %@", error.localizedDescription);
         [self showToast:@"获取银行卡列表失败"];
     }];
 }
@@ -328,6 +337,12 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     return self.bankList.count;
+}
+
+#pragma mark - UITableViewDelegate
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    return 90; // 75pt卡片高度 + 15pt间距
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -410,7 +425,7 @@
     }];
     
     [bankInfo mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.centerY.equalTo(cardView);
+        make.top.equalTo(cardView).offset(16);
         make.left.equalTo(bankLogo.mas_right).offset(10); // 20rpx -> 10pt
         make.right.equalTo(cardView).offset(-60);
     }];
@@ -443,13 +458,29 @@
     UILabel *bankNumLabel = [cardView viewWithTag:105];
     UIButton *checkbox = [cardView viewWithTag:106];
     
-    // 设置银行Logo（可以根据银行名称加载对应图片）
+    // 设置银行Logo
+    // 先清除之前的图片和背景
+    bankLogo.image = nil;
+    bankLogo.backgroundColor = [UIColor lightGrayColor]; // 默认占位色
+    bankLogo.contentMode = UIViewContentModeScaleAspectFit;
+    
     if (bankCard.bankLogo && bankCard.bankLogo.length > 0) {
-        // 这里可以使用SDWebImage加载网络图片
-        // [bankLogo sd_setImageWithURL:[NSURL URLWithString:bankCard.bankLogo]];
-        bankLogo.backgroundColor = [UIColor lightGrayColor]; // 占位色
-    } else {
-        bankLogo.backgroundColor = [UIColor lightGrayColor];
+        // 使用异步加载网络图片
+        NSURL *logoURL = [NSURL URLWithString:bankCard.bankLogo];
+        if (logoURL) {
+            NSURLSessionDataTask *task = [[NSURLSession sharedSession] dataTaskWithURL:logoURL completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+                if (data && !error) {
+                    UIImage *image = [UIImage imageWithData:data];
+                    if (image) {
+                        dispatch_async(dispatch_get_main_queue(), ^{
+                            bankLogo.image = image;
+                            bankLogo.backgroundColor = [UIColor clearColor];
+                        });
+                    }
+                }
+            }];
+            [task resume];
+        }
     }
     
     // 银行名称和卡类型
@@ -483,12 +514,6 @@
         bankCard.selected = !bankCard.selected;
         sender.selected = bankCard.selected;
     }
-}
-
-#pragma mark - UITableViewDelegate
-
-- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    return 90; // 150rpx + 30rpx margin = 180rpx -> 90pt
 }
 
 @end 
