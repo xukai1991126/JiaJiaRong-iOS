@@ -68,13 +68,24 @@
 }
 
 - (void)updateNavigationBar {
+    NSLog(@"🔄 更新导航栏，银行卡数量: %ld, 删除模式: %@", (long)self.bankList.count, self.showDelete ? @"是" : @"否");
+    
     if (self.bankList.count > 0) {
         if (self.showDelete) {
+            // 删除模式：显示确定和取消按钮
+            NSLog(@"📱 设置导航栏：删除模式 - 显示[确定][取消]按钮");
+            self.navigationItem.rightBarButtonItem = nil; // 清除单个按钮
             self.navigationItem.rightBarButtonItems = @[self.confirmButton, self.cancelButton];
         } else {
+            // 正常模式：显示删除银行卡按钮
+            NSLog(@"📱 设置导航栏：正常模式 - 显示[删除银行卡]按钮");
+            self.navigationItem.rightBarButtonItems = nil; // 清除多个按钮
             self.navigationItem.rightBarButtonItem = self.deleteButton;
         }
     } else {
+        // 没有银行卡：不显示任何按钮
+        NSLog(@"📱 设置导航栏：无银行卡 - 隐藏所有按钮");
+        self.navigationItem.rightBarButtonItems = nil;
         self.navigationItem.rightBarButtonItem = nil;
     }
 }
@@ -217,12 +228,14 @@
 #pragma mark - Actions
 
 - (void)onDeleteMode {
+    NSLog(@"🗑️ 进入删除模式");
     self.showDelete = YES;
     [self updateNavigationBar];
     [self.tableView reloadData];
 }
 
 - (void)onCancelDelete {
+    NSLog(@"❌ 取消删除模式，回到正常状态");
     self.showDelete = NO;
     // 清除所有选择状态
     for (JJRBankCardModel *bankCard in self.bankList) {
@@ -244,7 +257,7 @@
                                                             preferredStyle:UIAlertControllerStyleAlert];
     
     [alert addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
-        self.showDelete = NO;
+        // 用户在删除确认弹窗中点击取消，退出删除模式
         [self onCancelDelete];
     }]];
     
