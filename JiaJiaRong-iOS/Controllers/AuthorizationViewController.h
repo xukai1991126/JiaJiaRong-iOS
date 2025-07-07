@@ -1,5 +1,5 @@
-#import <UIKit/UIKit.h>
+#import "JJRBaseViewController.h"
 
-@interface AuthorizationViewController : UIViewController
+@interface AuthorizationViewController : JJRBaseViewController
 
 @end 

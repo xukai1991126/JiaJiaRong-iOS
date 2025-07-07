@@ -1,5 +1,5 @@
-#import <UIKit/UIKit.h>
+#import "JJRBaseViewController.h"
 
-@interface IDCardViewController : UIViewController
+@interface IDCardViewController : JJRBaseViewController
 
 @end 

@@ -1,5 +1,5 @@
-#import <UIKit/UIKit.h>
+#import "JJRBaseViewController.h"
 
-@interface RealNameAuthViewController : UIViewController
+@interface RealNameAuthViewController : JJRBaseViewController
 
 @end 

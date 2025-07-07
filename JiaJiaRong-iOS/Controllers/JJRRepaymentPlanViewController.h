@@ -6,11 +6,11 @@
 //  Copyright © 2024年 JiaJiaRong. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+#import "JJRBaseViewController.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface JJRRepaymentPlanViewController : UIViewController
+@interface JJRRepaymentPlanViewController : JJRBaseViewController
 
 @end
 

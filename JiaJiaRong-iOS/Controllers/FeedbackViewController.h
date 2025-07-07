@@ -1,5 +1,5 @@
-#import <UIKit/UIKit.h>
+#import "JJRBaseViewController.h"
 
-@interface FeedbackViewController : UIViewController
+@interface FeedbackViewController : JJRBaseViewController
 
 @end 

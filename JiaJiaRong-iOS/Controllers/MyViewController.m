@@ -1,7 +1,7 @@
 #import "MyViewController.h"
 #import "LoginViewController.h"
 #import "ApplicationRecordViewController.h"
-#import "BankCardListViewController.h"
+#import "JJRBankCardListViewController.h"
 #import "UserInfoViewController.h"
 #import "RealNameAuthViewController.h"
 #import "AboutUsViewController.h"
@@ -407,7 +407,7 @@
         vc.hidesBottomBarWhenPushed = YES;
         [self.navigationController pushViewController:vc animated:YES];
     } else if ([action isEqualToString:@"bankCard"]) {
-        BankCardListViewController *vc = [[BankCardListViewController alloc] init];
+        JJRBankCardListViewController *vc = [[JJRBankCardListViewController alloc] init];
         vc.hidesBottomBarWhenPushed = YES;
         [self.navigationController pushViewController:vc animated:YES];
     } else if ([action isEqualToString:@"myInfo"]) {
@@ -474,7 +474,7 @@
         vc.hidesBottomBarWhenPushed = YES;
         [self.navigationController pushViewController:vc animated:YES];
     } else if ([action isEqualToString:@"bankCard"]) {
-        BankCardListViewController *vc = [[BankCardListViewController alloc] init];
+        JJRBankCardListViewController *vc = [[JJRBankCardListViewController alloc] init];
         vc.hidesBottomBarWhenPushed = YES;
         [self.navigationController pushViewController:vc animated:YES];
     } else if ([action isEqualToString:@"myInfo"]) {

@@ -22,6 +22,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) NSString *phoneNumber; // 手机号
 @property (nonatomic, assign) BOOL isDefault;        // 是否默认卡
 @property (nonatomic, assign) BOOL isVerified;       // 是否已验证
+@property (nonatomic, assign) BOOL selected;         // 是否被选中（用于删除模式）
 @property (nonatomic, strong) NSString *createTime;  // 创建时间
 @property (nonatomic, strong) NSString *updateTime;  // 更新时间
 

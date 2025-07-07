@@ -53,13 +53,13 @@
 
 #pragma mark - 银行卡相关接口
 // 获取银行卡列表
-#define JJR_BANK_CARD_LIST @"/app/bankcard/list"
+#define JJR_BANK_CARD_LIST @"/app/blank/list"
 
 // 添加银行卡
-#define JJR_BANK_CARD_ADD @"/app/bankcard/add"
+#define JJR_BANK_CARD_ADD @"/app/blank/add"
 
 // 删除银行卡
-#define JJR_BANK_CARD_DELETE @"/app/bankcard/delete"
+#define JJR_BANK_CARD_DELETE @"/app/blank/remove"
 
 #pragma mark - 申请记录相关接口
 // 获取申请记录

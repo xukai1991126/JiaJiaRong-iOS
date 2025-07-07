@@ -1,5 +1,5 @@
-#import <UIKit/UIKit.h>
+#import "JJRBaseViewController.h"
 
-@interface BankCardAddViewController : UIViewController
+@interface BankCardAddViewController : JJRBaseViewController
 
 @end 

@@ -1,6 +1,6 @@
-#import <UIKit/UIKit.h>
+#import "JJRBaseViewController.h"
 
-@interface RepaymentPlanViewController : UIViewController
+@interface RepaymentPlanViewController : JJRBaseViewController
 
 @property (nonatomic, strong) NSString *loanNo;
 

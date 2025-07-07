@@ -1,5 +1,5 @@
-#import <UIKit/UIKit.h>
+#import "JJRBaseViewController.h"
 
-@interface MoreViewController : UIViewController
+@interface MoreViewController : JJRBaseViewController
 
 @end 
