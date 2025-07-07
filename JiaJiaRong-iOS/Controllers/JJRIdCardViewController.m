@@ -23,6 +23,7 @@
 @property (nonatomic, copy) NSString *backImagePath;
 @property (nonatomic, copy) NSString *certifyData;
 @property (nonatomic, copy) NSString *metaInfo;
+@property (nonatomic, copy) NSString *currentUploadType; // 记录当前上传的图片类型
 
 @end
 
@@ -176,6 +177,9 @@
         return;
     }
     
+    // 记录当前上传的图片类型
+    self.currentUploadType = type;
+    
     UIImagePickerController *picker = [[UIImagePickerController alloc] init];
     picker.sourceType = UIImagePickerControllerSourceTypeCamera;
     picker.delegate = self;
@@ -184,6 +188,9 @@
 }
 
 - (void)openAlbumForType:(NSString *)type {
+    // 记录当前上传的图片类型
+    self.currentUploadType = type;
+    
     UIImagePickerController *picker = [[UIImagePickerController alloc] init];
     picker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
     picker.delegate = self;
@@ -328,19 +335,19 @@
     }
     
     // 保存图片到本地
-    NSString *fileName = [NSString stringWithFormat:@"idcard_%ld.jpg", (long)[[NSDate date] timeIntervalSince1970]];
+    NSString *fileName = [NSString stringWithFormat:@"idcard_%@_%ld.jpg", self.currentUploadType, (long)[[NSDate date] timeIntervalSince1970]];
     NSString *filePath = [NSTemporaryDirectory() stringByAppendingPathComponent:fileName];
     
     NSData *imageData = UIImageJPEGRepresentation(image, 0.8);
     [imageData writeToFile:filePath atomically:YES];
     
-    // 更新UI
-    if (picker.sourceType == UIImagePickerControllerSourceTypeCamera) {
-        // 拍照
+    // 根据当前上传类型更新对应的UI和数据
+    if ([self.currentUploadType isEqualToString:@"face"]) {
+        // 身份证人像面
         [self.idCardView setFaceImage:image];
         self.form.faceImage = filePath;
-    } else {
-        // 相册选择
+    } else if ([self.currentUploadType isEqualToString:@"back"]) {
+        // 身份证国徽面
         [self.idCardView setBackImage:image];
         self.form.backImage = filePath;
     }
