@@ -1,10 +1,10 @@
 #import "MyViewController.h"
 #import "LoginViewController.h"
-#import "ApplicationRecordViewController.h"
+#import "JJRApplyRecordViewController.h"
 #import "JJRBankCardListViewController.h"
 #import "UserInfoViewController.h"
 #import "RealNameAuthViewController.h"
-#import "AboutUsViewController.h"
+#import "JJRAboutUsViewController.h"
 #import "MoreViewController.h"
 #import "JJRUserManager.h"
 #import <Masonry/Masonry.h>
@@ -320,115 +320,6 @@
     }
 }
 
-#pragma mark - UITableViewDataSource
-
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return self.menuItems.count;
-}
-
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    static NSString *cellIdentifier = @"MenuCell";
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
-    
-    if (!cell) {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
-        cell.backgroundColor = [UIColor whiteColor];
-        cell.selectionStyle = UITableViewCellSelectionStyleNone;
-        
-        // 添加圆角
-        cell.layer.cornerRadius = 12;
-        cell.layer.masksToBounds = YES;
-        
-        // 设置内边距
-        cell.separatorInset = UIEdgeInsetsMake(0, 15, 0, 15);
-    }
-    
-    NSDictionary *item = self.menuItems[indexPath.row];
-    
-    // 设置图标 - 48rpx -> 24pt
-    UIImage *iconImage = [UIImage imageNamed:item[@"icon"]];
-    cell.imageView.image = iconImage;
-    
-    // 设置标题
-    cell.textLabel.text = item[@"title"];
-    cell.textLabel.font = [UIFont systemFontOfSize:14]; // 28rpx -> 14pt
-    cell.textLabel.textColor = [UIColor colorWithRed:26.0/255.0 green:26.0/255.0 blue:26.0/255.0 alpha:1.0];
-    
-    // 设置右箭头
-    UIImageView *arrowImageView = [[UIImageView alloc] init];
-    arrowImageView.image = [UIImage imageNamed:@"arrow_right"];
-    arrowImageView.contentMode = UIViewContentModeScaleAspectFit;
-    arrowImageView.frame = CGRectMake(0, 0, 16, 16);
-    cell.accessoryView = arrowImageView;
-    
-    return cell;
-}
-
-#pragma mark - UITableViewDelegate
-
-- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    return 50; // padding: 35rpx -> 70pt总高度
-}
-
-- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
-    return 0.01; // 很小的高度，几乎不可见
-}
-
-- (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section {
-    return 0.01; // 很小的高度，几乎不可见
-}
-
-// 添加cell之间的间距
-- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
-    UIView *headerView = [[UIView alloc] init];
-    headerView.backgroundColor = [UIColor clearColor];
-    return headerView;
-}
-
-- (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section {
-    UIView *footerView = [[UIView alloc] init];
-    footerView.backgroundColor = [UIColor clearColor];
-    return footerView;
-}
-
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    [tableView deselectRowAtIndexPath:indexPath animated:YES];
-    
-    // 检查登录状态
-    if (!self.isLoggedIn) {
-        return;
-    }
-    
-    NSDictionary *item = self.menuItems[indexPath.row];
-    NSString *action = item[@"action"];
-    
-    if ([action isEqualToString:@"applicationRecord"]) {
-        ApplicationRecordViewController *vc = [[ApplicationRecordViewController alloc] init];
-        vc.hidesBottomBarWhenPushed = YES;
-        [self.navigationController pushViewController:vc animated:YES];
-    } else if ([action isEqualToString:@"bankCard"]) {
-        JJRBankCardListViewController *vc = [[JJRBankCardListViewController alloc] init];
-        vc.hidesBottomBarWhenPushed = YES;
-        [self.navigationController pushViewController:vc animated:YES];
-    } else if ([action isEqualToString:@"myInfo"]) {
-        UserInfoViewController *vc = [[UserInfoViewController alloc] init];
-        vc.hidesBottomBarWhenPushed = YES;
-        [self.navigationController pushViewController:vc animated:YES];
-    } else if ([action isEqualToString:@"realNameAuth"]) {
-        RealNameAuthViewController *vc = [[RealNameAuthViewController alloc] init];
-        vc.hidesBottomBarWhenPushed = YES;
-        [self.navigationController pushViewController:vc animated:YES];
-    } else if ([action isEqualToString:@"aboutUs"]) {
-        AboutUsViewController *vc = [[AboutUsViewController alloc] init];
-        vc.hidesBottomBarWhenPushed = YES;
-        [self.navigationController pushViewController:vc animated:YES];
-    } else if ([action isEqualToString:@"more"]) {
-        MoreViewController *vc = [[MoreViewController alloc] init];
-        vc.hidesBottomBarWhenPushed = YES;
-        [self.navigationController pushViewController:vc animated:YES];
-    }
-}
-
 #pragma mark - Actions
 
 - (void)loginTapped {
@@ -470,7 +361,7 @@
     NSString *action = item[@"action"];
     
     if ([action isEqualToString:@"applicationRecord"]) {
-        ApplicationRecordViewController *vc = [[ApplicationRecordViewController alloc] init];
+        JJRApplyRecordViewController *vc = [[JJRApplyRecordViewController alloc] init];
         vc.hidesBottomBarWhenPushed = YES;
         [self.navigationController pushViewController:vc animated:YES];
     } else if ([action isEqualToString:@"bankCard"]) {
@@ -486,7 +377,7 @@
         vc.hidesBottomBarWhenPushed = YES;
         [self.navigationController pushViewController:vc animated:YES];
     } else if ([action isEqualToString:@"aboutUs"]) {
-        AboutUsViewController *vc = [[AboutUsViewController alloc] init];
+        JJRAboutUsViewController *vc = [[JJRAboutUsViewController alloc] init];
         vc.hidesBottomBarWhenPushed = YES;
         [self.navigationController pushViewController:vc animated:YES];
     } else if ([action isEqualToString:@"more"]) {
