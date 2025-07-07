@@ -953,6 +953,7 @@
 }
 
 - (void)showIdPopup {
+    [self.view endEditing:YES];
     // 验证表单
     if (!self.cityCode) {
         [self showToast:@"请填写城市"];
