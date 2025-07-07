@@ -19,7 +19,7 @@
 @property (nonatomic, strong) NSArray<UIImageView *> *stepImages;
 @property (nonatomic, strong) NSArray<UILabel *> *stepNumbers;
 @property (nonatomic, strong) NSArray<UIView *> *stepLines;
-@property (nonatomic, strong) UILabel *stepTitleLabel;
+@property (nonatomic, strong) NSArray<UILabel *> *stepTitleLabels;
 
 // 上传页面
 @property (nonatomic, strong) UIView *uploadContainer;
@@ -93,6 +93,9 @@
     NSMutableArray *images = [NSMutableArray array];
     NSMutableArray *numbers = [NSMutableArray array];
     NSMutableArray *lines = [NSMutableArray array];
+    NSMutableArray *titleLabels = [NSMutableArray array];
+    
+    NSArray *stepTitles = @[@"身份证上传", @"人脸识别", @"认证结果"];
     
     for (int i = 0; i < 3; i++) {
         UIImageView *imageView = [[UIImageView alloc] init];
@@ -106,8 +109,21 @@
         numberLabel.font = [UIFont systemFontOfSize:12];
         numberLabel.textColor = [UIColor whiteColor];
         numberLabel.textAlignment = NSTextAlignmentCenter;
+        // 第一个圆圈不显示数字，只显示图标
+        if (i == 0) {
+            numberLabel.hidden = YES;
+        }
         [imageView addSubview:numberLabel];
         [numbers addObject:numberLabel];
+        
+        // 步骤标题
+        UILabel *titleLabel = [[UILabel alloc] init];
+        titleLabel.text = stepTitles[i];
+        titleLabel.font = [UIFont systemFontOfSize:12];
+        titleLabel.textColor = [UIColor colorWithHexString:@"#666666"];
+        titleLabel.textAlignment = NSTextAlignmentCenter;
+        [self.stepContainer addSubview:titleLabel];
+        [titleLabels addObject:titleLabel];
         
         if (i < 2) {
             UIView *line = [[UIView alloc] init];
@@ -120,14 +136,7 @@
     self.stepImages = [images copy];
     self.stepNumbers = [numbers copy];
     self.stepLines = [lines copy];
-    
-    // 步骤标题
-    self.stepTitleLabel = [[UILabel alloc] init];
-    self.stepTitleLabel.text = @"身份证上传    人脸识别    认证结果";
-    self.stepTitleLabel.font = [UIFont systemFontOfSize:12];
-    self.stepTitleLabel.textColor = [UIColor colorWithHexString:@"#666666"];
-    self.stepTitleLabel.textAlignment = NSTextAlignmentCenter;
-    [self.stepContainer addSubview:self.stepTitleLabel];
+    self.stepTitleLabels = [titleLabels copy];
 }
 
 - (void)setupUploadPage {
@@ -139,7 +148,6 @@
     self.uploadTitleLabel.text = @"请拍摄您本人身份证";
     self.uploadTitleLabel.font = [UIFont boldSystemFontOfSize:18];
     self.uploadTitleLabel.textColor = [UIColor colorWithHexString:@"#333333"];
-    self.uploadTitleLabel.textAlignment = NSTextAlignmentCenter;
     [self.uploadContainer addSubview:self.uploadTitleLabel];
     
     // 副标题
@@ -147,7 +155,6 @@
     self.uploadSubtitleLabel.text = @"仅限于人民银行核查公民身份，请放心使用";
     self.uploadSubtitleLabel.font = [UIFont systemFontOfSize:14];
     self.uploadSubtitleLabel.textColor = [UIColor colorWithHexString:@"#666666"];
-    self.uploadSubtitleLabel.textAlignment = NSTextAlignmentCenter;
     self.uploadSubtitleLabel.numberOfLines = 0;
     [self.uploadContainer addSubview:self.uploadSubtitleLabel];
     
@@ -245,11 +252,15 @@
         make.height.mas_equalTo(80);
     }];
     
+    // 存储tipItem以便后续设置约束
+    NSMutableArray *tipItems = [NSMutableArray array];
+    
     for (int i = 0; i < tips.count; i++) {
         NSDictionary *tip = tips[i];
         
         UIView *tipItem = [[UIView alloc] init];
         [tipsRow addSubview:tipItem];
+        [tipItems addObject:tipItem];
         
         UIImageView *tipImage = [[UIImageView alloc] init];
         tipImage.image = [UIImage imageNamed:tip[@"image"]];
@@ -263,12 +274,6 @@
         tipLabel.textAlignment = NSTextAlignmentCenter;
         [tipItem addSubview:tipLabel];
         
-        [tipItem mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.top.bottom.equalTo(tipsRow);
-            make.width.equalTo(tipsRow).multipliedBy(0.25);
-            make.left.equalTo(tipsRow).offset(i * (UIScreen.mainScreen.bounds.size.width * 0.25));
-        }];
-        
         [tipImage mas_makeConstraints:^(MASConstraintMaker *make) {
             make.top.centerX.equalTo(tipItem);
             make.width.height.mas_equalTo(40);
@@ -278,6 +283,25 @@
             make.top.equalTo(tipImage.mas_bottom).offset(5);
             make.left.right.equalTo(tipItem);
             make.height.mas_equalTo(15);
+        }];
+    }
+    
+    // 设置tipItem的水平布局约束，使其平均分布
+    for (int i = 0; i < tipItems.count; i++) {
+        UIView *tipItem = tipItems[i];
+        [tipItem mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.top.bottom.equalTo(tipsRow);
+            
+            if (i == 0) {
+                // 第一个item：距离左边10pt，宽度相等
+                make.left.equalTo(tipsRow).offset(10);
+                make.width.equalTo(tipsRow).multipliedBy(0.21); // 21%的宽度
+            } else {
+                // 其他item：距离前一个item右边8pt，宽度相等
+                UIView *preTipItem = tipItems[i-1];
+                make.left.equalTo(preTipItem.mas_right).offset(8);
+                make.width.equalTo(tipItems[0]); // 与第一个item宽度相等
+            }
         }];
     }
 }
@@ -416,7 +440,7 @@
     [self.stepContainer mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self).offset(20);
         make.left.right.equalTo(self).inset(20);
-        make.height.mas_equalTo(60);
+        make.height.mas_equalTo(40); // 增加高度以容纳标题文字
     }];
     
     // 步骤图片约束
@@ -426,11 +450,11 @@
             make.centerY.equalTo(self.stepContainer);
             make.width.height.mas_equalTo(30);
             if (i == 0) {
-                make.left.equalTo(self.stepContainer);
+                make.left.equalTo(self.stepContainer).offset(30); // 距离左边30pt
             } else if (i == 1) {
                 make.centerX.equalTo(self.stepContainer);
             } else {
-                make.right.equalTo(self.stepContainer);
+                make.right.equalTo(self.stepContainer).offset(-30); // 距离右边30pt
             }
         }];
         
@@ -456,17 +480,23 @@
         }];
     }
     
-    [self.stepTitleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.stepContainer.mas_bottom).offset(10);
-        make.left.right.equalTo(self.stepContainer);
-        make.height.mas_equalTo(20);
-    }];
+    // 步骤标题约束
+    for (int i = 0; i < self.stepTitleLabels.count; i++) {
+        UILabel *titleLabel = self.stepTitleLabels[i];
+        UIImageView *imageView = self.stepImages[i];
+        [titleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.top.equalTo(self.stepContainer.mas_bottom).offset(1);
+            make.centerX.equalTo(imageView);
+            make.height.mas_equalTo(20);
+            make.width.mas_lessThanOrEqualTo(80); // 设置最大宽度，避免文字过长时重叠
+        }];
+    }
     
     // 上传页面约束
     [self.uploadContainer mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.stepTitleLabel.mas_bottom).offset(20);
+        make.top.equalTo(self.stepTitleLabels.firstObject.mas_bottom).offset(20);
         make.left.right.equalTo(self).inset(20);
-        make.bottom.equalTo(self).offset(-100);
+        make.bottom.equalTo(self).offset(-200);
     }];
     
     [self.uploadTitleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -477,13 +507,13 @@
     [self.uploadSubtitleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.uploadTitleLabel.mas_bottom).offset(10);
         make.left.right.equalTo(self.uploadContainer);
-        make.height.mas_equalTo(40);
+        make.height.mas_equalTo(20);
     }];
     
     [self.uploadImageContainer mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.uploadSubtitleLabel.mas_bottom).offset(20);
         make.left.right.equalTo(self.uploadContainer);
-        make.height.mas_equalTo(200);
+        make.height.mas_equalTo(150);
     }];
     
     // 正面图片约束
@@ -549,7 +579,7 @@
     
     // 人脸识别页面约束
     [self.faceVerifyContainer mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.stepTitleLabel.mas_bottom).offset(20);
+        make.top.equalTo(self.stepTitleLabels.firstObject.mas_bottom).offset(20);
         make.left.right.equalTo(self).inset(20);
         make.bottom.equalTo(self).offset(-100);
     }];
@@ -590,7 +620,7 @@
     
     // 结果页面约束
     [self.resultContainer mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.stepTitleLabel.mas_bottom).offset(20);
+        make.top.equalTo(self.stepTitleLabels.firstObject.mas_bottom).offset(20);
         make.left.right.equalTo(self).inset(20);
         make.bottom.equalTo(self).offset(-100);
     }];
@@ -657,19 +687,31 @@
     for (int i = 0; i < self.stepImages.count; i++) {
         UIImageView *imageView = self.stepImages[i];
         UILabel *numberLabel = self.stepNumbers[i];
+        UILabel *titleLabel = self.stepTitleLabels[i];
+        
+        // 第一个圆圈始终不显示数字，只显示图标
+        if (i == 0) {
+            numberLabel.hidden = YES;
+        }
         
         if (i < step) {
             // 已完成的步骤
             imageView.image = [UIImage imageNamed:@"step_active"];
-            numberLabel.hidden = YES;
+            if (i != 0) numberLabel.hidden = YES; // 第一个圆圈已经在上面处理了
+            titleLabel.textColor = [UIColor colorWithHexString:@"#666666"];
+            titleLabel.font = [UIFont systemFontOfSize:12];
         } else if (i == step) {
             // 当前步骤
             imageView.image = [UIImage imageNamed:@"step_active"];
-            numberLabel.hidden = NO;
+            if (i != 0) numberLabel.hidden = NO; // 第一个圆圈不显示数字
+            titleLabel.textColor = [UIColor colorWithHexString:@"#1a1a1a"];
+            titleLabel.font = [UIFont boldSystemFontOfSize:12];
         } else {
             // 未完成的步骤
             imageView.image = [UIImage imageNamed:@"step_inactive"];
-            numberLabel.hidden = NO;
+            if (i != 0) numberLabel.hidden = NO; // 第一个圆圈不显示数字
+            titleLabel.textColor = [UIColor colorWithHexString:@"#666666"];
+            titleLabel.font = [UIFont systemFontOfSize:12];
         }
     }
 }
