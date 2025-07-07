@@ -443,27 +443,20 @@
             }
             
             if (isExpanded) {
-                // 展开状态：计算完整高度
+                // 展开状态：标题(50) + 提示(30) + 选项区域 + 底部间距(15) + 分隔线(1)
                 NSArray *options = item[@"conditionList"];
-                CGFloat baseHeight = 50 + 30 + 15; // 标题行 + 提示文本 + 间距
-                CGFloat buttonHeight = 35;
-                CGFloat rowSpacing = 12;
-                
-                NSInteger columns = (options.count == 2) ? 2 : 3;
-                NSInteger rows = (options.count + columns - 1) / columns;
-                CGFloat optionsHeight = rows * buttonHeight + (rows - 1) * rowSpacing;
-                
-                return baseHeight + optionsHeight + 15; // 底部间距
+                NSInteger rows = (options.count + 2) / 3; // 3列布局
+                return 50 + 30 + (rows * 45) + 15 + 1; // 增加1px分隔线高度
             } else {
-                // 折叠状态：只显示标题行
-                return 50; // 只有标题行的高度
+                // 折叠状态：只显示标题行 + 分隔线
+                return 50 + 1; // 增加1px分隔线高度
             }
         }
-        return 80;
+        return 50 + 1; // 默认高度 + 分隔线
     } else if (indexPath.section == 3) {
-        return 120; // 贷款金额 + 按钮
+        return 150; // 贷款金额
     }
-    return 60;
+    return 44;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
@@ -580,8 +573,8 @@
             [cityRow addSubview:valueLabel];
             
             UIImageView *arrowIcon = [[UIImageView alloc] init];
-            arrowIcon.image = [UIImage systemImageNamed:@"chevron.right"];
-            arrowIcon.tintColor = [UIColor colorWithRed:0.6 green:0.6 blue:0.6 alpha:1.0];
+            arrowIcon.image = [UIImage imageNamed:@"arrow_right"];
+            arrowIcon.contentMode = UIViewContentModeScaleAspectFit;
             [cityRow addSubview:arrowIcon];
             
             [titleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -753,7 +746,7 @@
                 [optionsView mas_makeConstraints:^(MASConstraintMaker *make) {
                     make.left.right.equalTo(cell.contentView);
                     make.top.equalTo(hintLabel.mas_bottom).offset(15);
-                    make.bottom.equalTo(cell.contentView).offset(-15);
+                    make.bottom.equalTo(cell.contentView).offset(-16); // 为分隔线留出空间
                 }];
                 
                 // 根据选项数量设置布局
@@ -769,6 +762,16 @@
                 // 折叠状态：只显示标题行，不显示选中的值
                 // 不添加任何额外的视图，只保留标题行
             }
+            
+            // 添加底部分隔线（无论展开还是折叠都显示）
+            UIView *separatorLine = [[UIView alloc] init];
+            separatorLine.backgroundColor = [UIColor colorWithRed:0.93 green:0.93 blue:0.93 alpha:1.0]; // 浅灰色
+            [cell.contentView addSubview:separatorLine];
+            
+            [separatorLine mas_makeConstraints:^(MASConstraintMaker *make) {
+                make.left.right.bottom.equalTo(cell.contentView);
+                make.height.mas_equalTo(1);
+            }];
             
             return cell;
         }
@@ -823,7 +826,7 @@
             [nextButton setTitle:@"下一步" forState:UIControlStateNormal];
             [nextButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
             nextButton.titleLabel.font = [UIFont systemFontOfSize:16];
-            nextButton.backgroundColor = [UIColor colorWithRed:0.23 green:0.31 blue:0.87 alpha:1.0];
+            nextButton.backgroundColor = [UIColor colorWithHexString:@"#FF772C"];
             nextButton.layer.cornerRadius = 25;
             nextButton.tag = 302;
             [nextButton addTarget:self action:@selector(showIdPopup) forControlEvents:UIControlEventTouchUpInside];
