@@ -464,13 +464,39 @@
 - (void)modifyPasswordWithParams:(NSDictionary *)params 
                         success:(JJRSuccessBlock)success 
                         failure:(JJRFailureBlock)failure {
-    [self POST:JJR_PASSWORD_MODIFY params:params success:success failure:failure];
+//    [self POST:JJR_PASSWORD_MODIFY params:params success:success failure:failure];
+}
+
+- (void)updatePasswordWithParams:(NSDictionary *)params 
+                        success:(JJRSuccessBlock)success 
+                        failure:(JJRFailureBlock)failure {
+    [self POST:JJR_PASSWORD_UPDATE params:params success:success failure:failure];
 }
 
 - (void)forgetPasswordWithParams:(NSDictionary *)params 
                         success:(JJRSuccessBlock)success 
                         failure:(JJRFailureBlock)failure {
     [self POST:JJR_PASSWORD_FORGET params:params success:success failure:failure];
+}
+
+#pragma mark - 验证码相关接口
+
+- (void)sendCaptchaWithParams:(NSDictionary *)params 
+                     success:(JJRSuccessBlock)success 
+                     failure:(JJRFailureBlock)failure {
+    [self POST:JJR_CAPTCHA_SEND params:params success:success failure:failure];
+}
+
+#pragma mark - 用户操作相关接口
+
+- (void)logoutWithSuccess:(JJRSuccessBlock)success 
+                 failure:(JJRFailureBlock)failure {
+    [self POST:JJR_TOKEN_LOGOUT params:@{} success:success failure:failure];
+}
+
+- (void)cancelAccountWithSuccess:(JJRSuccessBlock)success 
+                        failure:(JJRFailureBlock)failure {
+    [self POST:JJR_USERINFO_CANCEL params:@{} success:success failure:failure];
 }
 
 #pragma mark - 反馈相关接口

@@ -138,6 +138,12 @@ typedef void(^JJRFailureBlock)(NSError *error);
 - (void)getRepaymentPlanWithSuccess:(JJRSuccessBlock)success 
                            failure:(JJRFailureBlock)failure;
 
+#pragma mark - 验证码相关接口
+// 发送验证码
+- (void)sendCaptchaWithParams:(NSDictionary *)params 
+                     success:(JJRSuccessBlock)success 
+                     failure:(JJRFailureBlock)failure;
+
 #pragma mark - 密码管理相关接口
 // 初始化密码
 - (void)initPasswordWithParams:(NSDictionary *)params 
@@ -149,9 +155,23 @@ typedef void(^JJRFailureBlock)(NSError *error);
                         success:(JJRSuccessBlock)success 
                         failure:(JJRFailureBlock)failure;
 
+// 更新密码 (通过验证码)
+- (void)updatePasswordWithParams:(NSDictionary *)params 
+                        success:(JJRSuccessBlock)success 
+                        failure:(JJRFailureBlock)failure;
+
 // 忘记密码
 - (void)forgetPasswordWithParams:(NSDictionary *)params 
                         success:(JJRSuccessBlock)success 
+                        failure:(JJRFailureBlock)failure;
+
+#pragma mark - 用户操作相关接口
+// 退出登陆
+- (void)logoutWithSuccess:(JJRSuccessBlock)success 
+                 failure:(JJRFailureBlock)failure;
+
+// 注销账号
+- (void)cancelAccountWithSuccess:(JJRSuccessBlock)success 
                         failure:(JJRFailureBlock)failure;
 
 #pragma mark - 反馈相关接口

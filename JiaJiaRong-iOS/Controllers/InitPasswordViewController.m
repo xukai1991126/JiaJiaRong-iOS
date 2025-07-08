@@ -1,10 +1,15 @@
 #import "InitPasswordViewController.h"
-#import "NetworkService.h"
+#import "JJRNetworkService.h"
 #import <Masonry/Masonry.h>
+#import "UIColor+Hex.h"
+#import "ToastTool.h"
+#import "JJRUserManager.h"
 
 @interface InitPasswordViewController ()
 
 @property (nonatomic, strong) UIScrollView *scrollView;
+@property (nonatomic, strong) UILabel *titleLabel;
+@property (nonatomic, strong) UILabel *descLabel;
 @property (nonatomic, strong) UIView *contentView;
 @property (nonatomic, strong) UIView *formView;
 @property (nonatomic, strong) UITextField *passwordTextField;
@@ -26,52 +31,56 @@
     
     // 滚动视图
     self.scrollView = [[UIScrollView alloc] init];
+    self.scrollView.showsVerticalScrollIndicator = NO;
     [self.view addSubview:self.scrollView];
     
     self.contentView = [[UIView alloc] init];
     [self.scrollView addSubview:self.contentView];
     
-    // 表单视图
-    self.formView = [[UIView alloc] init];
-    self.formView.backgroundColor = [UIColor whiteColor];
-    self.formView.layer.cornerRadius = 12;
-    [self.contentView addSubview:self.formView];
+    // 大标题 - 对应uni-app的"初始化密码"
+    self.titleLabel = [[UILabel alloc] init];
+    self.titleLabel.text = @"初始化密码";
+    self.titleLabel.font = [UIFont boldSystemFontOfSize:20]; // 40rpx ≈ 20pt
+    self.titleLabel.textColor = [UIColor colorWithRed:26.0/255.0 green:26.0/255.0 blue:26.0/255.0 alpha:1.0];
+    [self.contentView addSubview:self.titleLabel];
     
-    // 密码输入框
-    UILabel *passwordLabel = [[UILabel alloc] init];
-    passwordLabel.text = @"设置密码";
-    passwordLabel.font = [UIFont systemFontOfSize:16];
-    passwordLabel.textColor = [UIColor blackColor];
-    [self.formView addSubview:passwordLabel];
+    // 描述文字 - 对应uni-app的"由8-16位数字及字母组成"
+    self.descLabel = [[UILabel alloc] init];
+    self.descLabel.text = @"由8-16位数字及字母组成";
+    self.descLabel.font = [UIFont systemFontOfSize:14]; // 28rpx ≈ 14pt
+    self.descLabel.textColor = [UIColor colorWithRed:118.0/255.0 green:118.0/255.0 blue:118.0/255.0 alpha:1.0];
+    [self.contentView addSubview:self.descLabel];
     
+    // 密码输入框 - 对应uni-app的"请输入新密码"
     self.passwordTextField = [[UITextField alloc] init];
-    self.passwordTextField.placeholder = @"请输入密码";
-    self.passwordTextField.font = [UIFont systemFontOfSize:16];
-    self.passwordTextField.borderStyle = UITextBorderStyleRoundedRect;
+    self.passwordTextField.placeholder = @"请输入新密码";
+    self.passwordTextField.font = [UIFont systemFontOfSize:14];
     self.passwordTextField.secureTextEntry = YES;
-    [self.formView addSubview:self.passwordTextField];
+    self.passwordTextField.backgroundColor = [UIColor colorWithRed:230.0/255.0 green:230.0/255.0 blue:230.0/255.0 alpha:1.0];
+
+    self.passwordTextField.layer.cornerRadius = 6;
+    self.passwordTextField.leftView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 20, 0)];
+    self.passwordTextField.leftViewMode = UITextFieldViewModeAlways;
+    [self.contentView addSubview:self.passwordTextField];
     
-    // 确认密码输入框
-    UILabel *confirmPasswordLabel = [[UILabel alloc] init];
-    confirmPasswordLabel.text = @"确认密码";
-    confirmPasswordLabel.font = [UIFont systemFontOfSize:16];
-    confirmPasswordLabel.textColor = [UIColor blackColor];
-    [self.formView addSubview:confirmPasswordLabel];
-    
+    // 确认密码输入框 - 对应uni-app的"请再次输入新密码"
     self.confirmPasswordTextField = [[UITextField alloc] init];
-    self.confirmPasswordTextField.placeholder = @"请再次输入密码";
-    self.confirmPasswordTextField.font = [UIFont systemFontOfSize:16];
-    self.confirmPasswordTextField.borderStyle = UITextBorderStyleRoundedRect;
+    self.confirmPasswordTextField.placeholder = @"请再次输入新密码";
+    self.confirmPasswordTextField.font = [UIFont systemFontOfSize:14];
     self.confirmPasswordTextField.secureTextEntry = YES;
-    [self.formView addSubview:self.confirmPasswordTextField];
+    self.confirmPasswordTextField.backgroundColor = [UIColor colorWithRed:230.0/255.0 green:230.0/255.0 blue:230.0/255.0 alpha:1.0];
+    self.confirmPasswordTextField.layer.cornerRadius = 6;
+    self.confirmPasswordTextField.leftView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 20, 0)];
+    self.confirmPasswordTextField.leftViewMode = UITextFieldViewModeAlways;
+    [self.contentView addSubview:self.confirmPasswordTextField];
     
-    // 提交按钮
+    // 提交按钮 - 对应uni-app的"确认提交"
     self.submitButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [self.submitButton setTitle:@"确认设置" forState:UIControlStateNormal];
+    [self.submitButton setTitle:@"确认提交" forState:UIControlStateNormal];
     [self.submitButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    self.submitButton.titleLabel.font = [UIFont boldSystemFontOfSize:18];
-    self.submitButton.backgroundColor = [UIColor colorWithRed:59.0/255.0 green:79.0/255.0 blue:222.0/255.0 alpha:1.0];
-    self.submitButton.layer.cornerRadius = 25;
+    self.submitButton.titleLabel.font = [UIFont systemFontOfSize:14]; // 28rpx ≈ 14pt
+    self.submitButton.backgroundColor = [UIColor colorWithHexString:@"#FF772C"]; // #3B4FDE
+    self.submitButton.layer.cornerRadius = 23;
     [self.submitButton addTarget:self action:@selector(submitButtonTapped) forControlEvents:UIControlEventTouchUpInside];
     [self.contentView addSubview:self.submitButton];
     
@@ -85,54 +94,54 @@
         make.width.equalTo(self.scrollView);
     }];
     
-    [self.formView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.contentView).offset(20);
-        make.left.right.equalTo(self.contentView).inset(20);
+    // 标题 - 距离顶部30rpx ≈ 15pt
+    [self.titleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.contentView).offset(15);
+        make.left.equalTo(self.contentView).offset(15); // 30rpx ≈ 15pt
+        make.right.equalTo(self.contentView).offset(-15);
     }];
     
-    [passwordLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.left.equalTo(self.formView).offset(20);
+    // 描述文字 - 距离标题20rpx ≈ 10pt
+    [self.descLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.titleLabel.mas_bottom).offset(10);
+        make.left.right.equalTo(self.titleLabel);
     }];
     
+    // 密码输入框 - 距离描述文字20rpx ≈ 10pt
     [self.passwordTextField mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(passwordLabel.mas_bottom).offset(10);
-        make.left.right.equalTo(self.formView).inset(20);
-        make.height.mas_equalTo(44);
+        make.top.equalTo(self.descLabel.mas_bottom).offset(10);
+        make.left.right.equalTo(self.titleLabel);
+        make.height.mas_equalTo(46); // 对应uni-app的46px
     }];
     
-    [confirmPasswordLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.passwordTextField.mas_bottom).offset(20);
-        make.left.equalTo(self.formView).offset(20);
-    }];
-    
+    // 确认密码输入框 - 紧贴密码输入框
     [self.confirmPasswordTextField mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(confirmPasswordLabel.mas_bottom).offset(10);
-        make.left.right.equalTo(self.formView).inset(20);
-        make.height.mas_equalTo(44);
-        make.bottom.equalTo(self.formView).offset(-20);
+        make.top.equalTo(self.passwordTextField.mas_bottom).offset(10);
+        make.left.right.height.equalTo(self.passwordTextField);
     }];
     
+    // 提交按钮 - 距离确认密码框20rpx ≈ 10pt，高度92rpx ≈ 46pt
     [self.submitButton mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.formView.mas_bottom).offset(30);
-        make.left.right.equalTo(self.contentView).inset(20);
-        make.height.mas_equalTo(50);
+        make.top.equalTo(self.confirmPasswordTextField.mas_bottom).offset(10);
+        make.left.right.equalTo(self.titleLabel);
+        make.height.mas_equalTo(46);
         make.bottom.equalTo(self.contentView).offset(-20);
     }];
 }
 
 - (void)submitButtonTapped {
     if (self.passwordTextField.text.length == 0) {
-        [self showAlert:@"请输入密码"];
+        [ToastTool showToast:@"请输入新密码" inView:self.view];
         return;
     }
     
     if (self.confirmPasswordTextField.text.length == 0) {
-        [self showAlert:@"请确认密码"];
+        [ToastTool showToast:@"请确认新密码" inView:self.view];
         return;
     }
     
     if (![self.passwordTextField.text isEqualToString:self.confirmPasswordTextField.text]) {
-        [self showAlert:@"两次输入的密码不一致"];
+        [ToastTool showToast:@"两次输入的密码不一致" inView:self.view];
         return;
     }
     
@@ -140,35 +149,31 @@
 }
 
 - (void)initPassword {
-    [NetworkService showLoading];
+    [JJRNetworkService showLoading];
     
-    NSDictionary *params = @{@"password": self.passwordTextField.text};
+    NSDictionary *params = @{@"pwd": self.passwordTextField.text,@"checkPwd": self.confirmPasswordTextField.text};
     
-    [[NetworkService sharedInstance] POST:@"/app/user/initPassword" 
-                                   params:params 
-                                 success:^(NSDictionary *response) {
-        [NetworkService hideLoading];
+    [[JJRNetworkService sharedInstance] initPasswordWithParams:params 
+                                                       success:^(NSDictionary *response) {
+        [JJRNetworkService hideLoading];
         dispatch_async(dispatch_get_main_queue(), ^{
-            [self showAlert:@"密码设置成功"];
-            [self.navigationController popViewControllerAnimated:YES];
+            [ToastTool showToastInKeWindow:@"密码设置成功"];
+            // 更新用户信息
+            NSDictionary *userInfo = [[JJRUserManager sharedManager] userInfo];
+            NSMutableDictionary *updatedUserInfo = [userInfo mutableCopy] ?: [NSMutableDictionary dictionary];
+            updatedUserInfo[@"initPwd"] = @YES;
+            [[JJRUserManager sharedManager] updateUserInfo:updatedUserInfo];
+            
+            [self.navigationController popToRootViewControllerAnimated:YES];
         });
     } failure:^(NSError *error) {
-        [NetworkService hideLoading];
+        [JJRNetworkService hideLoading];
         dispatch_async(dispatch_get_main_queue(), ^{
-            [self showAlert:@"密码设置失败，请重试"];
+            [ToastTool showToast:@"密码设置失败，请重试" inView:self.view];
         });
     }];
 }
 
-- (void)showAlert:(NSString *)message {
-    UIAlertController *alert = [UIAlertController alertControllerWithTitle:nil 
-                                                                   message:message 
-                                                            preferredStyle:UIAlertControllerStyleAlert];
-    UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"确定" 
-                                                       style:UIAlertActionStyleDefault 
-                                                     handler:nil];
-    [alert addAction:okAction];
-    [self presentViewController:alert animated:YES completion:nil];
-}
+
 
 @end 

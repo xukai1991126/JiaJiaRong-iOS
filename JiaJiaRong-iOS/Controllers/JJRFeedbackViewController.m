@@ -22,7 +22,6 @@
 @implementation JJRFeedbackViewController
 
 - (void)viewDidLoad {
-    @weakify(self);
     [super viewDidLoad];
     [self setupUI];
     [self setupConstraints];

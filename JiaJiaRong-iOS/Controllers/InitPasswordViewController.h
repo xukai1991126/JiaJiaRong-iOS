@@ -1,5 +1,5 @@
-#import <UIKit/UIKit.h>
+#import "JJRBaseViewController.h"
 
-@interface InitPasswordViewController : UIViewController
+@interface InitPasswordViewController : JJRBaseViewController
 
 @end 

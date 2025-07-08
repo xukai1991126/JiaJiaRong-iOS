@@ -10,11 +10,19 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-typedef void(^JJRPasswordModifyBlock)(NSString *oldPassword, NSString *newPassword, NSString *confirmPassword);
+typedef void(^JJRSendCaptchaBlock)(NSString *mobile);
+typedef void(^JJRPasswordUpdateBlock)(NSString *mobile, NSString *captcha, NSString *newPassword, NSString *confirmPassword);
 
 @interface JJRPasswordModifyView : UIView
 
-@property (nonatomic, copy) JJRPasswordModifyBlock modifyPasswordBlock;
+@property (nonatomic, copy) JJRSendCaptchaBlock sendCaptchaBlock;
+@property (nonatomic, copy) JJRPasswordUpdateBlock passwordUpdateBlock;
+
+// 设置手机号
+- (void)setMobile:(NSString *)mobile;
+
+// 开始验证码倒计时
+- (void)startCaptchaCountdown;
 
 @end
 

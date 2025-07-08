@@ -18,6 +18,7 @@
 // 获取应用信息
 #define JJR_APP_INFO @"/app/info"
 
+#pragma mark - 验证码相关接口
 // 发送验证码
 #define JJR_CAPTCHA_SEND @"/app/captcha/send"
 
@@ -85,13 +86,20 @@
 
 #pragma mark - 密码管理相关接口
 // 初始化密码
-#define JJR_PASSWORD_INIT @"/app/password/init"
+#define JJR_PASSWORD_INIT @"/app/pwd/init"
 
-// 修改密码
-#define JJR_PASSWORD_MODIFY @"/app/password/modify"
+// 修改密码 (通过验证码)
+#define JJR_PASSWORD_UPDATE @"/app/pwd/update"
 
 // 忘记密码
 #define JJR_PASSWORD_FORGET @"/app/password/forget"
+
+#pragma mark - 用户操作相关接口
+// 退出登陆
+#define JJR_TOKEN_LOGOUT @"/app/token/logout"
+
+// 注销账号
+#define JJR_USERINFO_CANCEL @"/app/userinfo/cancel"
 
 #pragma mark - 反馈相关接口
 // 提交反馈
