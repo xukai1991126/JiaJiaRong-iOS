@@ -11,11 +11,12 @@
 #import "JJRIdCardModel.h"
 #import "JJRNetworkService.h"
 #import "JJRShouquanshuViewController.h"
+#import "JJRFaceVerifyManager.h"
 #import <Photos/Photos.h>
 #import <AVFoundation/AVFoundation.h>
 #import <Masonry/Masonry.h>
 
-@interface JJRIdCardViewController ()<UINavigationControllerDelegate,UIImagePickerControllerDelegate>
+@interface JJRIdCardViewController ()<UINavigationControllerDelegate,UIImagePickerControllerDelegate,JJRFaceVerifyManagerDelegate>
 
 @property (nonatomic, strong) JJRIdCardView *idCardView;
 @property (nonatomic, strong) JJRIdCardModel *form;
@@ -24,6 +25,8 @@
 @property (nonatomic, copy) NSString *certifyData;
 @property (nonatomic, copy) NSString *metaInfo;
 @property (nonatomic, copy) NSString *currentUploadType; // 记录当前上传的图片类型
+@property (nonatomic, strong) JJRFaceVerifyManager *faceVerifyManager; // 人脸识别管理器
+@property (nonatomic, strong) NSDictionary *certifyInfo; // 人脸识别认证信息
 
 @end
 
@@ -34,6 +37,7 @@
     [self setupUI];
     [self setupData];
     [self checkPermissions];
+    [self setupFaceVerifyManager];
 }
 
 - (void)setupUI {
@@ -235,26 +239,51 @@
     }];
 }
 
+- (void)setupFaceVerifyManager {
+    // 初始化人脸识别管理器
+    self.faceVerifyManager = [JJRFaceVerifyManager sharedManager];
+    self.faceVerifyManager.delegate = self;
+    self.faceVerifyManager.presentingViewController = self;
+    
+    // 初始化阿里云SDK
+    [self.faceVerifyManager initializeSDK];
+    
+    NSLog(@"🎯 人脸识别管理器初始化完成");
+}
+
 - (void)startFaceVerify {
+    // 获取设备信息
+    NSDictionary *metaInfoDict = [self.faceVerifyManager getMetaInfo];
+    
+    // 将设备信息转换为JSON字符串（与uni-app保持一致）
+    NSError *error;
+    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:metaInfoDict options:0 error:&error];
+    NSString *metaInfo = @"";
+    if (!error && jsonData) {
+        metaInfo = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+    }
+    
     [JJRNetworkService showLoading];
     
-    // 获取设备信息
-    NSString *metaInfo = [self getMetaInfo];
-    
-    NSDictionary *params = @{
-        @"metaInfo": metaInfo ?: @""
-    };
-    
-    // 调用正确的人脸识别初始化接口
-    [[JJRNetworkService sharedInstance] initFaceVerifyWithParams:params success:^(NSDictionary *responseObject) {
+    // 调用后台初始化人脸识别接口
+    [[JJRNetworkService sharedInstance] initFaceVerifyWithParams:@{@"metaInfo": metaInfo} success:^(NSDictionary *responseObject) {
         [JJRNetworkService hideLoading];
         
         if ([responseObject[@"code"] integerValue] == 0) {
-            self.certifyData = responseObject[@"data"];
-            self.metaInfo = metaInfo;
+            // 保存认证信息
+            self.certifyInfo = responseObject[@"data"];
+            NSString *certifyId = self.certifyInfo[@"certifyId"];
             
-            // 调用人脸识别SDK
-            [self callFaceVerifySDK];
+            if (certifyId && certifyId.length > 0) {
+                // 配置extParams，必须传入当前控制器
+                NSMutableDictionary *extParams = [NSMutableDictionary dictionary];
+                [extParams setValue:self forKey:@"currentCtr"];
+                
+                // 调用人脸识别SDK
+                [self.faceVerifyManager startFaceVerifyWithCertifyId:certifyId extParams:extParams];
+            } else {
+                [self showToast:@"认证ID获取失败"];
+            }
         } else {
             [self showToast:responseObject[@"err"][@"msg"] ?: @"人脸识别初始化失败"];
         }
@@ -264,67 +293,35 @@
     }];
 }
 
-- (void)callFaceVerifySDK {
-    // 这里需要集成具体的人脸识别SDK
-    // 模拟调用阿里云金融级实人认证SDK
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        // 模拟人脸识别成功
-        [self faceVerifySuccess:1000]; // 1000表示成功
+#pragma mark - JJRFaceVerifyManagerDelegate
+
+- (void)faceVerifyManager:(JJRFaceVerifyManager *)manager 
+        didCompleteWithResult:(JJRFaceVerifyResult)result 
+                      message:(NSString *)message {
+    
+    NSLog(@"🎯 人脸识别结果: %ld, 消息: %@", (long)result, message);
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (result == JJRFaceVerifyResultSuccess) {
+            // 人脸识别成功
+            [self showToast:@"人脸识别成功"];
+            
+            // 延迟显示结果页面
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                [self.idCardView setStep:JJRIdCardStepResult animated:YES];
+                [self.idCardView showResult:YES];
+            });
+        } else {
+            // 人脸识别失败
+            [self showToast:message];
+        }
     });
 }
 
-- (void)faceVerifySuccess:(NSInteger)code {
-    if (code == 1000) {
-        // 人脸识别成功
-        // 更新用户信息状态（与uni-app保持一致）
-        // 这里可以保存用户认证状态到本地存储
-        
-        [self showToast:@"人脸识别成功"];
-        
-        // 延迟显示结果页面
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            [self.idCardView setStep:JJRIdCardStepResult animated:YES];
-            [self.idCardView showResult:YES];
-        });
-    } else {
-        // 人脸识别失败
-        NSString *errorMessage = @"认证失败";
-        switch (code) {
-            case 1001:
-                errorMessage = @"系统错误";
-                break;
-            case 1003:
-                errorMessage = @"验证中断";
-                break;
-            case 2003:
-                errorMessage = @"客户端设备时间错误";
-                break;
-            case 2006:
-                errorMessage = @"刷脸失败";
-                break;
-            default:
-                errorMessage = @"认证失败";
-                break;
-        }
-        [self showToast:errorMessage];
-    }
-}
-
-- (NSString *)getMetaInfo {
-    // 获取设备信息，实际需要根据SDK要求实现
-    NSDictionary *deviceInfo = @{
-        @"platform": @"ios",
-        @"version": [[UIDevice currentDevice] systemVersion],
-        @"model": [[UIDevice currentDevice] model]
-    };
-    
-    NSError *error;
-    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:deviceInfo options:0 error:&error];
-    if (error) {
-        return @"";
-    }
-    
-    return [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+- (void)faceVerifyManager:(JJRFaceVerifyManager *)manager 
+             didProgress:(CGFloat)progress 
+                     tip:(NSString *)tip {
+    NSLog(@"🎯 人脸识别进度: %.2f, 提示: %@", progress, tip);
 }
 
 - (void)openAgreement:(NSString *)type {

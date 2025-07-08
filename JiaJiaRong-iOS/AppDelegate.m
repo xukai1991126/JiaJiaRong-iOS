@@ -3,6 +3,7 @@
 #import "LoginViewController.h"
 #import "JJRUserManager.h"
 #import <IQKeyboardManager/IQKeyboardManager.h>
+#import <AliyunFaceAuthFacade/AliyunFaceAuthFacade.h>
 
 @interface AppDelegate ()
 
@@ -13,6 +14,9 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     NSLog(@"🎯 AppDelegate - didFinishLaunchingWithOptions called");
     
+    // 初始化阿里云人脸识别SDK（IPv6网络初始化）
+    [self initializeAliyunFaceSDK];
+    
     // 初始化键盘管理
     [self setupKeyboardManager];
     
@@ -21,6 +25,25 @@
     
     NSLog(@"🎯 AppDelegate - setup completed");
     return YES;
+}
+
+- (void)initializeAliyunFaceSDK {
+    @try {
+        // 使用IPv6初始化（推荐方式，符合苹果App Store要求）
+        [AliyunFaceAuthFacade initIPv6];
+        NSLog(@"🎯 阿里云人脸识别SDK初始化成功（IPv6）");
+        NSLog(@"📱 SDK版本: %@", [AliyunFaceAuthFacade getVersion]);
+    } @catch (NSException *exception) {
+        NSLog(@"❌ 阿里云SDK初始化失败: %@", exception.description);
+        
+        // 降级到普通初始化
+        @try {
+            [AliyunFaceAuthFacade initSDK];
+            NSLog(@"🎯 降级到普通初始化成功");
+        } @catch (NSException *fallbackException) {
+            NSLog(@"❌ 普通初始化也失败: %@", fallbackException.description);
+        }
+    }
 }
 
 - (void)setupKeyboardManager {

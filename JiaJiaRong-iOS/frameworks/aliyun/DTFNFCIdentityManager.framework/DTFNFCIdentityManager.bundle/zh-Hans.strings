@@ -1,0 +1,42 @@
+/* 
+  Localizable.strings
+  AliyunIdentityFace
+
+  Created by Lingxuan on 2022/12/1.
+  Copyright © 2022 aliyun.com. All rights reserved.
+*/
+
+// nfc提示文案
+"kNeed" = "还需";
+"kDontMove" = "秒,请勿移动";
+"kNFCIdentification" = "NFC识别";
+"kIDNumber" = "证件号码";
+"kEnterIDNumber" = "请输入9位证件号码";
+"kDateOfBirth" = "出生日期";
+"kPeriodOfValidity" = "有效期";
+"kPleaseSelect" = "请选择";
+"kNextStep" = "下一步";
+"kCancelTitle" = "取消";
+"kOKTitle" = "确定";
+"kStart" = "请准备好证件，点击开始读卡";
+"kStartReading" = "开始读取";
+"kReadException" = "读取异常，请重试";
+"kNetworkAnomaly" = "请检查网络，重新读卡";
+"kReadError" = "读取错误";
+"kCardReadingFailure" = "读取时请勿移动证件，请将证件对准NFC区域，重新读卡";
+"kThreeElementErrors" = "证件要素输入不正确，请重新输入";
+"kCardError" = "读取异常，请使用正确的证件";
+"kDeviceNotSupported" = "读取异常，当前设备不支持此功能";
+"kNFCTurnedOff" = "NFC已关闭";
+"kSuccessfullyRead" = "读取成功";
+"kCardReading" = "证件读取中，请勿移动";
+"kPutIDCardInPosition" = "请将证件放到图示位置";
+"kPutIDCardInPositionMove" = "请将证件放到图示位置，静置";
+"kIDCardReadFailedRetry" = "读取证件失败，请重试";
+"kIDCardReadFailed" = "读取证件失败";
+"kExpirationMustGreaterBirthdate" = "证件有效截止日期必须大于出生日期。";
+"kPrompt" = "提示";
+"kReadyToScan" = "已准备好扫描";
+"kDocNotSupported" = "不支持此类证件";
+
+

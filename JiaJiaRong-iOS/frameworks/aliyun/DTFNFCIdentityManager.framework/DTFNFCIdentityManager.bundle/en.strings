@@ -1,0 +1,41 @@
+/* 
+  Localizable.strings
+  AliyunIdentityFace
+
+  Created by Lingxuan on 2022/12/1.
+  Copyright © 2022 aliyun.com. All rights reserved.
+*/
+
+// nfc提示文案
+"kNeed" = "Time left: ";
+"kDontMove" = "seconds. Do not remove your device.";
+"kNFCIdentification" = "NFC Verification";
+"kIDNumber" = "ID Number";
+"kEnterIDNumber" = "Enter a 9-digit ID number";
+"kDateOfBirth" = "Date of Birth";
+"kPeriodOfValidity" = "Validity Period";
+"kPleaseSelect" = "Select";
+"kNextStep" = "Next";
+"kCancelTitle" = "Cancel";
+"kOKTitle" = "OK";
+"kStart" = "Please prepare your documents and click to start reading";
+"kStartReading" = "Start Reading";
+"kReadException" = "An error occurred. Try again.";
+"kNetworkAnomaly" = "Check the network connection and try again.";
+"kReadError" = "An error occurred.";
+"kCardReadingFailure" = "Do not move the document during reading. Position the document in the NFC area and try again.";
+"kThreeElementErrors" = "The specified parameters of your document are invalid. Change the values.";
+"kCardError" = "An error occurred. Use a valid document.";
+"kDeviceNotSupported" = "An error occurred. The current device does not support this feature.";
+"kNFCTurnedOff" = "NFC is disabled.";
+"kSuccessfullyRead" = "Successful";
+"kCardReading" = "The document is being read. Do not move the document.";
+"kPutIDCardInPosition" = "Position your document";
+"kPutIDCardInPositionMove" = "Position your document and wait for ";
+"kIDCardReadFailedRetry" = "Failed to read the document. Try again.";
+"kIDCardReadFailed" = "Failed to read the document.";
+"kExpirationMustGreaterBirthdate" = "The valid expiry date of the certificate must be greater than the date of birth.";
+"kPrompt" = "Prompt";
+"kReadyToScan" = "Ready to scan";
+"kDocNotSupported" = "This type of document is not supported";
+
