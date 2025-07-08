@@ -40,7 +40,7 @@
 }
 
 - (void)setupUI {
-    self.title = @"个人信息授权书";
+    self.title = @"授权书";
     self.view.backgroundColor = [UIColor whiteColor];
     
     // 创建渐变背景
