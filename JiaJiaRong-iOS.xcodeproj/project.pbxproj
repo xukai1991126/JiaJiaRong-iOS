@@ -31,6 +31,11 @@
 		A94404742E1C9BDF00864322 /* libz.1.2.8.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = A94404732E1C9BDE00864322 /* libz.1.2.8.tbd */; };
 		A94404762E1C9BE700864322 /* AdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A94404752E1C9BE700864322 /* AdSupport.framework */; };
 		A94404782E1C9BF100864322 /* ReplayKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A94404772E1C9BF100864322 /* ReplayKit.framework */; };
+		A9951FA12E1CC2C4005C86AF /* APBToygerFacade.bundle in Resources */ = {isa = PBXBuildFile; fileRef = A9951FA02E1CC2C3005C86AF /* APBToygerFacade.bundle */; };
+		A9951FA32E1CC2FE005C86AF /* ToygerService.bundle in Resources */ = {isa = PBXBuildFile; fileRef = A9951FA22E1CC2FE005C86AF /* ToygerService.bundle */; };
+		A9951FA52E1CC341005C86AF /* OCRXMedia.bundle in Resources */ = {isa = PBXBuildFile; fileRef = A9951FA42E1CC341005C86AF /* OCRXMedia.bundle */; };
+		A9951FA72E1CC36E005C86AF /* BioAuthEngine.bundle in Resources */ = {isa = PBXBuildFile; fileRef = A9951FA62E1CC36E005C86AF /* BioAuthEngine.bundle */; };
+		A9951FA92E1CC39B005C86AF /* MultiFactorFacade.bundle in Resources */ = {isa = PBXBuildFile; fileRef = A9951FA82E1CC39B005C86AF /* MultiFactorFacade.bundle */; };
 		C615DF589306E82BBA1A2177 /* libPods-JiaJiaRong-iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D9790782680663DA1951483 /* libPods-JiaJiaRong-iOS.a */; };
 /* End PBXBuildFile section */
 
@@ -81,6 +86,12 @@
 		A94404732E1C9BDE00864322 /* libz.1.2.8.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.1.2.8.tbd; path = usr/lib/libz.1.2.8.tbd; sourceTree = SDKROOT; };
 		A94404752E1C9BE700864322 /* AdSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdSupport.framework; path = System/Library/Frameworks/AdSupport.framework; sourceTree = SDKROOT; };
 		A94404772E1C9BF100864322 /* ReplayKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ReplayKit.framework; path = System/Library/Frameworks/ReplayKit.framework; sourceTree = SDKROOT; };
+		A9951FA02E1CC2C3005C86AF /* APBToygerFacade.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = APBToygerFacade.bundle; path = "JiaJiaRong-iOS/frameworks/aliyun/APBToygerFacade.framework/APBToygerFacade.bundle"; sourceTree = "<group>"; };
+		A9951FA22E1CC2FE005C86AF /* ToygerService.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = ToygerService.bundle; path = "JiaJiaRong-iOS/frameworks/aliyun/ToygerService.framework/ToygerService.bundle"; sourceTree = "<group>"; };
+		A9951FA42E1CC341005C86AF /* OCRXMedia.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = OCRXMedia.bundle; path = "JiaJiaRong-iOS/frameworks/aliyun/OCRDetectSDKForTech.framework/OCRXMedia.bundle"; sourceTree = "<group>"; };
+		A9951FA62E1CC36E005C86AF /* BioAuthEngine.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = BioAuthEngine.bundle; path = "JiaJiaRong-iOS/frameworks/aliyun/BioAuthEngine.framework/BioAuthEngine.bundle"; sourceTree = "<group>"; };
+		A9951FA82E1CC39B005C86AF /* MultiFactorFacade.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = MultiFactorFacade.bundle; path = "JiaJiaRong-iOS/frameworks/aliyun/MultiFactorFacade.framework/MultiFactorFacade.bundle"; sourceTree = "<group>"; };
+		A9951FAA2E1CC3C0005C86AF /* APBToygerFacade.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = APBToygerFacade.bundle; path = "JiaJiaRong-iOS/frameworks/aliyun/APBToygerFacade.framework/APBToygerFacade.bundle"; sourceTree = "<group>"; };
 		A9CBBCF22E1CA24800C7ED35 /* APBToygerFacade.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = APBToygerFacade.bundle; path = "JiaJiaRong-iOS/frameworks/aliyun/APBToygerFacade.framework/APBToygerFacade.bundle"; sourceTree = "<group>"; };
 		A9CBBCF42E1CA26500C7ED35 /* APBToygerFacadeSuitable.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = APBToygerFacadeSuitable.bundle; path = "JiaJiaRong-iOS/frameworks/aliyun/APBToygerFacade.framework/APBToygerFacadeSuitable.bundle"; sourceTree = "<group>"; };
 		A9CBBCF62E1CA26F00C7ED35 /* BioAuthEngine.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = BioAuthEngine.bundle; path = "JiaJiaRong-iOS/frameworks/aliyun/BioAuthEngine.framework/BioAuthEngine.bundle"; sourceTree = "<group>"; };
@@ -174,6 +185,12 @@
 		A93256322E19435E0098BEB3 = {
 			isa = PBXGroup;
 			children = (
+				A9951FAA2E1CC3C0005C86AF /* APBToygerFacade.bundle */,
+				A9951FA82E1CC39B005C86AF /* MultiFactorFacade.bundle */,
+				A9951FA62E1CC36E005C86AF /* BioAuthEngine.bundle */,
+				A9951FA42E1CC341005C86AF /* OCRXMedia.bundle */,
+				A9951FA22E1CC2FE005C86AF /* ToygerService.bundle */,
+				A9951FA02E1CC2C3005C86AF /* APBToygerFacade.bundle */,
 				A9CBBCFC2E1CA29B00C7ED35 /* ToygerService.bundle */,
 				A9CBBCFA2E1CA28600C7ED35 /* OCRXMedia.bundle */,
 				A9CBBCF82E1CA27C00C7ED35 /* MultiFactorFacade.bundle */,
@@ -355,6 +372,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A9951FA12E1CC2C4005C86AF /* APBToygerFacade.bundle in Resources */,
+				A9951FA92E1CC39B005C86AF /* MultiFactorFacade.bundle in Resources */,
+				A9951FA72E1CC36E005C86AF /* BioAuthEngine.bundle in Resources */,
+				A9951FA52E1CC341005C86AF /* OCRXMedia.bundle in Resources */,
+				A9951FA32E1CC2FE005C86AF /* ToygerService.bundle in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
