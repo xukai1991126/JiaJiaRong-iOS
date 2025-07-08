@@ -339,29 +339,29 @@
     
     // 设置状态颜色和图标
     UIColor *statusColor;
-    NSString *iconName;
+    NSString *imageName;
     switch (status) {
         case 1:
             statusColor = [UIColor colorWithRed:12.0/255.0 green:89.0/255.0 blue:205.0/255.0 alpha:1.0];
-            iconName = @"clock";
+            imageName = @"img_e37ba6e8d5cb";
             break;
         case 2:
             statusColor = [UIColor colorWithRed:82.0/255.0 green:205.0/255.0 blue:12.0/255.0 alpha:1.0];
-            iconName = @"checkmark.circle";
+            imageName = @"img_fa2686883e60";
             break;
         case 3:
             statusColor = [UIColor colorWithRed:240.0/255.0 green:2.0/255.0 blue:2.0/255.0 alpha:1.0];
-            iconName = @"xmark.circle";
+            imageName = @"img_8e0b3be1e1de";
             break;
         default:
             statusColor = [UIColor blackColor];
-            iconName = @"questionmark.circle";
+            imageName = @"img_e37ba6e8d5cb"; // 默认使用放款中图片
             break;
     }
     
     statusLabel.textColor = statusColor;
-    statusImageView.image = [UIImage systemImageNamed:iconName];
-    statusImageView.tintColor = statusColor;
+    statusImageView.image = [UIImage imageNamed:imageName];
+    // 不需要设置tintColor，因为使用的是彩色图片
     
     // 设置还款计划按钮
     repaymentButton.hidden = (status != 2);
