@@ -11,7 +11,6 @@
 #import "JJRAppInfoModel.h"
 #import "JJRAPIDefines.h"
 #import "WebViewController.h"
-#import <Masonry/Masonry.h>
 #import <objc/runtime.h>
 
 @interface JJRAboutUsViewController ()

@@ -1,8 +1,5 @@
 #import "InitPasswordViewController.h"
 #import "JJRNetworkService.h"
-#import <Masonry/Masonry.h>
-#import "UIColor+Hex.h"
-#import "JJRToastTool.h"
 #import "JJRUserManager.h"
 
 @interface InitPasswordViewController ()

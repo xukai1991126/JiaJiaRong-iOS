@@ -14,7 +14,6 @@
 #import "JJRFaceVerifyManager.h"
 #import <Photos/Photos.h>
 #import <AVFoundation/AVFoundation.h>
-#import <Masonry/Masonry.h>
 
 @interface JJRIdCardViewController ()<UINavigationControllerDelegate,UIImagePickerControllerDelegate,JJRFaceVerifyManagerDelegate>
 

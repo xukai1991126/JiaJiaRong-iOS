@@ -12,9 +12,7 @@
 #import "JJRNetworkService.h"
 #import "JJRToast.h"
 #import "JJRUserManager.h"
-#import "JJRToastTool.h"
 #import "LoginViewController.h"
-#import <Masonry/Masonry.h>
 
 @interface JJRPasswordModifyViewController ()
 

@@ -1,5 +1,4 @@
 #import "JJRCityPickerViewController.h"
-#import <Masonry/Masonry.h>
 
 @interface JJRCityPickerViewController () <UITableViewDelegate, UITableViewDataSource>
 

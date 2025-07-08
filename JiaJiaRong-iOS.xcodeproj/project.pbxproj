@@ -493,6 +493,7 @@
 					"$(PROJECT_DIR)/JiaJiaRong-iOS/Controllers/aliyun",
 					"$(PROJECT_DIR)/JiaJiaRong-iOS/frameworks/aliyun",
 				);
+				GCC_PREFIX_HEADER = "JiaJiaRong-iOS/JiaJiaRong-iOS-Prefix.pch";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "JiaJiaRong-iOS/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "家家融";
@@ -597,6 +598,7 @@
 					"$(PROJECT_DIR)/JiaJiaRong-iOS/Controllers/aliyun",
 					"$(PROJECT_DIR)/JiaJiaRong-iOS/frameworks/aliyun",
 				);
+				GCC_PREFIX_HEADER = "JiaJiaRong-iOS/JiaJiaRong-iOS-Prefix.pch";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "JiaJiaRong-iOS/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "家家融";

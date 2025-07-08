@@ -11,7 +11,6 @@
 #import "JJRPasswordForgetView.h"
 #import "JJRNetworkService.h"
 #import "JJRToast.h"
-#import <Masonry/Masonry.h>
 
 @interface JJRPasswordForgetViewController ()
 

@@ -9,8 +9,6 @@
 #import "JJRFeedbackViewController.h"
 #import "JJRFeedbackView.h"
 #import "JJRNetworkService.h"
-#import "JJRToastTool.h"
-#import <Masonry/Masonry.h>
 
 @interface JJRFeedbackViewController ()
 

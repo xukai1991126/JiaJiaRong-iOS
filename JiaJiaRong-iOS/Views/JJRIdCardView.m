@@ -7,8 +7,6 @@
 //
 
 #import "JJRIdCardView.h"
-#import <Masonry/Masonry.h>
-#import "UIColor+Hex.h"
 #import "JJRButton.h"
 #import "JJRInputView.h"
 
@@ -384,8 +382,8 @@
     [self.faceVerifyContainer addSubview:self.agreementContainer];
     
     self.agreementCheckbox = [UIButton buttonWithType:UIButtonTypeCustom];
-    [self.agreementCheckbox setImage:[UIImage imageNamed:@"checkbox_unchecked"] forState:UIControlStateNormal];
-    [self.agreementCheckbox setImage:[UIImage imageNamed:@"checkbox_checked"] forState:UIControlStateSelected];
+    [self.agreementCheckbox setImage:[UIImage imageNamed:@"img_2a5bf1c39141_unselect"] forState:UIControlStateNormal];
+    [self.agreementCheckbox setImage:[UIImage imageNamed:@"img_2a5bf1c39141"] forState:UIControlStateSelected];
     [self.agreementCheckbox addTarget:self action:@selector(agreementCheckboxTapped) forControlEvents:UIControlEventTouchUpInside];
     [self.agreementContainer addSubview:self.agreementCheckbox];
     

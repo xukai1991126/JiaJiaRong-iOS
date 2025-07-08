@@ -7,7 +7,6 @@
 #import "JJRAboutUsViewController.h"
 #import "MoreViewController.h"
 #import "JJRUserManager.h"
-#import <Masonry/Masonry.h>
 
 @interface MyViewController ()
 

@@ -9,8 +9,6 @@
 #import "JJRRepaymentPlanViewController.h"
 #import "JJRRepaymentPlanModel.h"
 #import "JJRNetworkService.h"
-#import <Masonry/Masonry.h>
-#import "UIColor+Hex.h"
 
 @interface JJRRepaymentPlanViewController () <UITableViewDelegate, UITableViewDataSource>
 

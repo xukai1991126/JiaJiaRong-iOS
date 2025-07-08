@@ -7,8 +7,6 @@
 //
 
 #import "JJRInputView.h"
-#import <Masonry/Masonry.h>
-#import "UIColor+Hex.h"
 #import "JJREnums.h"
 #import <YYKit/YYKit.h>
 

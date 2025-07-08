@@ -1,7 +1,6 @@
 #import "MainTabBarController.h"
 #import "HomeViewController.h"
 #import "MyViewController.h"
-#import "UIColor+Hex.h"
 
 @interface MainTabBarController ()
 

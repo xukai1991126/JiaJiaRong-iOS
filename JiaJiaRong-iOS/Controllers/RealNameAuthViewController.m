@@ -2,8 +2,6 @@
 #import "JJRNetworkService.h"
 #import "JJRRealNameAuthModel.h"
 #import "JJRAPIDefines.h"
-#import <Masonry/Masonry.h>
-#import "JJRToastTool.h"
 
 @interface RealNameAuthViewController () <UITableViewDataSource, UITableViewDelegate>
 

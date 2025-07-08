@@ -9,7 +9,6 @@
 #import "JJRApplyRecordViewController.h"
 #import "JJRNetworkService.h"
 #import "JJRRepaymentPlanViewController.h"
-#import <Masonry/Masonry.h>
 
 @interface JJRApplyRecordViewController () <UITableViewDelegate, UITableViewDataSource>
 

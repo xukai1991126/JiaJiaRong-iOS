@@ -9,8 +9,6 @@
 #import "JJRPasswordForgetView.h"
 #import "JJRInputView.h"
 #import "JJRButton.h"
-#import <Masonry/Masonry.h>
-#import "UIColor+Hex.h"
 
 @interface JJRPasswordForgetView ()
 

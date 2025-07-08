@@ -7,8 +7,6 @@
 //
 
 #import "JJRShouquanshuViewController.h"
-#import <Masonry/Masonry.h>
-#import "UIColor+Hex.h"
 #import "JJRButton.h"
 #import "JJRApplyFormViewController.h"
 

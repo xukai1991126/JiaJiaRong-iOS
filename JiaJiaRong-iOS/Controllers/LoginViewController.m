@@ -3,8 +3,6 @@
 #import "JJRUserManager.h"
 #import "MainTabBarController.h"
 #import "WebViewController.h"
-#import <Masonry/Masonry.h>
-#import "UIColor+Hex.h"
 #import <CoreText/CoreText.h>
 #import <YYKit/YYKit.h>
 

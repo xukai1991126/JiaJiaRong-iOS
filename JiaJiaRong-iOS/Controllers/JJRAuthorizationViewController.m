@@ -10,8 +10,6 @@
 #import "JJRNetworkService.h"
 #import "JJRUserManager.h"
 #import "JJRResultViewController.h"
-#import <Masonry/Masonry.h>
-#import "UIColor+Hex.h"
 
 @interface JJRAuthorizationViewController ()
 

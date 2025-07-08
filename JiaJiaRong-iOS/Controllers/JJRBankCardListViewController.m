@@ -10,7 +10,6 @@
 #import "JJRBankCardAddViewController.h"
 #import "JJRNetworkService.h"
 #import "JJRBankCardModel.h"
-#import <Masonry/Masonry.h>
 #import <YYKit/YYKit.h>
 #import <QuartzCore/QuartzCore.h>
 

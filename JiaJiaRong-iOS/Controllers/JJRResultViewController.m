@@ -9,8 +9,6 @@
 #import "JJRResultViewController.h"
 #import "JJRNetworkService.h"
 #import "JJRUserManager.h"
-#import <Masonry/Masonry.h>
-#import "UIColor+Hex.h"
 
 @interface JJRResultViewController ()
 

@@ -1,13 +1,18 @@
+//
+//  MoreViewController.m
+//  JiaJiaRong-iOS
+//
+//  Created by Assistant on 2024/7/1.
+//  Copyright © 2024年 JiaJiaRong. All rights reserved.
+//
+
 #import "MoreViewController.h"
-#import "InitPasswordViewController.h"
-#import "JJRFeedbackViewController.h"
-#import "JJRPasswordModifyViewController.h"
 #import "JJRUserManager.h"
 #import "JJRNetworkService.h"
+#import "JJRPasswordModifyViewController.h"
+#import "InitPasswordViewController.h"
+#import "JJRFeedbackViewController.h"
 #import "LoginViewController.h"
-#import <Masonry/Masonry.h>
-#import "UIColor+Hex.h"
-#import "JJRToastTool.h"
 
 @interface MoreViewController ()
 

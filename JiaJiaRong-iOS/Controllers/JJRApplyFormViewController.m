@@ -12,7 +12,6 @@
 #import "JJRIdCardViewController.h"
 #import "JJRInputView.h"
 #import "JJRCityPickerViewController.h"
-#import <Masonry/Masonry.h>
 #import <YYKit/YYKit.h>
 #import <objc/runtime.h>
 

@@ -2,7 +2,6 @@
 #import "JJRNetworkService.h"
 #import "JJRUserInfoModel.h"
 #import "JJRAPIDefines.h"
-#import <Masonry/Masonry.h>
 
 @interface UserInfoViewController ()
 

@@ -1,0 +1,59 @@
+//
+//  JiaJiaRong-iOS-Prefix.pch
+//  JiaJiaRong-iOS
+//
+//  Created by Assistant on 2024/12/20.
+//  Copyright © 2024年 JiaJiaRong. All rights reserved.
+//
+
+#ifndef JiaJiaRong_iOS_Prefix_pch
+#define JiaJiaRong_iOS_Prefix_pch
+
+#ifdef __OBJC__
+    #import <UIKit/UIKit.h>
+    #import <Foundation/Foundation.h>
+    
+    // 常用的分类
+    #import "UIColor+Hex.h"
+    
+    // 第三方库
+    #import <Masonry/Masonry.h>
+    
+    // 工具类
+    #import "JJRToastTool.h"
+    
+    // 常用宏定义
+    #define SCREEN_WIDTH [UIScreen mainScreen].bounds.size.width
+    #define SCREEN_HEIGHT [UIScreen mainScreen].bounds.size.height
+    #define SAFE_AREA_TOP (SCREEN_HEIGHT >= 812.0 ? 88.0 : 64.0)
+    #define SAFE_AREA_BOTTOM (SCREEN_HEIGHT >= 812.0 ? 34.0 : 0.0)
+    #define STATUS_BAR_HEIGHT (SCREEN_HEIGHT >= 812.0 ? 44.0 : 20.0)
+    #define NAVIGATION_BAR_HEIGHT 44.0
+    #define TABBAR_HEIGHT (SCREEN_HEIGHT >= 812.0 ? 83.0 : 49.0)
+    
+    // 颜色宏定义
+    #define MAIN_COLOR [UIColor colorWithHexString:@"#3B4FDE"]
+    #define BACKGROUND_COLOR [UIColor colorWithHexString:@"#F8F9FA"]
+    #define TEXT_COLOR [UIColor colorWithHexString:@"#1A1A1A"]
+    #define PLACEHOLDER_COLOR [UIColor colorWithHexString:@"#B3B3B3"]
+    #define BORDER_COLOR [UIColor colorWithHexString:@"#E5E5E5"]
+    
+    // 字体宏定义
+    #define FONT_REGULAR(size) [UIFont systemFontOfSize:size]
+    #define FONT_MEDIUM(size) [UIFont systemFontOfSize:size weight:UIFontWeightMedium]
+    #define FONT_BOLD(size) [UIFont boldSystemFontOfSize:size]
+    
+    // 弱引用宏定义
+    #define WeakSelf __weak typeof(self) weakSelf = self;
+    #define StrongSelf __strong typeof(weakSelf) strongSelf = weakSelf;
+    
+    // 日志宏定义
+    #ifdef DEBUG
+        #define NSLog(format, ...) printf("🔍 %s\n", [[NSString stringWithFormat:format, ##__VA_ARGS__] UTF8String]);
+    #else
+        #define NSLog(format, ...)
+    #endif
+    
+#endif
+
+#endif /* JiaJiaRong_iOS_Prefix_pch */ 

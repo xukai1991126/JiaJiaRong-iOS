@@ -9,7 +9,6 @@
 #import "JJRBankCardAddViewController.h"
 #import "JJRNetworkService.h"
 #import "WebViewController.h"
-#import <Masonry/Masonry.h>
 #import <YYKit/YYKit.h>
 #import "ZJGeneraMacros.h"
 

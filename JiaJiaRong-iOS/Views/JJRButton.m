@@ -7,8 +7,6 @@
 //
 
 #import "JJRButton.h"
-#import <Masonry/Masonry.h>
-#import "UIColor+Hex.h"
 #import <pop/pop.h>
 
 @interface JJRButton ()

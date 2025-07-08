@@ -7,8 +7,6 @@
 //
 
 #import "JJRBankCardCell.h"
-#import <Masonry/Masonry.h>
-#import "UIColor+Hex.h"
 
 @interface JJRBankCardCell ()
 

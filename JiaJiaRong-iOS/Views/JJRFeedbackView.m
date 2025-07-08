@@ -7,9 +7,7 @@
 //
 
 #import "JJRFeedbackView.h"
-#import <Masonry/Masonry.h>
 #import <objc/runtime.h>
-#import "UIColor+Hex.h"
 
 @interface JJRFeedbackView ()
 
@@ -89,8 +87,8 @@
     [self.submitButton setTitle:@"确认提交" forState:UIControlStateNormal];
     [self.submitButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     self.submitButton.titleLabel.font = [UIFont systemFontOfSize:14]; // 28rpx -> 14pt
-    self.submitButton.backgroundColor =[UIColor colorWithHexString:@"#FF772C"]; // #3B4FDE
-    self.submitButton.layer.cornerRadius = 23.0;
+    self.submitButton.backgroundColor = [UIColor colorWithHexString:@"#3B4FDE"]; // 使用正确的蓝色
+    self.submitButton.layer.cornerRadius = 8.0;
     [self.submitButton addTarget:self action:@selector(submitButtonTapped) forControlEvents:UIControlEventTouchUpInside];
     [self addSubview:self.submitButton];
 }

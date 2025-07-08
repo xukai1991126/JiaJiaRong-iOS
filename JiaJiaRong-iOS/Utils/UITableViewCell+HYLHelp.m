@@ -7,7 +7,6 @@
 //
 
 #import "UITableViewCell+HYLHelp.h"
-#import <Masonry/Masonry.h>
 #import "UIColor+HYLHelper.h"
 
 @implementation UITableViewCell (HYLHelp)

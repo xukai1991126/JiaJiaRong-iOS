@@ -7,8 +7,6 @@
 //
 
 #import "JJRAboutUsView.h"
-#import <Masonry/Masonry.h>
-#import "UIColor+Hex.h"
 
 @interface JJRAboutUsView ()
 
