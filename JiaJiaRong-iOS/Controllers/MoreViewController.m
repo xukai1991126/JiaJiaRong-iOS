@@ -7,7 +7,7 @@
 #import "LoginViewController.h"
 #import <Masonry/Masonry.h>
 #import "UIColor+Hex.h"
-#import "ToastTool.h"
+#import "JJRToastTool.h"
 
 @interface MoreViewController ()
 
@@ -347,7 +347,7 @@
 - (void)performLogout {
     [[JJRNetworkService sharedInstance] logoutWithSuccess:^(NSDictionary *response) {
         dispatch_async(dispatch_get_main_queue(), ^{
-            [ToastTool showSuccess:@"登出成功" inView:self.view];
+            [JJRToastTool showSuccess:@"登出成功" inView:self.view];
             // 和uni-app保持一致：清除所有存储包括token
             // uni-app中退出登录时调用uni.clearStorage()
             [self.userManager clearAllUserData];
@@ -359,7 +359,7 @@
         });
     } failure:^(NSError *error) {
         dispatch_async(dispatch_get_main_queue(), ^{
-            [ToastTool showError:@"登出失败，请重试" inView:self.view];
+            [JJRToastTool showError:@"登出失败，请重试" inView:self.view];
         });
     }];
 }
@@ -367,7 +367,7 @@
 - (void)performCancelAccount {
     [[JJRNetworkService sharedInstance] cancelAccountWithSuccess:^(NSDictionary *response) {
         dispatch_async(dispatch_get_main_queue(), ^{
-            [ToastTool showSuccess:@"注销成功" inView:self.view];
+            [JJRToastTool showSuccess:@"注销成功" inView:self.view];
             // 和uni-app保持一致：清除所有存储包括token
             // uni-app中注销账号时调用uni.clearStorage()
             [self.userManager clearAllUserData];
@@ -379,7 +379,7 @@
         });
     } failure:^(NSError *error) {
         dispatch_async(dispatch_get_main_queue(), ^{
-            [ToastTool showError:@"注销失败，请重试" inView:self.view];
+            [JJRToastTool showError:@"注销失败，请重试" inView:self.view];
         });
     }];
 }
@@ -400,7 +400,7 @@
     
     self.cacheSize = 0;
     [self loadUserInfo]; // 重新加载界面更新缓存大小显示
-    [ToastTool showSuccess:@"清除成功" inView:self.view];
+    [JJRToastTool showSuccess:@"清除成功" inView:self.view];
 
 }
 

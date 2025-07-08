@@ -9,9 +9,8 @@
 #import "JJRFeedbackViewController.h"
 #import "JJRFeedbackView.h"
 #import "JJRNetworkService.h"
-#import "JJRToast.h"
+#import "JJRToastTool.h"
 #import <Masonry/Masonry.h>
-#import <YYKit/YYKit.h>
 
 @interface JJRFeedbackViewController ()
 
@@ -28,15 +27,15 @@
 }
 
 - (void)setupUI {
-    self.title = @"意见反馈";
+    self.title = @"问题反馈";
     self.view.backgroundColor = [UIColor whiteColor];
     
     self.feedbackView = [[JJRFeedbackView alloc] init];
     [self.view addSubview:self.feedbackView];
     
     __weak typeof(self) weakSelf = self;
-    self.feedbackView.submitFeedbackBlock = ^(NSString *content, NSString *contact) {
-        [weakSelf submitFeedback:content contact:contact];
+    self.feedbackView.submitFeedbackBlock = ^(NSString *content) {
+        [weakSelf submitFeedback:content];
     };
 }
 
@@ -46,31 +45,26 @@
     }];
 }
 
-- (void)submitFeedback:(NSString *)content contact:(NSString *)contact {
+- (void)submitFeedback:(NSString *)content {
     if (!content || content.length == 0) {
-        [JJRToast showToast:@"请输入反馈内容"];
+        [JJRToastTool showToast:@"请输入意见或反馈" inView:self.view];
         return;
     }
-    
-    if (content.length < 10) {
-        [JJRToast showToast:@"反馈内容不能少于10个字符"];
-        return;
-    }
-    
-    [JJRNetworkService showLoading];
     
     NSDictionary *params = @{
-        @"content": content,
-        @"contact": contact ?: @""
+        @"content": content
     };
     
-    [[JJRNetworkService sharedInstance] submitFeedbackWithParams:params success:^(id responseObject) {
-        [JJRNetworkService hideLoading];
-        [JJRToast showToast:@"反馈提交成功"];
-        [self.navigationController popViewControllerAnimated:YES];
+    [[JJRNetworkService sharedInstance] submitOpinionWithParams:params success:^(id responseObject) {
+        [JJRToastTool showSuccess:@"提交成功" inView:self.view];
+        [self.feedbackView clearContent];
+        
+        // 延迟0.5秒后返回上一页
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [self.navigationController popViewControllerAnimated:YES];
+        });
     } failure:^(NSError *error) {
-        [JJRNetworkService hideLoading];
-        [JJRToast showToast:error.localizedDescription];
+        [JJRToastTool showError:@"提交失败，请稍后再试" inView:self.view];
     }];
 }
 

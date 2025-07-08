@@ -105,6 +105,9 @@
 // 提交反馈
 #define JJR_FEEDBACK_SUBMIT @"/app/feedback/submit"
 
+// 提交意见反馈
+#define JJR_OPINION_SUBMIT @"/app/common/opinion"
+
 #pragma mark - 其他接口
 // 获取关于我们
 #define JJR_ABOUT_US @"/app/about/us"

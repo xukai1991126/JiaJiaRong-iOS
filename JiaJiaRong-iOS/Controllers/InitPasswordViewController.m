@@ -2,7 +2,7 @@
 #import "JJRNetworkService.h"
 #import <Masonry/Masonry.h>
 #import "UIColor+Hex.h"
-#import "ToastTool.h"
+#import "JJRToastTool.h"
 #import "JJRUserManager.h"
 
 @interface InitPasswordViewController ()
@@ -131,13 +131,13 @@
 
 - (void)submitButtonTapped {
     if (self.passwordTextField.text.length == 0) {
-        [ToastTool showToast:@"请输入新密码" inView:self.view];
+        [JJRToastTool showToast:@"请输入新密码" inView:self.view];
         return;
     }
     
     // 密码格式验证：8-16位数字及字母组成
     if (self.passwordTextField.text.length < 8 || self.passwordTextField.text.length > 16) {
-        [ToastTool showToast:@"密码长度必须为8-16位" inView:self.view];
+        [JJRToastTool showToast:@"密码长度必须为8-16位" inView:self.view];
         return;
     }
     
@@ -145,17 +145,17 @@
     NSString *passwordRegex = @"^(?=.*\\d)(?=.*[a-zA-Z])[a-zA-Z\\d]{8,16}$";
     NSPredicate *passwordPredicate = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", passwordRegex];
     if (![passwordPredicate evaluateWithObject:self.passwordTextField.text]) {
-        [ToastTool showToast:@"密码必须由8-16位数字及字母组成" inView:self.view];
+        [JJRToastTool showToast:@"密码必须由8-16位数字及字母组成" inView:self.view];
         return;
     }
     
     if (self.confirmPasswordTextField.text.length == 0) {
-        [ToastTool showToast:@"请确认新密码" inView:self.view];
+        [JJRToastTool showToast:@"请确认新密码" inView:self.view];
         return;
     }
     
     if (![self.passwordTextField.text isEqualToString:self.confirmPasswordTextField.text]) {
-        [ToastTool showToast:@"两次输入的密码不一致" inView:self.view];
+        [JJRToastTool showToast:@"两次输入的密码不一致" inView:self.view];
         return;
     }
     
@@ -171,7 +171,7 @@
                                                        success:^(NSDictionary *response) {
         [JJRNetworkService hideLoading];
         dispatch_async(dispatch_get_main_queue(), ^{
-            [ToastTool showToastInKeWindow:@"密码设置成功"];
+            [JJRToastTool showToastInKeWindow:@"密码设置成功"];
             // 更新用户信息
             NSDictionary *userInfo = [[JJRUserManager sharedManager] userInfo];
             NSMutableDictionary *updatedUserInfo = [userInfo mutableCopy] ?: [NSMutableDictionary dictionary];
@@ -183,7 +183,7 @@
     } failure:^(NSError *error) {
         [JJRNetworkService hideLoading];
         dispatch_async(dispatch_get_main_queue(), ^{
-            [ToastTool showToast:@"密码设置失败，请重试" inView:self.view];
+            [JJRToastTool showToast:@"密码设置失败，请重试" inView:self.view];
         });
     }];
 }

@@ -1,14 +1,14 @@
 //
-//  ToastTool.m
+//  JJRToastTool.m
 //  JiaJiaRong-iOS
 //
 //  Created by xk work's computer on 2025/7/8.
 //
 
-#import "ToastTool.h"
+#import "JJRToastTool.h"
 #import <MBProgressHUD/MBProgressHUD.h>
 
-@implementation ToastTool
+@implementation JJRToastTool
 
 + (void)showToast:(NSString *)message inView:(UIView *)view {
     if (!view || !message.length) return;

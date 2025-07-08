@@ -1,5 +1,5 @@
 //
-//  ToastTool.h
+//  JJRToastTool.h
 //  JiaJiaRong-iOS
 //
 //  Created by xk work's computer on 2025/7/8.
@@ -9,7 +9,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface ToastTool : NSObject
+@interface JJRToastTool : NSObject
 
 /// 显示仅文字提示
 + (void)showToast:(NSString *)message inView:(UIView *)view;

@@ -10,11 +10,13 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-typedef void(^JJRSubmitFeedbackBlock)(NSString *content, NSString *contact);
+typedef void(^JJRSubmitFeedbackBlock)(NSString *content);
 
 @interface JJRFeedbackView : UIView
 
 @property (nonatomic, copy) JJRSubmitFeedbackBlock submitFeedbackBlock;
+
+- (void)clearContent;
 
 @end
 

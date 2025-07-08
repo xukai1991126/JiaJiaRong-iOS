@@ -508,6 +508,12 @@
     [self POST:JJR_FEEDBACK_SUBMIT params:params success:success failure:failure];
 }
 
+- (void)submitOpinionWithParams:(NSDictionary *)params 
+                       success:(JJRSuccessBlock)success 
+                       failure:(JJRFailureBlock)failure {
+    [self POST:JJR_OPINION_SUBMIT params:params success:success failure:failure];
+}
+
 #pragma mark - 其他接口
 
 - (void)getAboutUsWithSuccess:(JJRSuccessBlock)success 

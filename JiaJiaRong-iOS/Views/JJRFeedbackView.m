@@ -7,20 +7,16 @@
 //
 
 #import "JJRFeedbackView.h"
-#import "JJRInputView.h"
-#import "JJRButton.h"
 #import <Masonry/Masonry.h>
+#import <objc/runtime.h>
 #import "UIColor+Hex.h"
 
 @interface JJRFeedbackView ()
 
-@property (nonatomic, strong) UIScrollView *scrollView;
-@property (nonatomic, strong) UIView *contentView;
-@property (nonatomic, strong) UILabel *contentLabel;
-@property (nonatomic, strong) UITextView *contentTextView;
-@property (nonatomic, strong) UILabel *contactLabel;
-@property (nonatomic, strong) JJRInputView *contactInput;
-@property (nonatomic, strong) JJRButton *submitButton;
+@property (nonatomic, strong) UILabel *titleLabel;
+@property (nonatomic, strong) UILabel *descLabel;
+@property (nonatomic, strong) UITextView *textView;
+@property (nonatomic, strong) UIButton *submitButton;
 
 @end
 
@@ -38,103 +34,115 @@
 - (void)setupUI {
     self.backgroundColor = [UIColor whiteColor];
     
-    // 滚动视图
-    self.scrollView = [[UIScrollView alloc] init];
-    self.scrollView.showsVerticalScrollIndicator = NO;
-    [self addSubview:self.scrollView];
+    // 标题
+    self.titleLabel = [[UILabel alloc] init];
+    self.titleLabel.text = @"我们期待您的反馈";
+    self.titleLabel.font = [UIFont boldSystemFontOfSize:16]; // 32rpx -> 16pt
+    self.titleLabel.textColor = [UIColor colorWithRed:0.102 green:0.102 blue:0.102 alpha:1.0]; // #1A1A1A
+    [self addSubview:self.titleLabel];
     
-    // 内容视图
-    self.contentView = [[UIView alloc] init];
-    [self.scrollView addSubview:self.contentView];
+    // 描述
+    self.descLabel = [[UILabel alloc] init];
+    self.descLabel.text = @"请详细描述您的问题或建议，我们将及时跟进解决。";
+    self.descLabel.font = [UIFont systemFontOfSize:13]; // 26rpx -> 13pt
+    self.descLabel.textColor = [UIColor colorWithRed:0.102 green:0.102 blue:0.102 alpha:1.0]; // #1A1A1A
+    self.descLabel.numberOfLines = 0;
+    [self addSubview:self.descLabel];
     
-    // 反馈内容标签
-    self.contentLabel = [[UILabel alloc] init];
-    self.contentLabel.text = @"反馈内容";
-    self.contentLabel.font = [UIFont systemFontOfSize:16 weight:UIFontWeightMedium];
-    self.contentLabel.textColor = [UIColor colorWithHexString:@"#333333"];
-    [self.contentView addSubview:self.contentLabel];
+    // 输入框
+    self.textView = [[UITextView alloc] init];
+    self.textView.font = [UIFont systemFontOfSize:15];
+    self.textView.textColor = [UIColor colorWithRed:0.102 green:0.102 blue:0.102 alpha:1.0]; // #1A1A1A
+    self.textView.backgroundColor = [UIColor whiteColor];
+    self.textView.layer.borderColor = [UIColor colorWithRed:0.898 green:0.898 blue:0.898 alpha:1.0].CGColor; // #E5E5E5
+    self.textView.layer.borderWidth = 1.0;
+    self.textView.layer.cornerRadius = 4.0;
+    self.textView.textContainerInset = UIEdgeInsetsMake(10, 10, 10, 10);
     
-    // 反馈内容输入框
-    self.contentTextView = [[UITextView alloc] init];
-    self.contentTextView.font = [UIFont systemFontOfSize:16];
-    self.contentTextView.textColor = [UIColor colorWithHexString:@"#333333"];
-    self.contentTextView.layer.borderColor = [UIColor colorWithHexString:@"#E5E5E5"].CGColor;
-    self.contentTextView.layer.borderWidth = 1.0;
-    self.contentTextView.layer.cornerRadius = 8.0;
-    self.contentTextView.textContainerInset = UIEdgeInsetsMake(12, 12, 12, 12);
-    [self.contentView addSubview:self.contentTextView];
+    // 添加placeholder
+    UILabel *placeholderLabel = [[UILabel alloc] init];
+    placeholderLabel.text = @"请输入内容";
+    placeholderLabel.font = [UIFont systemFontOfSize:15];
+    placeholderLabel.textColor = [UIColor colorWithRed:0.702 green:0.702 blue:0.702 alpha:1.0]; // #B3B3B3
+    placeholderLabel.numberOfLines = 0;
+    placeholderLabel.userInteractionEnabled = NO;
+    placeholderLabel.translatesAutoresizingMaskIntoConstraints = NO;
+    [self.textView addSubview:placeholderLabel];
     
-    // 联系方式标签
-    self.contactLabel = [[UILabel alloc] init];
-    self.contactLabel.text = @"联系方式（选填）";
-    self.contactLabel.font = [UIFont systemFontOfSize:16 weight:UIFontWeightMedium];
-    self.contactLabel.textColor = [UIColor colorWithHexString:@"#333333"];
-    [self.contentView addSubview:self.contactLabel];
+    // 设置placeholder约束
+    [NSLayoutConstraint activateConstraints:@[
+        [placeholderLabel.topAnchor constraintEqualToAnchor:self.textView.topAnchor constant:10],
+        [placeholderLabel.leadingAnchor constraintEqualToAnchor:self.textView.leadingAnchor constant:15],
+        [placeholderLabel.trailingAnchor constraintEqualToAnchor:self.textView.trailingAnchor constant:-15],
+    ]];
     
-    // 联系方式输入框
-    self.contactInput = [[JJRInputView alloc] init];
-    self.contactInput.titleLabel.text = @"";
-    self.contactInput.textField.placeholder = @"请输入手机号或邮箱";
-    [self.contentView addSubview:self.contactInput];
+    // 监听textView变化来控制placeholder显示
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(textViewDidChange:) name:UITextViewTextDidChangeNotification object:self.textView];
+    
+    // 保存placeholder的引用
+    objc_setAssociatedObject(self.textView, @"placeholderLabel", placeholderLabel, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    
+    [self addSubview:self.textView];
     
     // 提交按钮
-    self.submitButton = [[JJRButton alloc] init];
-    [self.submitButton setTitle:@"提交反馈" forState:UIControlStateNormal];
+    self.submitButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    [self.submitButton setTitle:@"确认提交" forState:UIControlStateNormal];
+    [self.submitButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    self.submitButton.titleLabel.font = [UIFont systemFontOfSize:14]; // 28rpx -> 14pt
+    self.submitButton.backgroundColor =[UIColor colorWithHexString:@"#FF772C"]; // #3B4FDE
+    self.submitButton.layer.cornerRadius = 23.0;
     [self.submitButton addTarget:self action:@selector(submitButtonTapped) forControlEvents:UIControlEventTouchUpInside];
-    [self.contentView addSubview:self.submitButton];
+    [self addSubview:self.submitButton];
 }
 
 - (void)setupConstraints {
-    [self.scrollView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.edges.equalTo(self);
+    [self.titleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.mas_safeAreaLayoutGuideTop).offset(15); // 30rpx -> 15pt
+        make.left.equalTo(self).offset(15); // 30rpx -> 15pt
+        make.right.equalTo(self).offset(-15);
     }];
     
-    [self.contentView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.edges.equalTo(self.scrollView);
-        make.width.equalTo(self.scrollView);
+    [self.descLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.titleLabel.mas_bottom).offset(10); // 20rpx -> 10pt
+        make.left.equalTo(self).offset(15);
+        make.right.equalTo(self).offset(-15);
     }];
     
-    [self.contentLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.contentView).offset(20);
-        make.left.equalTo(self.contentView).offset(20);
-        make.right.equalTo(self.contentView).offset(-20);
-        make.height.mas_equalTo(24);
-    }];
-    
-    [self.contentTextView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.contentLabel.mas_bottom).offset(10);
-        make.left.equalTo(self.contentView).offset(20);
-        make.right.equalTo(self.contentView).offset(-20);
-        make.height.mas_equalTo(120);
-    }];
-    
-    [self.contactLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.contentTextView.mas_bottom).offset(20);
-        make.left.equalTo(self.contentView).offset(20);
-        make.right.equalTo(self.contentView).offset(-20);
-        make.height.mas_equalTo(24);
-    }];
-    
-    [self.contactInput mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.contactLabel.mas_bottom).offset(10);
-        make.left.equalTo(self.contentView).offset(20);
-        make.right.equalTo(self.contentView).offset(-20);
-        make.height.mas_equalTo(60);
+    [self.textView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.descLabel.mas_bottom).offset(15);
+        make.left.equalTo(self).offset(15);
+        make.right.equalTo(self).offset(-15);
+        make.height.mas_equalTo(100); // 与uni-app一致
     }];
     
     [self.submitButton mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.contactInput.mas_bottom).offset(40);
-        make.left.equalTo(self.contentView).offset(20);
-        make.right.equalTo(self.contentView).offset(-20);
-        make.height.mas_equalTo(50);
-        make.bottom.equalTo(self.contentView).offset(-20);
+        make.bottom.equalTo(self.mas_safeAreaLayoutGuideBottom).offset(-15); // 30rpx -> 15pt
+        make.left.equalTo(self).offset(16); // 32rpx -> 16pt
+        make.right.equalTo(self).offset(-16);
+        make.height.mas_equalTo(49); // 98rpx -> 49pt
     }];
+}
+
+- (void)textViewDidChange:(NSNotification *)notification {
+    UITextView *textView = notification.object;
+    UILabel *placeholderLabel = objc_getAssociatedObject(textView, @"placeholderLabel");
+    placeholderLabel.hidden = textView.text.length > 0;
 }
 
 - (void)submitButtonTapped {
     if (self.submitFeedbackBlock) {
-        self.submitFeedbackBlock(self.contentTextView.text, self.contactInput.textField.text);
+        self.submitFeedbackBlock(self.textView.text);
     }
+}
+
+- (void)clearContent {
+    self.textView.text = @"";
+    UILabel *placeholderLabel = objc_getAssociatedObject(self.textView, @"placeholderLabel");
+    placeholderLabel.hidden = NO;
+}
+
+- (void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 @end 

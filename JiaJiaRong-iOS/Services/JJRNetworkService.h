@@ -180,6 +180,11 @@ typedef void(^JJRFailureBlock)(NSError *error);
                         success:(JJRSuccessBlock)success 
                         failure:(JJRFailureBlock)failure;
 
+// 提交意见反馈
+- (void)submitOpinionWithParams:(NSDictionary *)params 
+                       success:(JJRSuccessBlock)success 
+                       failure:(JJRFailureBlock)failure;
+
 #pragma mark - 授权相关接口
 // 获取授权机构数量
 - (void)getAuthorityNumberWithSuccess:(JJRSuccessBlock)success 

@@ -12,7 +12,7 @@
 #import "JJRNetworkService.h"
 #import "JJRToast.h"
 #import "JJRUserManager.h"
-#import "ToastTool.h"
+#import "JJRToastTool.h"
 #import "LoginViewController.h"
 #import <Masonry/Masonry.h>
 
@@ -69,7 +69,7 @@
 
 - (void)sendCaptcha:(NSString *)mobile {
     if (!mobile || mobile.length == 0) {
-        [ToastTool showToast:@"请输入手机号" inView:self.view];
+        [JJRToastTool showToast:@"请输入手机号" inView:self.view];
         return;
     }
     
@@ -77,7 +77,7 @@
     NSString *mobileRegex = @"^1[3456789]\\d{9}$";
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", mobileRegex];
     if (![predicate evaluateWithObject:mobile]) {
-        [ToastTool showToast:@"请输入正确格式手机号" inView:self.view];
+        [JJRToastTool showToast:@"请输入正确格式手机号" inView:self.view];
         return;
     }
     
@@ -98,13 +98,13 @@
                                                       success:^(NSDictionary *response) {
         [JJRNetworkService hideLoading];
         dispatch_async(dispatch_get_main_queue(), ^{
-            [ToastTool showToast:@"验证码已发送" inView:self.view];
+            [JJRToastTool showToast:@"验证码已发送" inView:self.view];
             [self.passwordModifyView startCaptchaCountdown];
         });
     } failure:^(NSError *error) {
         [JJRNetworkService hideLoading];
         dispatch_async(dispatch_get_main_queue(), ^{
-            [ToastTool showToast:@"验证码发送失败，请重试" inView:self.view];
+            [JJRToastTool showToast:@"验证码发送失败，请重试" inView:self.view];
         });
     }];
 }
@@ -117,23 +117,23 @@
     
     // 参数验证
     if (!mobile || mobile.length != 11) {
-        [ToastTool showToast:@"请填写正确的手机号" inView:self.view];
+        [JJRToastTool showToast:@"请填写正确的手机号" inView:self.view];
         return;
     }
     
     if (!captcha || captcha.length != 4) {
-        [ToastTool showToast:@"请填写正确的验证码" inView:self.view];
+        [JJRToastTool showToast:@"请填写正确的验证码" inView:self.view];
         return;
     }
     
     if (!newPassword || newPassword.length == 0) {
-        [ToastTool showToast:@"请填写正确的密码" inView:self.view];
+        [JJRToastTool showToast:@"请填写正确的密码" inView:self.view];
         return;
     }
     
     // 密码格式验证：8-16位数字及字母组成
     if (newPassword.length < 8 || newPassword.length > 16) {
-        [ToastTool showToast:@"密码长度必须为8-16位" inView:self.view];
+        [JJRToastTool showToast:@"密码长度必须为8-16位" inView:self.view];
         return;
     }
     
@@ -141,17 +141,17 @@
     NSString *passwordRegex = @"^(?=.*\\d)(?=.*[a-zA-Z])[a-zA-Z\\d]{8,16}$";
     NSPredicate *passwordPredicate = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", passwordRegex];
     if (![passwordPredicate evaluateWithObject:newPassword]) {
-        [ToastTool showToast:@"密码必须由8-16位数字及字母组成" inView:self.view];
+        [JJRToastTool showToast:@"密码必须由8-16位数字及字母组成" inView:self.view];
         return;
     }
     
     if (!confirmPassword || confirmPassword.length == 0) {
-        [ToastTool showToast:@"请再次确认密码" inView:self.view];
+        [JJRToastTool showToast:@"请再次确认密码" inView:self.view];
         return;
     }
     
     if (![newPassword isEqualToString:confirmPassword]) {
-        [ToastTool showToast:@"确认密码请和原密码保持一致" inView:self.view];
+        [JJRToastTool showToast:@"确认密码请和原密码保持一致" inView:self.view];
         return;
     }
     
@@ -174,14 +174,14 @@
                                                          success:^(NSDictionary *response) {
         [JJRNetworkService hideLoading];
         dispatch_async(dispatch_get_main_queue(), ^{
-            [ToastTool showToastInKeWindow:@"修改成功"];
+            [JJRToastTool showToastInKeWindow:@"修改成功"];
             // 修改成功后退出登录
             [self logoutAndBackToLogin];
         });
     } failure:^(NSError *error) {
         [JJRNetworkService hideLoading];
         dispatch_async(dispatch_get_main_queue(), ^{
-            [ToastTool showToast:@"密码修改失败，请重试" inView:self.view];
+            [JJRToastTool showToast:@"密码修改失败，请重试" inView:self.view];
         });
     }];
 }
