@@ -51,6 +51,21 @@
 // 身份证验证
 #define JJR_IDCARD_VERIFY @"/app/idcard/verify"
 
+// 身份证信息上传
+#define JJR_IDENTITY_UPLOAD @"/app/identity/upload"
+
+// 身份证人像面OCR识别
+#define JJR_IDENTITY_IDCARD_FACE @"/app/identity/idcard/face"
+
+// 身份证国徽面OCR识别
+#define JJR_IDENTITY_IDCARD_BACK @"/app/identity/idcard/back"
+
+// 保存身份证信息
+#define JJR_IDENTITY_SAVE @"/app/identity/save"
+
+// 初始化人脸识别
+#define JJR_IDENTITY_INIT_FACE_VERIFY @"/app/identity/initFaceVerify"
+
 #pragma mark - 银行卡相关接口
 // 获取银行卡列表
 #define JJR_BANK_CARD_LIST @"/app/blank/list"

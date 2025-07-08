@@ -285,14 +285,20 @@
 #pragma mark - 身份证相关接口
 
 - (void)recognizeIdCardWithImage:(UIImage *)image 
-                        success:(JJRSuccessBlock)success 
-                        failure:(JJRFailureBlock)failure {
+                         success:(JJRSuccessBlock)success 
+                         failure:(JJRFailureBlock)failure {
+    
+    // 每次请求前重新生成动态请求头
+    [self addUniAppHeaders];
     
     NSString *fullURL = [NSString stringWithFormat:@"%@%@", self.baseURL, JJR_IDCARD_RECOGNIZE];
     
+    // 临时保存并移除Content-Type，让AFNetworking自动设置multipart
+    NSString *originalContentType = [self.sessionManager.requestSerializer valueForHTTPHeaderField:@"Content-Type"];
+    [self.sessionManager.requestSerializer setValue:nil forHTTPHeaderField:@"Content-Type"];
+    
     [self.sessionManager POST:fullURL 
                    parameters:nil 
-                      
      constructingBodyWithBlock:^(id<AFMultipartFormData>  _Nonnull formData) {
         NSData *imageData = UIImageJPEGRepresentation(image, 0.8);
         [formData appendPartWithFileData:imageData 
@@ -300,11 +306,18 @@
                                 fileName:@"idcard.jpg" 
                                 mimeType:@"image/jpeg"];
     } 
+                      progress:nil
                       success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+        // 恢复原始的Content-Type
+        [self.sessionManager.requestSerializer setValue:originalContentType forHTTPHeaderField:@"Content-Type"];
+        
         if (success) {
             success(responseObject);
         }
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+        // 恢复原始的Content-Type
+        [self.sessionManager.requestSerializer setValue:originalContentType forHTTPHeaderField:@"Content-Type"];
+        
         if (failure) {
             failure(error);
         }
@@ -315,6 +328,96 @@
                       success:(JJRSuccessBlock)success 
                       failure:(JJRFailureBlock)failure {
     [self POST:JJR_IDCARD_VERIFY params:params success:success failure:failure];
+}
+
+- (void)uploadIdCardImage:(UIImage *)image 
+                 success:(JJRSuccessBlock)success 
+                 failure:(JJRFailureBlock)failure {
+    
+    // 每次请求前重新生成动态请求头
+    [self addUniAppHeaders];
+    
+    NSString *fullURL = [NSString stringWithFormat:@"%@%@", self.baseURL, JJR_IDENTITY_UPLOAD];
+    
+    NSLog(@"📤 开始上传身份证图片");
+    NSLog(@"📤 URL: %@", fullURL);
+    NSLog(@"📤 图片尺寸: %.0f x %.0f", image.size.width, image.size.height);
+    
+    // 临时保存并移除Content-Type，让AFNetworking自动设置multipart
+    NSString *originalContentType = [self.sessionManager.requestSerializer valueForHTTPHeaderField:@"Content-Type"];
+    [self.sessionManager.requestSerializer setValue:nil forHTTPHeaderField:@"Content-Type"];
+    
+    // 打印请求头
+    NSDictionary *headers = self.sessionManager.requestSerializer.HTTPRequestHeaders;
+    NSLog(@"📤 请求头: %@", headers);
+    
+    [self.sessionManager POST:fullURL 
+                   parameters:nil 
+     constructingBodyWithBlock:^(id<AFMultipartFormData>  _Nonnull formData) {
+        NSData *imageData = UIImageJPEGRepresentation(image, 0.8);
+        NSLog(@"📤 图片数据大小: %.2f KB", imageData.length / 1024.0);
+        
+        [formData appendPartWithFileData:imageData 
+                                    name:@"file" 
+                                fileName:@"idcard.jpg" 
+                                mimeType:@"image/jpeg"];
+    } 
+                      progress:nil
+                      success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+        NSLog(@"✅ 身份证图片上传成功");
+        NSLog(@"✅ 响应数据: %@", responseObject);
+        
+        // 恢复原始的Content-Type
+        [self.sessionManager.requestSerializer setValue:originalContentType forHTTPHeaderField:@"Content-Type"];
+        
+        if (success) {
+            success(responseObject);
+        }
+    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+        NSLog(@"❌ 身份证图片上传失败");
+        NSLog(@"❌ 错误信息: %@", error.localizedDescription);
+        
+        // 恢复原始的Content-Type
+        [self.sessionManager.requestSerializer setValue:originalContentType forHTTPHeaderField:@"Content-Type"];
+        
+        // 打印HTTP响应状态码
+        if (task.response && [task.response isKindOfClass:[NSHTTPURLResponse class]]) {
+            NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)task.response;
+            NSLog(@"❌ HTTP状态码: %ld", (long)httpResponse.statusCode);
+        }
+        
+        if (failure) {
+            failure(error);
+        }
+    }];
+}
+
+- (void)recognizeIdCardFaceWithImageUrl:(NSString *)imageUrl 
+                               success:(JJRSuccessBlock)success 
+                               failure:(JJRFailureBlock)failure {
+    
+    NSDictionary *params = @{@"url": imageUrl ?: @""};
+    [self POST:JJR_IDENTITY_IDCARD_FACE params:params success:success failure:failure];
+}
+
+- (void)recognizeIdCardBackWithImageUrl:(NSString *)imageUrl 
+                               success:(JJRSuccessBlock)success 
+                               failure:(JJRFailureBlock)failure {
+    
+    NSDictionary *params = @{@"url": imageUrl ?: @""};
+    [self POST:JJR_IDENTITY_IDCARD_BACK params:params success:success failure:failure];
+}
+
+- (void)saveIdCardInfoWithParams:(NSDictionary *)params 
+                        success:(JJRSuccessBlock)success 
+                        failure:(JJRFailureBlock)failure {
+    [self POST:JJR_IDENTITY_SAVE params:params success:success failure:failure];
+}
+
+- (void)initFaceVerifyWithParams:(NSDictionary *)params 
+                        success:(JJRSuccessBlock)success 
+                        failure:(JJRFailureBlock)failure {
+    [self POST:JJR_IDENTITY_INIT_FACE_VERIFY params:params success:success failure:failure];
 }
 
 #pragma mark - 银行卡相关接口
@@ -428,11 +531,17 @@
            success:(JJRSuccessBlock)success 
            failure:(JJRFailureBlock)failure {
     
+    // 每次请求前重新生成动态请求头
+    [self addUniAppHeaders];
+    
     NSString *fullURL = [NSString stringWithFormat:@"%@%@", self.baseURL, JJR_UPLOAD_IMAGE];
+    
+    // 临时保存并移除Content-Type，让AFNetworking自动设置multipart
+    NSString *originalContentType = [self.sessionManager.requestSerializer valueForHTTPHeaderField:@"Content-Type"];
+    [self.sessionManager.requestSerializer setValue:nil forHTTPHeaderField:@"Content-Type"];
     
     [self.sessionManager POST:fullURL 
                    parameters:nil 
-                      
      constructingBodyWithBlock:^(id<AFMultipartFormData>  _Nonnull formData) {
         NSData *imageData = UIImageJPEGRepresentation(image, 0.8);
         [formData appendPartWithFileData:imageData 
@@ -440,11 +549,18 @@
                                 fileName:@"image.jpg" 
                                 mimeType:@"image/jpeg"];
     } 
+                      progress:nil
                       success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+        // 恢复原始的Content-Type
+        [self.sessionManager.requestSerializer setValue:originalContentType forHTTPHeaderField:@"Content-Type"];
+        
         if (success) {
             success(responseObject);
         }
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+        // 恢复原始的Content-Type
+        [self.sessionManager.requestSerializer setValue:originalContentType forHTTPHeaderField:@"Content-Type"];
+        
         if (failure) {
             failure(error);
         }
@@ -457,22 +573,35 @@
           success:(JJRSuccessBlock)success 
           failure:(JJRFailureBlock)failure {
     
+    // 每次请求前重新生成动态请求头
+    [self addUniAppHeaders];
+    
     NSString *fullURL = [NSString stringWithFormat:@"%@%@", self.baseURL, JJR_UPLOAD_FILE];
+    
+    // 临时保存并移除Content-Type，让AFNetworking自动设置multipart
+    NSString *originalContentType = [self.sessionManager.requestSerializer valueForHTTPHeaderField:@"Content-Type"];
+    [self.sessionManager.requestSerializer setValue:nil forHTTPHeaderField:@"Content-Type"];
     
     [self.sessionManager POST:fullURL 
                    parameters:nil 
-                      
      constructingBodyWithBlock:^(id<AFMultipartFormData>  _Nonnull formData) {
         [formData appendPartWithFileData:fileData 
                                     name:@"file" 
                                 fileName:fileName 
                                 mimeType:mimeType];
     } 
+                      progress:nil
                       success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+        // 恢复原始的Content-Type
+        [self.sessionManager.requestSerializer setValue:originalContentType forHTTPHeaderField:@"Content-Type"];
+        
         if (success) {
             success(responseObject);
         }
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+        // 恢复原始的Content-Type
+        [self.sessionManager.requestSerializer setValue:originalContentType forHTTPHeaderField:@"Content-Type"];
+        
         if (failure) {
             failure(error);
         }

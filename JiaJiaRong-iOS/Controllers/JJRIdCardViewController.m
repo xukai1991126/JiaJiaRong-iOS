@@ -37,7 +37,7 @@
 }
 
 - (void)setupUI {
-    self.title = @"身份证认证";
+    self.title = @"身份证";
     self.view.backgroundColor = [UIColor whiteColor];
     
     self.idCardView = [[JJRIdCardView alloc] init];
@@ -201,7 +201,7 @@
 - (void)uploadIdCardInfo {
     [JJRNetworkService showLoading];
     
-    // 构建请求参数
+    // 构建请求参数 - 使用与uni-app相同的字段结构
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
     params[@"idName"] = self.form.idName ?: @"";
     params[@"idNo"] = self.form.idNo ?: @"";
@@ -214,14 +214,20 @@
     params[@"sex"] = self.form.sex ?: @"";
     params[@"validPeriod"] = self.form.validPeriod ?: @"";
     
-    [[JJRNetworkService sharedInstance] verifyIdCardWithParams:params success:^(NSDictionary *responseObject) {
+    // 调用正确的保存接口
+    [[JJRNetworkService sharedInstance] saveIdCardInfoWithParams:params success:^(NSDictionary *responseObject) {
         [JJRNetworkService hideLoading];
         
-        if ([responseObject[@"code"] integerValue] == 200) {
-            // 上传成功，进入人脸识别步骤
-            [self.idCardView setStep:JJRIdCardStepFaceVerify animated:YES];
+        if ([responseObject[@"code"] integerValue] == 0) {
+            // 保存成功，进入人脸识别步骤
+            [self showToast:@"上传成功"];
+            
+            // 延迟跳转到人脸识别页面
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                [self.idCardView setStep:JJRIdCardStepFaceVerify animated:YES];
+            });
         } else {
-            [self showToast:responseObject[@"msg"] ?: @"上传失败"];
+            [self showToast:responseObject[@"err"][@"msg"] ?: @"保存失败"];
         }
     } failure:^(NSError *error) {
         [JJRNetworkService hideLoading];
@@ -239,17 +245,18 @@
         @"metaInfo": metaInfo ?: @""
     };
     
-    [[JJRNetworkService sharedInstance] realNameAuthWithParams:params success:^(NSDictionary *responseObject) {
+    // 调用正确的人脸识别初始化接口
+    [[JJRNetworkService sharedInstance] initFaceVerifyWithParams:params success:^(NSDictionary *responseObject) {
         [JJRNetworkService hideLoading];
         
-        if ([responseObject[@"code"] integerValue] == 200) {
-            self.certifyData = responseObject[@"data"][@"certifyData"];
+        if ([responseObject[@"code"] integerValue] == 0) {
+            self.certifyData = responseObject[@"data"];
             self.metaInfo = metaInfo;
             
             // 调用人脸识别SDK
             [self callFaceVerifySDK];
         } else {
-            [self showToast:responseObject[@"msg"] ?: @"人脸识别初始化失败"];
+            [self showToast:responseObject[@"err"][@"msg"] ?: @"人脸识别初始化失败"];
         }
     } failure:^(NSError *error) {
         [JJRNetworkService hideLoading];
@@ -259,35 +266,48 @@
 
 - (void)callFaceVerifySDK {
     // 这里需要集成具体的人脸识别SDK
-    // 示例代码，实际需要根据SDK文档实现
+    // 模拟调用阿里云金融级实人认证SDK
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         // 模拟人脸识别成功
-        [self faceVerifySuccess];
+        [self faceVerifySuccess:1000]; // 1000表示成功
     });
 }
 
-- (void)faceVerifySuccess {
-    [JJRNetworkService showLoading];
-    
-    NSDictionary *params = @{
-        @"certifyData": self.certifyData ?: @"",
-        @"metaInfo": self.metaInfo ?: @""
-    };
-    
-    [[JJRNetworkService sharedInstance] realNameAuthWithParams:params success:^(NSDictionary *responseObject) {
-        [JJRNetworkService hideLoading];
+- (void)faceVerifySuccess:(NSInteger)code {
+    if (code == 1000) {
+        // 人脸识别成功
+        // 更新用户信息状态（与uni-app保持一致）
+        // 这里可以保存用户认证状态到本地存储
         
-        if ([responseObject[@"code"] integerValue] == 200) {
-            // 人脸识别成功，显示结果页
+        [self showToast:@"人脸识别成功"];
+        
+        // 延迟显示结果页面
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             [self.idCardView setStep:JJRIdCardStepResult animated:YES];
             [self.idCardView showResult:YES];
-        } else {
-            [self showToast:responseObject[@"msg"] ?: @"人脸识别失败"];
+        });
+    } else {
+        // 人脸识别失败
+        NSString *errorMessage = @"认证失败";
+        switch (code) {
+            case 1001:
+                errorMessage = @"系统错误";
+                break;
+            case 1003:
+                errorMessage = @"验证中断";
+                break;
+            case 2003:
+                errorMessage = @"客户端设备时间错误";
+                break;
+            case 2006:
+                errorMessage = @"刷脸失败";
+                break;
+            default:
+                errorMessage = @"认证失败";
+                break;
         }
-    } failure:^(NSError *error) {
-        [JJRNetworkService hideLoading];
-        [self showToast:@"网络错误，请重试"];
-    }];
+        [self showToast:errorMessage];
+    }
 }
 
 - (NSString *)getMetaInfo {
@@ -334,25 +354,95 @@
         image = info[UIImagePickerControllerOriginalImage];
     }
     
-    // 保存图片到本地
-    NSString *fileName = [NSString stringWithFormat:@"idcard_%@_%ld.jpg", self.currentUploadType, (long)[[NSDate date] timeIntervalSince1970]];
-    NSString *filePath = [NSTemporaryDirectory() stringByAppendingPathComponent:fileName];
+    [picker dismissViewControllerAnimated:YES completion:^{
+        // 先更新UI显示图片
+        if ([self.currentUploadType isEqualToString:@"face"]) {
+            [self.idCardView setFaceImage:image];
+        } else if ([self.currentUploadType isEqualToString:@"back"]) {
+            [self.idCardView setBackImage:image];
+        }
+        
+        // 开始上传和识别流程
+        [self uploadAndRecognizeImage:image forType:self.currentUploadType];
+    }];
+}
+
+- (void)uploadAndRecognizeImage:(UIImage *)image forType:(NSString *)type {
+    [JJRNetworkService showLoading];
     
-    NSData *imageData = UIImageJPEGRepresentation(image, 0.8);
-    [imageData writeToFile:filePath atomically:YES];
-    
-    // 根据当前上传类型更新对应的UI和数据
-    if ([self.currentUploadType isEqualToString:@"face"]) {
-        // 身份证人像面
-        [self.idCardView setFaceImage:image];
-        self.form.faceImage = filePath;
-    } else if ([self.currentUploadType isEqualToString:@"back"]) {
-        // 身份证国徽面
-        [self.idCardView setBackImage:image];
-        self.form.backImage = filePath;
+    // 第一步：上传图片到服务器
+    [[JJRNetworkService sharedInstance] uploadIdCardImage:image success:^(NSDictionary *responseObject) {
+        if ([responseObject[@"code"] integerValue] == 0) {
+            NSString *imageUrl = responseObject[@"data"];
+            if (imageUrl && imageUrl.length > 0) {
+                // 第二步：调用OCR识别接口
+                [self recognizeIdCardWithImageUrl:imageUrl forType:type];
+            } else {
+                [JJRNetworkService hideLoading];
+                [self showToast:@"图片上传失败，请重试"];
+            }
+        } else {
+            [JJRNetworkService hideLoading];
+            [self showToast:responseObject[@"msg"] ?: @"图片上传失败"];
+        }
+    } failure:^(NSError *error) {
+        [JJRNetworkService hideLoading];
+        [self showToast:@"网络错误，请重试"];
+    }];
+}
+
+- (void)recognizeIdCardWithImageUrl:(NSString *)imageUrl forType:(NSString *)type {
+    if ([type isEqualToString:@"face"]) {
+        // 识别身份证人像面
+        [[JJRNetworkService sharedInstance] recognizeIdCardFaceWithImageUrl:imageUrl success:^(NSDictionary *responseObject) {
+            [JJRNetworkService hideLoading];
+            
+            if ([responseObject[@"code"] integerValue] == 0) {
+                // 解析识别结果并更新表单
+                NSDictionary *data = responseObject[@"data"];
+                self.form.faceImage = imageUrl;
+                self.form.idName = data[@"name"] ?: @"";
+                self.form.idNo = data[@"idNumber"] ?: @"";
+                self.form.address = data[@"address"] ?: @"";
+                self.form.birthDate = data[@"birthDate"] ?: @"";
+                self.form.ethnicity = data[@"ethnicity"] ?: @"";
+                self.form.sex = data[@"sex"] ?: @"";
+                
+                [self showToast:@"身份证人像面识别成功"];
+            } else {
+                [self showToast:responseObject[@"err"][@"msg"] ?: @"身份证识别失败，请重新上传"];
+                // 清空图片
+                self.form.faceImage = @"";
+                [self.idCardView setFaceImage:[UIImage imageNamed:@"idcard_face_placeholder"]];
+            }
+        } failure:^(NSError *error) {
+            [JJRNetworkService hideLoading];
+            [self showToast:@"网络错误，请重试"];
+        }];
+    } else if ([type isEqualToString:@"back"]) {
+        // 识别身份证国徽面
+        [[JJRNetworkService sharedInstance] recognizeIdCardBackWithImageUrl:imageUrl success:^(NSDictionary *responseObject) {
+            [JJRNetworkService hideLoading];
+            
+            if ([responseObject[@"code"] integerValue] == 0) {
+                // 解析识别结果并更新表单
+                NSDictionary *data = responseObject[@"data"];
+                self.form.backImage = imageUrl;
+                self.form.issueAuthority = data[@"issueAuthority"] ?: @"";
+                self.form.validPeriod = data[@"validPeriod"] ?: @"";
+                
+                [self showToast:@"身份证国徽面识别成功"];
+            } else {
+                [self showToast:responseObject[@"err"][@"msg"] ?: @"身份证识别失败，请重新上传"];
+                // 清空图片
+                self.form.backImage = @"";
+                [self.idCardView setBackImage:[UIImage imageNamed:@"idcard_back_placeholder"]];
+            }
+        } failure:^(NSError *error) {
+            [JJRNetworkService hideLoading];
+            [self showToast:@"网络错误，请重试"];
+        }];
     }
-    
-    [picker dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker {

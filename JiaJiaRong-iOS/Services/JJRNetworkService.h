@@ -89,6 +89,31 @@ typedef void(^JJRFailureBlock)(NSError *error);
                       success:(JJRSuccessBlock)success 
                       failure:(JJRFailureBlock)failure;
 
+// 身份证图片上传
+- (void)uploadIdCardImage:(UIImage *)image 
+                 success:(JJRSuccessBlock)success 
+                 failure:(JJRFailureBlock)failure;
+
+// 身份证人像面OCR识别
+- (void)recognizeIdCardFaceWithImageUrl:(NSString *)imageUrl 
+                               success:(JJRSuccessBlock)success 
+                               failure:(JJRFailureBlock)failure;
+
+// 身份证国徽面OCR识别
+- (void)recognizeIdCardBackWithImageUrl:(NSString *)imageUrl 
+                               success:(JJRSuccessBlock)success 
+                               failure:(JJRFailureBlock)failure;
+
+// 保存身份证信息
+- (void)saveIdCardInfoWithParams:(NSDictionary *)params 
+                        success:(JJRSuccessBlock)success 
+                        failure:(JJRFailureBlock)failure;
+
+// 初始化人脸识别
+- (void)initFaceVerifyWithParams:(NSDictionary *)params 
+                        success:(JJRSuccessBlock)success 
+                        failure:(JJRFailureBlock)failure;
+
 #pragma mark - 银行卡相关接口
 // 获取银行卡列表
 - (void)getBankCardListWithSuccess:(JJRSuccessBlock)success 
