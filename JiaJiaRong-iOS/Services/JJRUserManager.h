@@ -21,9 +21,8 @@ NS_ASSUME_NONNULL_BEGIN
 // 用户信息
 @property (nonatomic, strong, nullable) NSDictionary *userInfo;
 
-// Token管理
+// Token管理 - 和uni-app保持一致，只有一个token
 @property (nonatomic, strong, nullable) NSString *token;
-@property (nonatomic, strong, nullable) NSString *userToken; // 用户登录token
 
 // 手机号
 @property (nonatomic, strong, nullable) NSString *mobile;
@@ -42,13 +41,10 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)clearAllUserData;
 
 #pragma mark - Token管理
-// 保存应用渠道token
-- (void)saveChannelToken:(NSString *)token;
+// 保存token（和uni-app一致，只有一个token）
+- (void)saveToken:(NSString *)token;
 
-// 保存用户登录token
-- (void)saveUserToken:(NSString *)userToken;
-
-// 获取当前有效的token（优先使用用户token，其次使用渠道token）
+// 获取当前token
 - (NSString * _Nullable)getCurrentToken;
 
 #pragma mark - 用户信息管理

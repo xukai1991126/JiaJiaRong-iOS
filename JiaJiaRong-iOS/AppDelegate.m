@@ -88,7 +88,6 @@
     
     NSLog(@"🎯 UserManager的属性值:");
     NSLog(@"🎯 - userInfo: %@", userManager.userInfo ? @"✅ 有数据" : @"❌ 无数据");
-    NSLog(@"🎯 - userToken: %@", userManager.userToken ? @"✅ 有数据" : @"❌ 无数据");
     NSLog(@"🎯 - channelToken: %@", userManager.token ? @"✅ 有数据" : @"❌ 无数据");
     NSLog(@"🎯 - mobile: %@", userManager.mobile ?: @"❌ 无数据");
     

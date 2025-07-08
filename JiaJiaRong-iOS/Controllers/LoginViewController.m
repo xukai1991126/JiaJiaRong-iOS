@@ -57,8 +57,8 @@
     CAGradientLayer *gradientLayer = [CAGradientLayer layer];
     gradientLayer.frame = self.view.bounds;
     gradientLayer.colors = @[
-        (id)[UIColor colorWithHexString:@"#263FED"].CGColor,
-        (id)[UIColor colorWithRed:48.0/255.0 green:155.0/255.0 blue:255.0/255.0 alpha:0.6].CGColor
+        (id)[UIColor colorWithHexString:@"#F2582B"].CGColor,
+        (id)[UIColor colorWithHexString:@"#FAE9D1"].CGColor
     ];
     gradientLayer.startPoint = CGPointMake(0, 0);
     gradientLayer.endPoint = CGPointMake(0, 1);
@@ -112,7 +112,7 @@
     [self.tabContainer addSubview:self.passwordTabButton];
     
     self.tabIndicator = [[UIView alloc] init];
-    self.tabIndicator.backgroundColor = [UIColor colorWithHexString:@"#3B4FDE"];
+    self.tabIndicator.backgroundColor = [UIColor colorWithHexString:@"#FF772C"];
     self.tabIndicator.layer.cornerRadius = 3;
     [self.tabContainer addSubview:self.tabIndicator];
     
@@ -178,7 +178,7 @@
     self.loginButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [self.loginButton setTitle:@"立即登录" forState:UIControlStateNormal];
     [self.loginButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    self.loginButton.backgroundColor = [UIColor colorWithHexString:@"#3B4FDE"];
+    self.loginButton.backgroundColor = [UIColor colorWithHexString:@"#FF772C"];
     self.loginButton.layer.cornerRadius = 10;
     self.loginButton.titleLabel.font = [UIFont systemFontOfSize:16];
     [self.loginButton addTarget:self action:@selector(loginTapped) forControlEvents:UIControlEventTouchUpInside];
@@ -590,25 +590,12 @@
     NSLog(@"🎯 登录成功: %@", response);
     
     // 保存登录信息到用户管理器
-    // 注意：要和uni-app保持一致，uni-app保存的是res.data，不是res.data.data
+    // 和uni-app保持一致，登录成功后只保存用户信息和手机号，不更新token
     NSDictionary *userInfo = response[@"data"];
     NSLog(@"🎯 准备保存的用户信息: %@", userInfo);
     NSLog(@"🎯 准备保存的手机号: %@", mobile);
     
-    // 检查userInfo中是否包含tk字段（服务端返回的是tk，不是token）
-    NSString *userToken = userInfo[@"tk"];
-    if (!userToken) {
-        // 如果userInfo中没有tk，检查response层级
-        userToken = response[@"tk"];
-        NSLog(@"🎯 在response层级找到tk: %@", userToken);
-    }
-    
-    // 如果找到了tk，先保存到UserManager作为用户token
-    if (userToken && userToken.length > 0) {
-        [[JJRUserManager sharedManager] saveUserToken:userToken];
-        NSLog(@"🎯 手动保存用户token (tk): %@", userToken);
-    }
-    
+    // 和uni-app一致：登录成功后不处理token，继续使用渠道token
     [[JJRUserManager sharedManager] saveLoginInfo:userInfo mobile:mobile];
     
     // 验证保存后的状态
@@ -616,7 +603,6 @@
     NSLog(@"🎯 保存后的UserManager状态:");
     NSLog(@"🎯 - isLoggedIn: %@", userManager.isLoggedIn ? @"YES" : @"NO");
     NSLog(@"🎯 - userInfo: %@", userManager.userInfo);
-    NSLog(@"🎯 - userToken: %@", userManager.userToken);
     NSLog(@"🎯 - token: %@", userManager.token);
     NSLog(@"🎯 - mobile: %@", userManager.mobile);
     
@@ -624,7 +610,6 @@
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     NSLog(@"🎯 保存后NSUserDefaults中的值:");
     NSLog(@"🎯 - JJRUserInfo: %@", [defaults objectForKey:@"JJRUserInfo"]);
-    NSLog(@"🎯 - userToken: %@", [defaults objectForKey:@"userToken"]);
     NSLog(@"🎯 - token: %@", [defaults objectForKey:@"token"]);
     NSLog(@"🎯 - mobile: %@", [defaults objectForKey:@"mobile"]);
     
@@ -720,12 +705,8 @@
 - (void)fetchAppChannelInfo {
     NSLog(@"🎯 开始获取应用渠道信息");
     
-    // 检查是否已有token（使用JJRUserManager）
-    NSString *existingToken = [[JJRUserManager sharedManager] getCurrentToken];
-    if (existingToken && existingToken.length > 0) {
-        NSLog(@"🎯 已有token，跳过获取");
-        return;
-    }
+    // 和uni-app保持一致：每次都获取token，不检查本地是否已有
+    // uni-app中每次进入相关页面都会直接调用/app/channel接口
     
     [[JJRNetworkService sharedInstance] getAppChannelWithAppId:@"JJR" 
                                                        client:@"IOS" 
@@ -733,8 +714,8 @@
         
         NSString *token = response[@"data"][@"tk"];  // 服务端返回的是tk字段
         if (token) {
-            [[JJRUserManager sharedManager] saveChannelToken:token];
-            NSLog(@"🎯 保存渠道token (tk): %@", token);
+            [[JJRUserManager sharedManager] saveToken:token];
+            NSLog(@"🎯 保存token (tk): %@", token);
         }
     } failure:^(NSError *error) {
         NSLog(@"🎯 应用渠道信息获取失败: %@", error.localizedDescription);

@@ -7,6 +7,7 @@
 #import "LoginViewController.h"
 #import <Masonry/Masonry.h>
 #import "UIColor+Hex.h"
+#import "ToastTool.h"
 
 @interface MoreViewController ()
 
@@ -346,8 +347,9 @@
 - (void)performLogout {
     [[JJRNetworkService sharedInstance] logoutWithSuccess:^(NSDictionary *response) {
         dispatch_async(dispatch_get_main_queue(), ^{
-            [self showToast:@"登出成功"];
-            [self.userManager logout];
+            // 和uni-app保持一致：清除所有存储包括token
+            // uni-app中退出登录时调用uni.clearStorage()
+            [self.userManager clearAllUserData];
             
             // 延迟跳转到登录页面
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
@@ -356,7 +358,7 @@
         });
     } failure:^(NSError *error) {
         dispatch_async(dispatch_get_main_queue(), ^{
-            [self showToast:@"登出失败，请重试"];
+            [ToastTool showError:@"登出失败，请重试" inView:self.view];
         });
     }];
 }
@@ -364,8 +366,10 @@
 - (void)performCancelAccount {
     [[JJRNetworkService sharedInstance] cancelAccountWithSuccess:^(NSDictionary *response) {
         dispatch_async(dispatch_get_main_queue(), ^{
-            [self showToast:@"注销成功"];
-            [self.userManager logout];
+            [ToastTool showSuccess:@"注销成功" inView:self.view];
+            // 和uni-app保持一致：清除所有存储包括token
+            // uni-app中注销账号时调用uni.clearStorage()
+            [self.userManager clearAllUserData];
             
             // 延迟跳转到登录页面
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
@@ -374,7 +378,7 @@
         });
     } failure:^(NSError *error) {
         dispatch_async(dispatch_get_main_queue(), ^{
-            [self showToast:@"注销失败，请重试"];
+            [ToastTool showError:@"注销失败，请重试" inView:self.view];
         });
     }];
 }
@@ -395,7 +399,8 @@
     
     self.cacheSize = 0;
     [self loadUserInfo]; // 重新加载界面更新缓存大小显示
-    [self showToast:@"清除成功"];
+    [ToastTool showSuccess:@"清除成功" inView:self.view];
+
 }
 
 - (void)navigateToLogin {
@@ -451,16 +456,5 @@
 }
 
 #pragma mark - Helper
-
-- (void)showToast:(NSString *)message {
-    UIAlertController *alert = [UIAlertController alertControllerWithTitle:nil
-                                                                   message:message
-                                                            preferredStyle:UIAlertControllerStyleAlert];
-    [self presentViewController:alert animated:YES completion:^{
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            [alert dismissViewControllerAnimated:YES completion:nil];
-        });
-    }];
-}
 
 @end 

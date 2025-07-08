@@ -135,6 +135,20 @@
         return;
     }
     
+    // 密码格式验证：8-16位数字及字母组成
+    if (self.passwordTextField.text.length < 8 || self.passwordTextField.text.length > 16) {
+        [ToastTool showToast:@"密码长度必须为8-16位" inView:self.view];
+        return;
+    }
+    
+    // 检查密码是否包含数字和字母
+    NSString *passwordRegex = @"^(?=.*\\d)(?=.*[a-zA-Z])[a-zA-Z\\d]{8,16}$";
+    NSPredicate *passwordPredicate = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", passwordRegex];
+    if (![passwordPredicate evaluateWithObject:self.passwordTextField.text]) {
+        [ToastTool showToast:@"密码必须由8-16位数字及字母组成" inView:self.view];
+        return;
+    }
+    
     if (self.confirmPasswordTextField.text.length == 0) {
         [ToastTool showToast:@"请确认新密码" inView:self.view];
         return;

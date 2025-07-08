@@ -8,6 +8,7 @@
 
 #import "JJRNetworkService.h"
 #import "JJRUserManager.h"
+#import "LoginViewController.h"
 #import <AFNetworking/AFNetworking.h>
 #import <MBProgressHUD/MBProgressHUD.h>
 #import <CommonCrypto/CommonDigest.h>
@@ -681,6 +682,11 @@
         NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
         NSLog(@"✅ 响应数据: %@", jsonString);
         
+        // 检查token失效
+        if ([self checkTokenInvalid:responseObject]) {
+            return; // 如果token失效，不继续执行success回调
+        }
+        
         if (success) {
             success(responseObject);
         }
@@ -734,9 +740,7 @@
     }
     
     [self.sessionManager POST:fullURL 
-                   parameters:params 
-                      
-                     
+                   parameters:params
                       success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         NSLog(@"✅ POST请求成功: %@", fullURL);
         
@@ -744,6 +748,11 @@
         NSData *jsonData = [NSJSONSerialization dataWithJSONObject:responseObject options:NSJSONWritingPrettyPrinted error:nil];
         NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
         NSLog(@"✅ 响应数据: %@", jsonString);
+        
+        // 检查token失效
+        if ([self checkTokenInvalid:responseObject]) {
+            return; // 如果token失效，不继续执行success回调
+        }
         
         if (success) {
             success(responseObject);
@@ -785,6 +794,83 @@
 - (void)submitMerchantApplyWithSuccess:(JJRSuccessBlock)success 
                               failure:(JJRFailureBlock)failure {
     [self POST:@"/app/form/merchant/apply" params:@{} success:success failure:failure];
+}
+
+#pragma mark - Token失效处理
+
+// 检查token是否失效
+- (BOOL)checkTokenInvalid:(NSDictionary *)response {
+    if (!response) return NO;
+    
+    // 检查是否为token失效错误
+    NSNumber *code = response[@"code"];
+    NSDictionary *error = response[@"err"];
+    
+    if (code && [code integerValue] == -1 && error) {
+        NSString *errorCode = error[@"code"];
+        NSString *errorMsg = error[@"msg"];
+        
+        if ([errorCode isEqualToString:@"LoginUser.Invalid"]) {
+            NSLog(@"🚨 检测到token失效: %@", errorMsg);
+            [self handleTokenInvalid:errorMsg];
+            return YES;
+        }
+    }
+    
+    return NO;
+}
+
+// 处理token失效
+- (void)handleTokenInvalid:(NSString *)message {
+    NSLog(@"🚨 处理token失效，清除用户数据并跳转到登录页");
+    
+    // 主线程执行UI相关操作
+    dispatch_async(dispatch_get_main_queue(), ^{
+        // 显示提示信息
+        [JJRNetworkService showToast:message ?: @"登录信息已失效"];
+        
+        // 清除用户数据
+        [[JJRUserManager sharedManager] logout];
+        
+        // 延迟跳转到登录页面
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [self navigateToLogin];
+        });
+    });
+}
+
+// 跳转到登录页面
+- (void)navigateToLogin {
+    // 获取当前应用的主窗口
+    UIWindow *keyWindow = [UIApplication sharedApplication].keyWindow;
+    
+    // iOS 13及以上版本的处理
+    if (!keyWindow) {
+        if (@available(iOS 13.0, *)) {
+            for (UIScene *scene in [UIApplication sharedApplication].connectedScenes) {
+                if (scene.activationState == UISceneActivationStateForegroundActive) {
+                    UIWindowScene *windowScene = (UIWindowScene *)scene;
+                    keyWindow = windowScene.windows.firstObject;
+                    break;
+                }
+            }
+        }
+    }
+    
+    if (keyWindow) {
+        // 导入LoginViewController
+        LoginViewController *loginVC = [[LoginViewController alloc] init];
+        UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:loginVC];
+        navController.modalPresentationStyle = UIModalPresentationFullScreen;
+        
+        // 设置为根视图控制器
+        keyWindow.rootViewController = navController;
+        [keyWindow makeKeyAndVisible];
+        
+        NSLog(@"🎯 已跳转到登录页面");
+    } else {
+        NSLog(@"⚠️ 无法获取主窗口，跳转登录页面失败");
+    }
 }
 
 #pragma mark - 工具方法

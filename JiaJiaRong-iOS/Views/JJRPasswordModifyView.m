@@ -11,6 +11,8 @@
 #import "JJRButton.h"
 #import <Masonry/Masonry.h>
 #import "UIColor+Hex.h"
+#import "JJRUserManager.h"
+#import "UIColor+Hex.h"
 
 @interface JJRPasswordModifyView ()
 
@@ -68,10 +70,10 @@
     
     // 手机号输入框 - 不可编辑
     self.mobileTextField = [[UITextField alloc] init];
-    self.mobileTextField.placeholder = @"请输入您的手机号";
+    self.mobileTextField.text = [[JJRUserManager sharedManager] mobile];
     self.mobileTextField.font = [UIFont systemFontOfSize:14];
     self.mobileTextField.enabled = NO; // 不可编辑
-    self.mobileTextField.backgroundColor = [UIColor colorWithRed:246.0/255.0 green:246.0/255.0 blue:246.0/255.0 alpha:1.0];
+    self.mobileTextField.backgroundColor = [UIColor colorWithRed:230.0/255.0 green:230.0/255.0 blue:230.0/255.0 alpha:1.0];
     self.mobileTextField.layer.cornerRadius = 6;
     self.mobileTextField.leftView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 20, 0)];
     self.mobileTextField.leftViewMode = UITextFieldViewModeAlways;
@@ -82,7 +84,7 @@
     self.captchaTextField.placeholder = @"请输入验证码";
     self.captchaTextField.font = [UIFont systemFontOfSize:14];
     self.captchaTextField.keyboardType = UIKeyboardTypeNumberPad;
-    self.captchaTextField.backgroundColor = [UIColor colorWithRed:246.0/255.0 green:246.0/255.0 blue:246.0/255.0 alpha:1.0];
+    self.captchaTextField.backgroundColor = [UIColor colorWithRed:230.0/255.0 green:230.0/255.0 blue:230.0/255.0 alpha:1.0];
     self.captchaTextField.layer.cornerRadius = 6;
     self.captchaTextField.leftView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 20, 0)];
     self.captchaTextField.leftViewMode = UITextFieldViewModeAlways;
@@ -101,7 +103,7 @@
     self.latestNewPasswordTextField.placeholder = @"请输入新密码";
     self.latestNewPasswordTextField.font = [UIFont systemFontOfSize:14];
     self.latestNewPasswordTextField.secureTextEntry = YES;
-    self.latestNewPasswordTextField.backgroundColor = [UIColor colorWithRed:246.0/255.0 green:246.0/255.0 blue:246.0/255.0 alpha:1.0];
+    self.latestNewPasswordTextField.backgroundColor =[UIColor colorWithRed:230.0/255.0 green:230.0/255.0 blue:230.0/255.0 alpha:1.0];
     self.latestNewPasswordTextField.layer.cornerRadius = 6;
     self.latestNewPasswordTextField.leftView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 20, 0)];
     self.latestNewPasswordTextField.leftViewMode = UITextFieldViewModeAlways;
@@ -112,7 +114,7 @@
     self.confirmPasswordTextField.placeholder = @"请再次输入新密码";
     self.confirmPasswordTextField.font = [UIFont systemFontOfSize:14];
     self.confirmPasswordTextField.secureTextEntry = YES;
-    self.confirmPasswordTextField.backgroundColor = [UIColor colorWithRed:246.0/255.0 green:246.0/255.0 blue:246.0/255.0 alpha:1.0];
+    self.confirmPasswordTextField.backgroundColor = [UIColor colorWithRed:230.0/255.0 green:230.0/255.0 blue:230.0/255.0 alpha:1.0];
     self.confirmPasswordTextField.layer.cornerRadius = 6;
     self.confirmPasswordTextField.leftView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 20, 0)];
     self.confirmPasswordTextField.leftViewMode = UITextFieldViewModeAlways;
@@ -123,8 +125,8 @@
     [self.submitButton setTitle:@"确认提交" forState:UIControlStateNormal];
     [self.submitButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     self.submitButton.titleLabel.font = [UIFont systemFontOfSize:14]; // 28rpx ≈ 14pt
-    self.submitButton.backgroundColor = [UIColor colorWithRed:59.0/255.0 green:79.0/255.0 blue:222.0/255.0 alpha:1.0]; // #3B4FDE
-    self.submitButton.layer.cornerRadius = 6;
+    self.submitButton.backgroundColor = [UIColor colorWithHexString:@"#FF772C"]; // #3B4FDE
+    self.submitButton.layer.cornerRadius = 23;
     [self.submitButton addTarget:self action:@selector(submitButtonTapped) forControlEvents:UIControlEventTouchUpInside];
     [self.contentView addSubview:self.submitButton];
 }

@@ -83,10 +83,15 @@
     
     [JJRNetworkService showLoading];
     
+    // 加密手机号
+    NSString *encryptedMobile = [JJRNetworkService encryptMobile:mobile];
+    NSString *md5Mobile = [JJRNetworkService encryptMobileMd5:mobile];
+    
     // 根据uni-app的逻辑，发送验证码参数
     NSDictionary *params = @{
-        @"mobile": mobile,
-        @"captchaType": @"REPWD"
+        @"mobile": encryptedMobile,
+        @"captchaType": @"REPWD",
+        @"md5":md5Mobile
     };
     
     [[JJRNetworkService sharedInstance] sendCaptchaWithParams:params 
@@ -103,6 +108,7 @@
         });
     }];
 }
+
 
 - (void)updatePassword:(NSString *)mobile 
                captcha:(NSString *)captcha 
@@ -125,6 +131,20 @@
         return;
     }
     
+    // 密码格式验证：8-16位数字及字母组成
+    if (newPassword.length < 8 || newPassword.length > 16) {
+        [ToastTool showToast:@"密码长度必须为8-16位" inView:self.view];
+        return;
+    }
+    
+    // 检查密码是否包含数字和字母
+    NSString *passwordRegex = @"^(?=.*\\d)(?=.*[a-zA-Z])[a-zA-Z\\d]{8,16}$";
+    NSPredicate *passwordPredicate = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", passwordRegex];
+    if (![passwordPredicate evaluateWithObject:newPassword]) {
+        [ToastTool showToast:@"密码必须由8-16位数字及字母组成" inView:self.view];
+        return;
+    }
+    
     if (!confirmPassword || confirmPassword.length == 0) {
         [ToastTool showToast:@"请再次确认密码" inView:self.view];
         return;
@@ -137,12 +157,17 @@
     
     [JJRNetworkService showLoading];
     
+    // 加密手机号
+    NSString *encryptedMobile = [JJRNetworkService encryptMobile:mobile];
+    NSString *md5Mobile = [JJRNetworkService encryptMobileMd5:mobile];
+    
     // 根据uni-app的逻辑构建参数
     NSDictionary *params = @{
-        @"mobile": mobile,
+        @"mobile": encryptedMobile,
         @"captcha": captcha,
         @"pwd": newPassword,
-        @"checkPwd": confirmPassword
+        @"checkPwd": confirmPassword,
+        @"md5": md5Mobile
     };
     
     [[JJRNetworkService sharedInstance] updatePasswordWithParams:params 
@@ -167,23 +192,10 @@
         dispatch_async(dispatch_get_main_queue(), ^{
             // 清除用户信息
             [[JJRUserManager sharedManager] logout];
+            [self.navigationController popToRootViewControllerAnimated:NO];
             
-            // 跳转到登录页面
-            UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Login" bundle:nil];
-            LoginViewController *loginVC = [storyboard instantiateViewControllerWithIdentifier:@"LoginViewController"];
+            [self navigateToLogin];
             
-            UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:loginVC];
-            
-            // 获取当前应用的 window
-            UIWindowScene *windowScene = (UIWindowScene *)[UIApplication sharedApplication].connectedScenes.anyObject;
-            UIWindow *window = windowScene.windows.firstObject;
-            
-            [UIView transitionWithView:window
-                              duration:0.3
-                               options:UIViewAnimationOptionTransitionCrossDissolve
-                            animations:^{
-                window.rootViewController = navController;
-            } completion:nil];
         });
     } failure:^(NSError *error) {
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -193,5 +205,40 @@
         });
     }];
 }
+
+// 跳转到登录页面
+- (void)navigateToLogin {
+    // 获取当前应用的主窗口
+    UIWindow *keyWindow = [UIApplication sharedApplication].keyWindow;
+    
+    // iOS 13及以上版本的处理
+    if (!keyWindow) {
+        if (@available(iOS 13.0, *)) {
+            for (UIScene *scene in [UIApplication sharedApplication].connectedScenes) {
+                if (scene.activationState == UISceneActivationStateForegroundActive) {
+                    UIWindowScene *windowScene = (UIWindowScene *)scene;
+                    keyWindow = windowScene.windows.firstObject;
+                    break;
+                }
+            }
+        }
+    }
+    
+    if (keyWindow) {
+        // 导入LoginViewController
+        LoginViewController *loginVC = [[LoginViewController alloc] init];
+        UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:loginVC];
+        navController.modalPresentationStyle = UIModalPresentationFullScreen;
+        
+        // 设置为根视图控制器
+        keyWindow.rootViewController = navController;
+        [keyWindow makeKeyAndVisible];
+        
+        NSLog(@"🎯 已跳转到登录页面");
+    } else {
+        NSLog(@"⚠️ 无法获取主窗口，跳转登录页面失败");
+    }
+}
+
 
 @end

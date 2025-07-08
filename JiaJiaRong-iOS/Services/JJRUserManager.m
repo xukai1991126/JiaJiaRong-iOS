@@ -11,15 +11,12 @@
 // 通知名称
 NSString * const JJRUserLoginStatusChangedNotification = @"JJRUserLoginStatusChangedNotification";
 
-// 存储键名
+// 存储键名 - 和uni-app保持一致
 static NSString * const kUserInfoKey = @"JJRUserInfo";
-static NSString * const kChannelTokenKey = @"token";
-static NSString * const kUserTokenKey = @"userToken";
+static NSString * const kTokenKey = @"token";  // 和uni-app一致，只有一个token
 static NSString * const kMobileKey = @"mobile";
 
 @interface JJRUserManager ()
-
-// 移除isLoggedIn的私有属性，现在通过getter方法动态计算
 
 @end
 
@@ -52,13 +49,12 @@ static NSString * const kMobileKey = @"mobile";
     // 从NSUserDefaults读取持久化数据
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     NSDictionary *storedUserInfo = [defaults objectForKey:kUserInfoKey];
-    NSString *storedUserToken = [defaults objectForKey:kUserTokenKey];
     
-    // 判断登录状态：有用户信息或有用户token（基于持久化数据）
-    BOOL loggedIn = (storedUserInfo != nil || (storedUserToken != nil && storedUserToken.length > 0));
+    // 判断登录状态：有用户信息就认为已登录（和uni-app逻辑一致）
+    BOOL loggedIn = (storedUserInfo != nil);
     
     NSLog(@"🎯 检查登录状态: %@", loggedIn ? @"已登录" : @"未登录");
-    NSLog(@"🎯 判断依据: storedUserInfo=%@, storedUserToken=%@", storedUserInfo ? @"有" : @"无", storedUserToken ? @"有" : @"无");
+    NSLog(@"🎯 判断依据: storedUserInfo=%@", storedUserInfo ? @"有" : @"无");
     
     return loggedIn;
 }
@@ -69,10 +65,9 @@ static NSString * const kMobileKey = @"mobile";
 
 - (void)updateLoginStatus {
     // 这个方法主要用于在数据变化后发送通知
-    // 实际的登录状态检查由isLoggedIn getter方法处理
     NSLog(@"🎯 用户登录状态更新，当前状态: %@", self.isLoggedIn ? @"已登录" : @"未登录");
     
-    // 发送登录状态变化通知（让监听者自行检查状态）
+    // 发送登录状态变化通知
     [[NSNotificationCenter defaultCenter] postNotificationName:JJRUserLoginStatusChangedNotification 
                                                         object:nil 
                                                       userInfo:@{@"isLoggedIn": @(self.isLoggedIn)}];
@@ -86,11 +81,8 @@ static NSString * const kMobileKey = @"mobile";
     self.userInfo = userInfo;
     self.mobile = mobile;
     
-    // 如果userInfo中包含tk字段，保存为用户token（服务端返回的是tk，不是token）
-    if (userInfo[@"tk"]) {
-        [self saveUserToken:userInfo[@"tk"]];
-        NSLog(@"🎯 从userInfo中保存tk作为用户token: %@", userInfo[@"tk"]);
-    }
+    // 和uni-app保持一致：登录成功后不更新token，继续使用原有的token
+    // uni-app中登录后只保存userInfo和mobile，不操作token
     
     [self saveToLocal];
     [self updateLoginStatus];
@@ -99,14 +91,12 @@ static NSString * const kMobileKey = @"mobile";
 - (void)logout {
     NSLog(@"🎯 用户登出");
     
-    // 清除用户相关数据，但保留渠道token
+    // 清除用户相关数据，但保留token（和uni-app逻辑一致）
     self.userInfo = nil;
-    self.userToken = nil;
     self.mobile = nil;
     
-    // 从本地存储中移除用户数据
+    // 从本地存储中移除用户数据，但保留token
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:kUserInfoKey];
-    [[NSUserDefaults standardUserDefaults] removeObjectForKey:kUserTokenKey];
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:kMobileKey];
     [[NSUserDefaults standardUserDefaults] synchronize];
     
@@ -117,14 +107,12 @@ static NSString * const kMobileKey = @"mobile";
     NSLog(@"🎯 清除所有用户数据");
     
     self.userInfo = nil;
-    self.userToken = nil;
     self.token = nil;
     self.mobile = nil;
     
     // 清除所有本地存储
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:kUserInfoKey];
-    [[NSUserDefaults standardUserDefaults] removeObjectForKey:kUserTokenKey];
-    [[NSUserDefaults standardUserDefaults] removeObjectForKey:kChannelTokenKey];
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:kTokenKey];
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:kMobileKey];
     [[NSUserDefaults standardUserDefaults] synchronize];
     
@@ -133,27 +121,15 @@ static NSString * const kMobileKey = @"mobile";
 
 #pragma mark - Token管理
 
-- (void)saveChannelToken:(NSString *)token {
-    NSLog(@"🎯 保存渠道Token: %@", token);
+- (void)saveToken:(NSString *)token {
+    NSLog(@"🎯 保存Token: %@", token);
     self.token = token;
-    [[NSUserDefaults standardUserDefaults] setObject:token forKey:kChannelTokenKey];
+    [[NSUserDefaults standardUserDefaults] setObject:token forKey:kTokenKey];
     [[NSUserDefaults standardUserDefaults] synchronize];
-    [self updateLoginStatus];
-}
-
-- (void)saveUserToken:(NSString *)userToken {
-    NSLog(@"🎯 保存用户Token: %@", userToken);
-    self.userToken = userToken;
-    [[NSUserDefaults standardUserDefaults] setObject:userToken forKey:kUserTokenKey];
-    [[NSUserDefaults standardUserDefaults] synchronize];
-    [self updateLoginStatus];
 }
 
 - (NSString *)getCurrentToken {
-    // 优先使用用户token，其次使用渠道token
-    if (self.userToken && self.userToken.length > 0) {
-        return self.userToken;
-    }
+    // 和uni-app保持一致，直接返回token
     return self.token;
 }
 
@@ -180,11 +156,7 @@ static NSString * const kMobileKey = @"mobile";
     }
     
     if (self.token) {
-        [defaults setObject:self.token forKey:kChannelTokenKey];
-    }
-    
-    if (self.userToken) {
-        [defaults setObject:self.userToken forKey:kUserTokenKey];
+        [defaults setObject:self.token forKey:kTokenKey];
     }
     
     if (self.mobile) {
@@ -199,14 +171,12 @@ static NSString * const kMobileKey = @"mobile";
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     
     self.userInfo = [defaults objectForKey:kUserInfoKey];
-    self.token = [defaults objectForKey:kChannelTokenKey];
-    self.userToken = [defaults objectForKey:kUserTokenKey];
+    self.token = [defaults objectForKey:kTokenKey];
     self.mobile = [defaults objectForKey:kMobileKey];
     
     NSLog(@"🎯 从本地加载用户数据:");
     NSLog(@"🎯 - userInfo: %@", self.userInfo ? @"有" : @"无");
     NSLog(@"🎯 - token: %@", self.token ? @"有" : @"无");
-    NSLog(@"🎯 - userToken: %@", self.userToken ? @"有" : @"无");
     NSLog(@"🎯 - mobile: %@", self.mobile ?: @"无");
 }
 

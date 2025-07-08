@@ -19,96 +19,64 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "D61045BA-E729-4487-8C61-F432679D0133"
+            uuid = "7FA0E7D0-67AD-40EB-B3DC-38F4F12A727E"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "JiaJiaRong-iOS/Controllers/HomeViewController.m"
+            filePath = "JiaJiaRong-iOS/Services/JJRUserManager.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "174"
-            endingLineNumber = "174"
-            landmarkName = "-fetchChannelInfo"
+            startingLineNumber = "86"
+            endingLineNumber = "86"
+            landmarkName = "-saveLoginInfo:mobile:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "59DCB6EF-F67D-4A4E-9F6B-7F94612AFAD6"
+            uuid = "B828785C-C80F-4B24-8A24-A2339B77EF7E"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "JiaJiaRong-iOS/Controllers/HomeViewController.m"
+            filePath = "JiaJiaRong-iOS/Controllers/LoginViewController.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "726"
-            endingLineNumber = "726"
-            landmarkName = "-applyButtonTapped"
+            startingLineNumber = "599"
+            endingLineNumber = "599"
+            landmarkName = "-handleLoginSuccess:mobile:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "BE6D458F-4A60-48B7-9ABD-47F206D4C04F"
+            uuid = "07C375BF-F8A8-407A-B32D-29E13526DB2D"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "JiaJiaRong-iOS/Views/JJRPasswordModifyView.m"
+            filePath = "JiaJiaRong-iOS/Controllers/LoginViewController.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "60"
-            endingLineNumber = "60"
-            landmarkName = "-setupUI"
+            startingLineNumber = "603"
+            endingLineNumber = "603"
+            landmarkName = "-handleLoginSuccess:mobile:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "BF891D1B-45EB-4301-8874-5CA634178214"
+            uuid = "022A67FD-4FA6-4B9F-BFDF-B6D7B953BD0F"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "JiaJiaRong-iOS/Controllers/JJRPasswordModifyViewController.m"
+            filePath = "JiaJiaRong-iOS/Controllers/LoginViewController.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "34"
-            endingLineNumber = "34"
-            landmarkName = "-setupUI"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "04902BEF-945B-4047-BC27-501147BB4499"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "JiaJiaRong-iOS/Controllers/MoreViewController.m"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "246"
-            endingLineNumber = "246"
-            landmarkName = "-menuItemTapped:"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "2B4AE13A-81BA-43C7-8080-AA6A9F6BF1EB"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "JiaJiaRong-iOS/Controllers/MoreViewController.m"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "248"
-            endingLineNumber = "248"
-            landmarkName = "-menuItemTapped:"
+            startingLineNumber = "607"
+            endingLineNumber = "607"
+            landmarkName = "-handleLoginSuccess:mobile:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
