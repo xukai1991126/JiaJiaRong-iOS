@@ -29,7 +29,5 @@ target 'JiaJiaRong-iOS' do
   # 图片加载
   pod 'SDWebImage', '~> 5.0'
   
-  # WebP支持 - 为YYKit和SDWebImage提供WebP支持
-  pod 'libwebp', '~> 1.0'
 
 end 

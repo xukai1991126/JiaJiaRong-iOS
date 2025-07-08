@@ -11,6 +11,7 @@
 #import "JJRUserManager.h"
 #import "JJRResultViewController.h"
 #import <Masonry/Masonry.h>
+#import "UIColor+Hex.h"
 
 @interface JJRAuthorizationViewController ()
 
@@ -69,9 +70,9 @@
     
     // 设置渐变颜色 (对应uni-app的渐变色)
     gradientLayer.colors = @[
-        (id)[UIColor colorWithRed:38.0/255.0 green:63.0/255.0 blue:237.0/255.0 alpha:1.0].CGColor,
-        (id)[UIColor colorWithRed:48.0/255.0 green:155.0/255.0 blue:255.0/255.0 alpha:0.6].CGColor,
-        (id)[UIColor colorWithRed:48.0/255.0 green:155.0/255.0 blue:255.0/255.0 alpha:0.0].CGColor
+        (id)[UIColor colorWithHexString:@"#F2582B"].CGColor,
+        (id)[UIColor colorWithHexString:@"#FAE9D1"].CGColor,
+        (id)[UIColor colorWithHexString:@"#FAE9D1" alpha:0.0].CGColor
     ];
     
     // 设置渐变方向 (从上到下)
@@ -123,7 +124,7 @@
     self.amountLabel = [[UILabel alloc] init];
     self.amountLabel.text = @"0";
     self.amountLabel.font = [UIFont boldSystemFontOfSize:40];
-    self.amountLabel.textColor = [UIColor colorWithRed:59.0/255.0 green:79.0/255.0 blue:222.0/255.0 alpha:1.0];
+    self.amountLabel.textColor = [UIColor colorWithHexString:@"#FF772C"];
     self.amountLabel.textAlignment = NSTextAlignmentCenter;
     [self.amountContainerView addSubview:self.amountLabel];
     
@@ -150,7 +151,7 @@
     [self.confirmButton setTitle:@"同意" forState:UIControlStateNormal];
     [self.confirmButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     self.confirmButton.titleLabel.font = [UIFont boldSystemFontOfSize:16];
-    self.confirmButton.backgroundColor = [UIColor colorWithRed:59.0/255.0 green:79.0/255.0 blue:222.0/255.0 alpha:1.0];
+    self.confirmButton.backgroundColor = [UIColor colorWithHexString:@"#FF772C"];
     self.confirmButton.layer.cornerRadius = 25;
     [self.confirmButton addTarget:self action:@selector(confirmButtonTapped) forControlEvents:UIControlEventTouchUpInside];
     [self.modalView addSubview:self.confirmButton];
@@ -233,7 +234,9 @@
     [[JJRNetworkService sharedInstance] getAuthorityNumberWithSuccess:^(NSDictionary *response) {
         [JJRNetworkService hideLoading];
         
-        if ([response[@"code"] integerValue] == 200) {
+        NSLog(@"✅ POST请求成功: %@", response);
+        
+        if ([response[@"code"] integerValue] == 0) {  // 修正：接口返回0表示成功
             self.authorityData = response[@"data"];
             [self updateAuthorityUI];
         } else {
@@ -241,6 +244,7 @@
         }
     } failure:^(NSError *error) {
         [JJRNetworkService hideLoading];
+        NSLog(@"❌ POST请求失败: %@", error);
         [self showToast:@"网络错误，请重试"];
     }];
 }
@@ -249,44 +253,72 @@
     [[JJRNetworkService sharedInstance] getAuthorizationAgreementWithAppId:@"JJR" 
                                                                      aupage:@1 
                                                                     success:^(NSDictionary *response) {
-        if ([response[@"code"] integerValue] == 200) {
+        NSLog(@"✅ GET请求成功: %@", response);
+        
+        if ([response[@"code"] integerValue] == 0) {  // 修正：接口返回0表示成功
             self.agreementContent = response[@"data"][@"content"];
             [self updateAgreementUI];
         } else {
             [self showToast:@"获取协议内容失败"];
         }
     } failure:^(NSError *error) {
+        NSLog(@"❌ GET请求失败: %@", error);
         [self showToast:@"获取协议内容失败"];
     }];
 }
 
 - (void)updateAuthorityUI {
     dispatch_async(dispatch_get_main_queue(), ^{
-        NSString *amount = self.authorityData[@"amount"] ?: @"0";
-        NSString *merchantNum = self.authorityData[@"merchantNum"] ?: @"0";
+        NSLog(@"🔄 更新授权UI，数据: %@", self.authorityData);
+        
+        // 处理amount数据 - 可能是NSNumber或NSString
+        NSString *amount = @"0";
+        if ([self.authorityData[@"amount"] isKindOfClass:[NSNumber class]]) {
+            amount = [self.authorityData[@"amount"] stringValue];
+        } else if ([self.authorityData[@"amount"] isKindOfClass:[NSString class]]) {
+            amount = self.authorityData[@"amount"];
+        }
+        
+        // 处理merchantNum数据 - 可能是NSNumber或NSString
+        NSString *merchantNum = @"0";
+        if ([self.authorityData[@"merchantNum"] isKindOfClass:[NSNumber class]]) {
+            merchantNum = [self.authorityData[@"merchantNum"] stringValue];
+        } else if ([self.authorityData[@"merchantNum"] isKindOfClass:[NSString class]]) {
+            merchantNum = self.authorityData[@"merchantNum"];
+        }
         
         self.amountLabel.text = amount;
         self.organizationLabel.text = [NSString stringWithFormat:@"预计%@家机构可提供服务（以实际匹配为准）", merchantNum];
+        
+        NSLog(@"✅ UI更新完成 - 金额: %@, 机构数: %@", amount, merchantNum);
     });
 }
 
 - (void)updateAgreementUI {
     dispatch_async(dispatch_get_main_queue(), ^{
-        if (self.agreementContent) {
+        NSLog(@"🔄 更新协议UI，内容长度: %lu", (unsigned long)self.agreementContent.length);
+        
+        if (self.agreementContent && self.agreementContent.length > 0) {
             // 将HTML内容转换为富文本
             NSData *data = [self.agreementContent dataUsingEncoding:NSUTF8StringEncoding];
+            NSError *error = nil;
             NSAttributedString *attributedString = [[NSAttributedString alloc] 
                 initWithData:data 
                 options:@{NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType,
                          NSCharacterEncodingDocumentAttribute: @(NSUTF8StringEncoding)} 
                 documentAttributes:nil 
-                error:nil];
+                error:&error];
             
-            if (attributedString) {
+            if (attributedString && !error) {
                 self.agreementTextView.attributedText = attributedString;
+                NSLog(@"✅ 协议内容HTML解析成功");
             } else {
+                NSLog(@"⚠️ HTML解析失败，使用原始文本: %@", error);
                 self.agreementTextView.text = self.agreementContent;
             }
+        } else {
+            NSLog(@"❌ 协议内容为空");
+            self.agreementTextView.text = @"协议内容加载失败";
         }
     });
 }
@@ -299,7 +331,9 @@
     [[JJRNetworkService sharedInstance] submitMerchantApplyWithSuccess:^(NSDictionary *response) {
         [JJRNetworkService hideLoading];
         
-        if ([response[@"code"] integerValue] == 200) {
+        NSLog(@"✅ 提交授权成功: %@", response);
+        
+        if ([response[@"code"] integerValue] == 0) {  // 修正：接口返回0表示成功
             // 更新用户信息
             JJRUserManager *userManager = [JJRUserManager sharedManager];
             NSMutableDictionary *userInfo = [NSMutableDictionary dictionaryWithDictionary:userManager.userInfo];
@@ -317,6 +351,7 @@
         }
     } failure:^(NSError *error) {
         [JJRNetworkService hideLoading];
+        NSLog(@"❌ 提交授权失败: %@", error);
         [self showToast:@"网络错误，请重试"];
     }];
 }
