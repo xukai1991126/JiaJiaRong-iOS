@@ -28,6 +28,9 @@ NS_ASSUME_NONNULL_BEGIN
 /// 显示失败提示
 + (void)showError:(NSString *)message inView:(UIView *)view;
 
+/// 显示警告提示
++ (void)showWarning:(NSString *)message inView:(UIView *)view;
+
 @end
 
 NS_ASSUME_NONNULL_END

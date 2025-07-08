@@ -347,6 +347,7 @@
 - (void)performLogout {
     [[JJRNetworkService sharedInstance] logoutWithSuccess:^(NSDictionary *response) {
         dispatch_async(dispatch_get_main_queue(), ^{
+            [ToastTool showSuccess:@"登出成功" inView:self.view];
             // 和uni-app保持一致：清除所有存储包括token
             // uni-app中退出登录时调用uni.clearStorage()
             [self.userManager clearAllUserData];
