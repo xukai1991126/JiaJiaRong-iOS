@@ -765,11 +765,49 @@
 - (void)setFaceImage:(UIImage *)image {
     self.faceImageView.image = image;
     self.faceImageView.layer.borderColor = [UIColor colorWithHexString:@"#007AFF"].CGColor;
+    
+    // 创建删除按钮
+    if (!self.faceDeleteButton) {
+        self.faceDeleteButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        [self.faceDeleteButton setImage:[UIImage imageNamed:@"idcard_delete"] forState:UIControlStateNormal];
+        self.faceDeleteButton.backgroundColor = [UIColor colorWithWhite:0.0 alpha:0.6];
+        self.faceDeleteButton.layer.cornerRadius = 12;
+        self.faceDeleteButton.layer.masksToBounds = YES;
+        [self.faceDeleteButton addTarget:self action:@selector(deleteFaceImage) forControlEvents:UIControlEventTouchUpInside];
+        [self.faceImageView addSubview:self.faceDeleteButton];
+        
+        [self.faceDeleteButton mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.top.right.equalTo(self.faceImageView).inset(5);
+            make.width.height.mas_equalTo(24);
+        }];
+    }
+    
+    // 显示删除按钮
+    self.faceDeleteButton.hidden = NO;
 }
 
 - (void)setBackImage:(UIImage *)image {
     self.backImageView.image = image;
     self.backImageView.layer.borderColor = [UIColor colorWithHexString:@"#007AFF"].CGColor;
+    
+    // 创建删除按钮
+    if (!self.backDeleteButton) {
+        self.backDeleteButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        [self.backDeleteButton setImage:[UIImage imageNamed:@"idcard_delete"] forState:UIControlStateNormal];
+        self.backDeleteButton.backgroundColor = [UIColor colorWithWhite:0.0 alpha:0.6];
+        self.backDeleteButton.layer.cornerRadius = 12;
+        self.backDeleteButton.layer.masksToBounds = YES;
+        [self.backDeleteButton addTarget:self action:@selector(deleteBackImage) forControlEvents:UIControlEventTouchUpInside];
+        [self.backImageView addSubview:self.backDeleteButton];
+        
+        [self.backDeleteButton mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.top.right.equalTo(self.backImageView).inset(5);
+            make.width.height.mas_equalTo(24);
+        }];
+    }
+    
+    // 显示删除按钮
+    self.backDeleteButton.hidden = NO;
 }
 
 - (void)setStep:(JJRIdCardStep)step animated:(BOOL)animated {
@@ -1011,6 +1049,79 @@
     if ([self.delegate respondsToSelector:@selector(idCardViewDidTapAgreement:title:)]) {
         [self.delegate idCardViewDidTapAgreement:@"privacy" title:@"隐私协议"];
     }
+}
+
+#pragma mark - Delete Button Actions
+
+- (void)deleteFaceImage {
+    // 重置正面图片为占位符
+    self.faceImageView.image = [UIImage imageNamed:@"idcard_face_placeholder"];
+    self.faceImageView.layer.borderColor = [UIColor colorWithHexString:@"#E5E5E5"].CGColor;
+    
+    // 隐藏删除按钮
+    self.faceDeleteButton.hidden = YES;
+    
+    // 清空正面相关的表单数据
+    self.form.faceImage = nil;
+    self.form.idName = nil;
+    self.form.idNo = nil;
+    self.form.address = nil;
+    
+    // 更新表单显示
+    [self updateFormDisplay];
+    
+    // 通知代理表单数据已更新
+    if ([self.delegate respondsToSelector:@selector(idCardViewDidChangeForm:)]) {
+        [self.delegate idCardViewDidChangeForm:self.form];
+    }
+}
+
+- (void)deleteBackImage {
+    // 重置背面图片为占位符
+    self.backImageView.image = [UIImage imageNamed:@"idcard_back_placeholder"];
+    self.backImageView.layer.borderColor = [UIColor colorWithHexString:@"#E5E5E5"].CGColor;
+    
+    // 隐藏删除按钮
+    self.backDeleteButton.hidden = YES;
+    
+    // 清空背面相关的表单数据
+    self.form.backImage = nil;
+    self.form.issueAuthority = nil;
+    self.form.validPeriod = nil;
+    
+    // 更新表单显示
+    [self updateFormDisplay];
+    
+    // 通知代理表单数据已更新
+    if ([self.delegate respondsToSelector:@selector(idCardViewDidChangeForm:)]) {
+        [self.delegate idCardViewDidChangeForm:self.form];
+    }
+}
+
+- (void)updateFormDisplay {
+    // 检查是否还有任何图片上传
+    BOOL hasFaceImage = self.form.faceImage.length > 0;
+    BOOL hasBackImage = self.form.backImage.length > 0;
+    
+    if (!hasFaceImage && !hasBackImage) {
+        // 如果两个图片都被删除，隐藏整个表单容器
+        [self.formContainer mas_updateConstraints:^(MASConstraintMaker *make) {
+            make.height.mas_equalTo(0);
+        }];
+        self.formContainer.hidden = YES;
+    } else {
+        // 如果还有图片，更新表单内容
+        [self updateFormWithData:self.form];
+    }
+    
+    // 更新按钮状态
+    [self updateNextButtonState];
+    
+    // 动画更新布局
+    [UIView animateWithDuration:0.3 animations:^{
+        [self.uploadContainer layoutIfNeeded];
+        [self layoutIfNeeded];
+    }];
 }
 
 @end 

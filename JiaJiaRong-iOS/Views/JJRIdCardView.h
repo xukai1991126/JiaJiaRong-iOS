@@ -35,6 +35,8 @@ typedef NS_ENUM(NSInteger, JJRIdCardStep) {
 @property (nonatomic, assign) JJRIdCardStep currentStep;
 @property (nonatomic, strong) JJRIdCardModel *form;
 @property (nonatomic, assign) BOOL isAgreementChecked;
+@property (nonatomic, strong) UIButton *faceDeleteButton;
+@property (nonatomic, strong) UIButton *backDeleteButton;
 
 - (void)setFaceImage:(UIImage *)image;
 - (void)setBackImage:(UIImage *)image;
