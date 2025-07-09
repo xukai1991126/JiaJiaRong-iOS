@@ -748,7 +748,7 @@
         } else if (i == step) {
             // 当前步骤
             imageView.image = [UIImage imageNamed:@"step_active"];
-            if (i != 0) numberLabel.hidden = NO; // 第一个圆圈不显示数字
+            if (i != 0) numberLabel.hidden = YES; // 第一个圆圈不显示数字
             titleLabel.textColor = [UIColor colorWithHexString:@"#1a1a1a"];
             titleLabel.font = [UIFont boldSystemFontOfSize:12];
         } else {
