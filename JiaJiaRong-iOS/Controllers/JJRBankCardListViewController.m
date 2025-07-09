@@ -247,7 +247,7 @@
 - (void)onBatchDelete {
     NSArray *selectedList = [self.bankList filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"selected == YES"]];
     if (selectedList.count == 0) {
-        [self showToast:@"请选择要删除的银行卡"];
+        [JJRToastTool showToast:@"请选择要删除的银行卡"];
         return;
     }
     
@@ -300,7 +300,7 @@
         [self updateUI];
     } failure:^(NSError *error) {
         NSLog(@"❌ 获取银行卡列表失败: %@", error.localizedDescription);
-        [self showToast:@"获取银行卡列表失败"];
+        [JJRToastTool showError:@"获取银行卡列表失败"];
     }];
 }
 
@@ -314,12 +314,12 @@
     NSDictionary *params = @{@"idList": ids};
     
     [[JJRNetworkService sharedInstance] POST:JJR_BANK_CARD_DELETE params:params success:^(NSDictionary *responseObject) {
-        [self showToast:@"删除成功"];
+        [JJRToastTool showSuccess:@"删除成功"];
         [self fetchBankList];
         self.showDelete = NO;
         [self updateNavigationBar];
     } failure:^(NSError *error) {
-        [self showToast:@"删除失败"];
+        [JJRToastTool showError:@"删除失败"];
     }];
 }
 
@@ -336,14 +336,6 @@
     [self.tableView reloadData];
 }
 
-- (void)showToast:(NSString *)message {
-    // 简单的Toast实现
-    UIAlertController *toast = [UIAlertController alertControllerWithTitle:nil message:message preferredStyle:UIAlertControllerStyleAlert];
-    [self presentViewController:toast animated:YES completion:nil];
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        [toast dismissViewControllerAnimated:YES completion:nil];
-    });
-}
 
 #pragma mark - UITableViewDataSource
 

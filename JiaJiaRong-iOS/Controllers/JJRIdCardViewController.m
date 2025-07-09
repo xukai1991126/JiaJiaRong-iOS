@@ -134,12 +134,12 @@
 - (void)idCardViewDidTapNextStep {
     // 验证表单
     if (!self.form.faceImage || self.form.faceImage.length == 0) {
-        [self showToast:@"请上传身份证人像面"];
+        [JJRToastTool showToast:@"请上传身份证人像面"];
         return;
     }
     
     if (!self.form.backImage || self.form.backImage.length == 0) {
-        [self showToast:@"请上传身份证国徽面"];
+        [JJRToastTool showToast:@"请上传身份证国徽面"];
         return;
     }
     
@@ -149,7 +149,7 @@
 
 - (void)idCardViewDidTapFaceVerify {
     if (!self.idCardView.isAgreementChecked) {
-        [self showToast:@"请同意并勾选协议"];
+        [JJRToastTool showToast:@"请同意并勾选协议"];
         return;
     }
     
@@ -177,7 +177,7 @@
 
 - (void)openCameraForType:(NSString *)type {
     if (![UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]) {
-        [self showToast:@"设备不支持拍照"];
+        [JJRToastTool showToast:@"设备不支持拍照"];
         return;
     }
     
@@ -224,18 +224,18 @@
         
         if ([responseObject[@"code"] integerValue] == 0) {
             // 保存成功，进入人脸识别步骤
-            [self showToast:@"上传成功"];
+            [JJRToastTool showSuccess:@"上传成功"];
             
             // 延迟跳转到人脸识别页面
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
                 [self.idCardView setStep:JJRIdCardStepFaceVerify animated:YES];
             });
         } else {
-            [self showToast:responseObject[@"err"][@"msg"] ?: @"保存失败"];
+            [JJRToastTool showError:responseObject[@"err"][@"msg"] ?: @"保存失败"];
         }
     } failure:^(NSError *error) {
         [JJRNetworkService hideLoading];
-        [self showToast:@"网络错误，请重试"];
+        [JJRToastTool showError:@"网络错误，请重试"];
     }];
 }
 
@@ -282,14 +282,14 @@
                 // 调用人脸识别SDK
                 [self.faceVerifyManager startFaceVerifyWithCertifyId:certifyId extParams:extParams];
             } else {
-                [self showToast:@"认证ID获取失败"];
+                [JJRToastTool showError:@"认证ID获取失败"];
             }
         } else {
-            [self showToast:responseObject[@"err"][@"msg"] ?: @"人脸识别初始化失败"];
+            [JJRToastTool showError:responseObject[@"err"][@"msg"] ?: @"人脸识别初始化失败"];
         }
     } failure:^(NSError *error) {
         [JJRNetworkService hideLoading];
-        [self showToast:@"网络错误，请重试"];
+        [JJRToastTool showError:@"网络错误，请重试"];
     }];
 }
 
@@ -304,7 +304,7 @@
     dispatch_async(dispatch_get_main_queue(), ^{
         if (result == JJRFaceVerifyResultSuccess) {
             // 人脸识别成功
-            [self showToast:@"人脸识别成功"];
+            [JJRToastTool showSuccess:@"人脸识别成功"];
             
             // 延迟显示结果页面
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
@@ -313,7 +313,7 @@
             });
         } else {
             // 人脸识别失败
-            [self showToast:message];
+            [JJRToastTool showError:message];
         }
     });
 }
@@ -333,18 +333,7 @@
     [self.navigationController pushViewController:webVC animated:YES];
 }
 
-- (void)showToast:(NSString *)message {
-    // 显示提示信息
-    UIAlertController *alert = [UIAlertController alertControllerWithTitle:nil
-                                                                   message:message
-                                                            preferredStyle:UIAlertControllerStyleAlert];
-    
-    [self presentViewController:alert animated:YES completion:^{
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            [alert dismissViewControllerAnimated:YES completion:nil];
-        });
-    }];
-}
+
 
 #pragma mark - UIImagePickerControllerDelegate
 
@@ -379,15 +368,15 @@
                 [self recognizeIdCardWithImageUrl:imageUrl forType:type];
             } else {
                 [JJRNetworkService hideLoading];
-                [self showToast:@"图片上传失败，请重试"];
+                [JJRToastTool showError:@"图片上传失败，请重试"];
             }
         } else {
             [JJRNetworkService hideLoading];
-            [self showToast:responseObject[@"msg"] ?: @"图片上传失败"];
+            [JJRToastTool showError:responseObject[@"msg"] ?: @"图片上传失败"];
         }
     } failure:^(NSError *error) {
         [JJRNetworkService hideLoading];
-        [self showToast:@"网络错误，请重试"];
+        [JJRToastTool showError:@"网络错误，请重试"];
     }];
 }
 
@@ -408,16 +397,16 @@
                 self.form.ethnicity = data[@"ethnicity"] ?: @"";
                 self.form.sex = data[@"sex"] ?: @"";
                 
-                [self showToast:@"身份证人像面识别成功"];
+                [JJRToastTool showSuccess:@"身份证人像面识别成功"];
             } else {
-                [self showToast:responseObject[@"err"][@"msg"] ?: @"身份证识别失败，请重新上传"];
+                [JJRToastTool showError:responseObject[@"err"][@"msg"] ?: @"身份证识别失败，请重新上传"];
                 // 清空图片
                 self.form.faceImage = @"";
                 [self.idCardView setFaceImage:[UIImage imageNamed:@"idcard_face_placeholder"]];
             }
         } failure:^(NSError *error) {
             [JJRNetworkService hideLoading];
-            [self showToast:@"网络错误，请重试"];
+            [JJRToastTool showError:@"网络错误，请重试"];
         }];
     } else if ([type isEqualToString:@"back"]) {
         // 识别身份证国徽面
@@ -431,16 +420,16 @@
                 self.form.issueAuthority = data[@"issueAuthority"] ?: @"";
                 self.form.validPeriod = data[@"validPeriod"] ?: @"";
                 
-                [self showToast:@"身份证国徽面识别成功"];
+                [JJRToastTool showSuccess:@"身份证国徽面识别成功"];
             } else {
-                [self showToast:responseObject[@"err"][@"msg"] ?: @"身份证识别失败，请重新上传"];
+                [JJRToastTool showError:responseObject[@"err"][@"msg"] ?: @"身份证识别失败，请重新上传"];
                 // 清空图片
                 self.form.backImage = @"";
                 [self.idCardView setBackImage:[UIImage imageNamed:@"idcard_back_placeholder"]];
             }
         } failure:^(NSError *error) {
             [JJRNetworkService hideLoading];
-            [self showToast:@"网络错误，请重试"];
+            [JJRToastTool showError:@"网络错误，请重试"];
         }];
     }
 }

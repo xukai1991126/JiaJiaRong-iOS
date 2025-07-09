@@ -605,7 +605,7 @@
             }];
             
             [valueLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-                make.right.equalTo(arrowIcon.mas_left).offset(-8);
+                make.right.equalTo(arrowIcon.mas_left).offset(-4);
                 make.centerY.equalTo(cityRow);
             }];
             
@@ -622,18 +622,18 @@
             [tipView mas_makeConstraints:^(MASConstraintMaker *make) {
                 make.left.right.equalTo(cell.contentView);
                 make.top.equalTo(cityRow.mas_bottom);
-                make.height.mas_equalTo(44);
+                make.height.mas_equalTo(24);
             }];
             
             UIImageView *infoIcon = [[UIImageView alloc] init];
             infoIcon.image = [UIImage systemImageNamed:@"info.circle"];
-            infoIcon.tintColor = [UIColor colorWithRed:0.23 green:0.31 blue:0.87 alpha:1.0];
+            infoIcon.tintColor = [UIColor colorWithHexString:@"#FF772C"];
             [tipView addSubview:infoIcon];
             
             UILabel *tipLabel = [[UILabel alloc] init];
             tipLabel.text = @"输入正确的城市，更有利于下款";
             tipLabel.font = [UIFont systemFontOfSize:13];
-            tipLabel.textColor = [UIColor colorWithRed:0.23 green:0.31 blue:0.87 alpha:1.0];
+            tipLabel.textColor = [UIColor colorWithHexString:@"#FF772C"];
             [tipView addSubview:tipLabel];
             
             [infoIcon mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -974,30 +974,30 @@
     [self.view endEditing:YES];
     // 验证表单
     if (!self.cityCode) {
-        [self showToast:@"请填写城市"];
+        [JJRToastTool showToast:@"请填写城市"];
         return;
     }
     
     for (NSDictionary *item in self.formData) {
         if (!self.formValues[item[@"field"]] || [self.formValues[item[@"field"]] isEqualToString:@""]) {
-            [self showToast:[NSString stringWithFormat:@"%@不能为空", item[@"fieldName"]]];
+            [JJRToastTool showToast:[NSString stringWithFormat:@"%@不能为空", item[@"fieldName"]]];
             return;
         }
     }
     
     if (!self.loanAmount || [self.loanAmount isEqualToString:@""]) {
-        [self showToast:@"请输入贷款金额"];
+        [JJRToastTool showToast:@"请输入贷款金额"];
         return;
     }
     
     NSInteger amount = [self.loanAmount integerValue];
     if (amount < 10000) {
-        [self showToast:@"贷款金额最低1万起"];
+        [JJRToastTool showToast:@"贷款金额最低1万起"];
         return;
     }
     
     if (amount > 200000) {
-        [self showToast:@"贷款金额不能超过20万"];
+        [JJRToastTool showToast:@"贷款金额不能超过20万"];
         return;
     }
     
@@ -1022,12 +1022,12 @@
 - (void)submitForm {
     // 验证身份证信息
     if (!self.nameTextField.text || self.nameTextField.text.length == 0) {
-        [self showToast:@"请填写正确的姓名"];
+        [JJRToastTool showToast:@"请填写正确的姓名"];
         return;
     }
     
     if (!self.idCardTextField.text || self.idCardTextField.text.length != 18) {
-        [self showToast:@"请填写正确的身份证号码"];
+        [JJRToastTool showToast:@"请填写正确的身份证号码"];
         return;
     }
     
@@ -1043,7 +1043,7 @@
     // 提交表单
     [[JJRNetworkService sharedInstance] submitFormApplyWithParams:params success:^(NSDictionary *responseObject) {
         if ([responseObject[@"code"] integerValue] == 0) {
-            [self showToast:@"提交成功"];
+            [JJRToastTool showSuccess:@"提交成功"];
             
             // 更新用户信息
             NSDictionary *userInfo = [[JJRUserManager sharedManager] userInfo];
@@ -1058,24 +1058,14 @@
                 [self.navigationController pushViewController:idCardVC animated:YES];
             });
         } else {
-            [self showToast:responseObject[@"err"][@"msg"] ?: @"提交失败"];
+            [JJRToastTool showError:responseObject[@"err"][@"msg"] ?: @"提交失败"];
         }
     } failure:^(NSError *error) {
-        [self showToast:@"网络错误，请重试"];
+        [JJRToastTool showError:@"网络错误，请重试"];
         NSLog(@"提交表单失败: %@", error);
     }];
 }
 
-- (void)showToast:(NSString *)message {
-    dispatch_async(dispatch_get_main_queue(), ^{
-        UIAlertController *alert = [UIAlertController alertControllerWithTitle:nil message:message preferredStyle:UIAlertControllerStyleAlert];
-        [self presentViewController:alert animated:YES completion:^{
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                [alert dismissViewControllerAnimated:YES completion:nil];
-            });
-        }];
-    });
-}
 
 #pragma mark - Helper Methods
 
@@ -1117,8 +1107,8 @@
         NSDictionary *selectedOption = self.selectedOptions[field];
         if (selectedOption && [selectedOption[@"key"] isEqualToString:option[@"key"]]) {
             optionButton.selected = YES;
-            optionButton.backgroundColor = [UIColor colorWithRed:0.23 green:0.31 blue:0.87 alpha:1.0];
-            optionButton.layer.borderColor = [UIColor colorWithRed:0.23 green:0.31 blue:0.87 alpha:1.0].CGColor;
+            optionButton.backgroundColor = [UIColor colorWithHexString:@"#FF772C"];
+            optionButton.layer.borderColor = [UIColor colorWithHexString:@"#FF772C"].CGColor;
         }
         
         // 使用 objc_setAssociatedObject 绑定数据

@@ -185,7 +185,7 @@
 
 - (void)agreeButtonTapped {
     if (!self.agreementCheckbox.selected) {
-        [self showToast:@"请先同意授权书"];
+        [JJRToastTool showToast:@"请先同意授权书"];
         return;
     }
     
@@ -195,16 +195,5 @@
     [self.navigationController pushViewController:formVC animated:YES];
 }
 
-- (void)showToast:(NSString *)message {
-    UIAlertController *alert = [UIAlertController alertControllerWithTitle:nil
-                                                                   message:message
-                                                            preferredStyle:UIAlertControllerStyleAlert];
-    
-    [self presentViewController:alert animated:YES completion:^{
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            [alert dismissViewControllerAnimated:YES completion:nil];
-        });
-    }];
-}
 
 @end 

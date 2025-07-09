@@ -139,7 +139,7 @@
         
     } failure:^(NSError *error) {
         NSLog(@"❌ 获取用户信息失败: %@", error.localizedDescription);
-        [self showToast:@"获取用户信息失败"];
+        [JJRToastTool showError:@"获取用户信息失败"];
     }];
 }
 
@@ -164,12 +164,6 @@
     idNoValueLabel.text = self.userInfo.idNo;
 }
 
-- (void)showToast:(NSString *)message {
-    UIAlertController *toast = [UIAlertController alertControllerWithTitle:nil message:message preferredStyle:UIAlertControllerStyleAlert];
-    [self presentViewController:toast animated:YES completion:nil];
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        [toast dismissViewControllerAnimated:YES completion:nil];
-    });
-}
+
 
 @end 

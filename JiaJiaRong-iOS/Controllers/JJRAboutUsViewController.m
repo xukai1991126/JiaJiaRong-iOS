@@ -237,7 +237,7 @@
         
     } failure:^(NSError *error) {
         NSLog(@"❌ 获取应用信息失败: %@", error.localizedDescription);
-        [self showToast:@"获取应用信息失败"];
+        [JJRToastTool showError:@"获取应用信息失败"];
     }];
 }
 
@@ -252,13 +252,7 @@
     self.appDescLabel.text = self.appInfo.appText;
 }
 
-- (void)showToast:(NSString *)message {
-    UIAlertController *toast = [UIAlertController alertControllerWithTitle:nil message:message preferredStyle:UIAlertControllerStyleAlert];
-    [self presentViewController:toast animated:YES completion:nil];
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        [toast dismissViewControllerAnimated:YES completion:nil];
-    });
-}
+
 
 #pragma mark - Actions
 

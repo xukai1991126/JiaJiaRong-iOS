@@ -757,7 +757,7 @@ typedef NS_ENUM(NSInteger, HomeTableViewSection) {
     
     // 检查协议勾选
     if (!self.protocolChecked && [self.userInfo[@"audit"] integerValue] == 0) {
-        [self showToast:@"请同意并勾选协议"];
+        [JJRToastTool showToast:@"请同意并勾选协议"];
         return;
     }
     
@@ -815,17 +815,6 @@ typedef NS_ENUM(NSInteger, HomeTableViewSection) {
     JJRResultViewController *resultVC = [[JJRResultViewController alloc] init];
     resultVC.hidesBottomBarWhenPushed = YES;
     [self.navigationController pushViewController:resultVC animated:YES];
-}
-
-#pragma mark - Helper
-
-- (void)showToast:(NSString *)message {
-    UIAlertController *alert = [UIAlertController alertControllerWithTitle:nil message:message preferredStyle:UIAlertControllerStyleAlert];
-    [self presentViewController:alert animated:YES completion:^{
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            [alert dismissViewControllerAnimated:YES completion:nil];
-        });
-    }];
 }
 
 @end 

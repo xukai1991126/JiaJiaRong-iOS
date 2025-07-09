@@ -238,12 +238,12 @@
             self.authorityData = response[@"data"];
             [self updateAuthorityUI];
         } else {
-            [self showToast:@"获取授权信息失败"];
+            [JJRToastTool showError:@"获取授权信息失败"];
         }
     } failure:^(NSError *error) {
         [JJRNetworkService hideLoading];
         NSLog(@"❌ POST请求失败: %@", error);
-        [self showToast:@"网络错误，请重试"];
+        [JJRToastTool showError:@"网络错误，请重试"];
     }];
 }
 
@@ -257,11 +257,11 @@
             self.agreementContent = response[@"data"][@"content"];
             [self updateAgreementUI];
         } else {
-            [self showToast:@"获取协议内容失败"];
+            [JJRToastTool showError:@"获取协议内容失败"];
         }
     } failure:^(NSError *error) {
         NSLog(@"❌ GET请求失败: %@", error);
-        [self showToast:@"获取协议内容失败"];
+        [JJRToastTool showError:@"获取协议内容失败"];
     }];
 }
 
@@ -338,19 +338,19 @@
             userInfo[@"authority"] = @YES;
             [userManager updateUserInfo:userInfo];
             
-            [self showToast:@"授权成功"];
+            [JJRToastTool showSuccess:@"授权成功"];
             
             // 延迟跳转到结果页面
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
                 [self navigateToResult];
             });
         } else {
-            [self showToast:response[@"msg"] ?: @"授权失败"];
+            [JJRToastTool showError:response[@"msg"] ?: @"授权失败"];
         }
     } failure:^(NSError *error) {
         [JJRNetworkService hideLoading];
         NSLog(@"❌ 提交授权失败: %@", error);
-        [self showToast:@"网络错误，请重试"];
+        [JJRToastTool showError:@"网络错误，请重试"];
     }];
 }
 
@@ -362,15 +362,6 @@
 
 #pragma mark - Helper
 
-- (void)showToast:(NSString *)message {
-    UIAlertController *alert = [UIAlertController alertControllerWithTitle:nil 
-                                                                   message:message 
-                                                            preferredStyle:UIAlertControllerStyleAlert];
-    [self presentViewController:alert animated:YES completion:^{
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            [alert dismissViewControllerAnimated:YES completion:nil];
-        });
-    }];
-}
+
 
 @end 

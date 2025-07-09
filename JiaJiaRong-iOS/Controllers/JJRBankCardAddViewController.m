@@ -326,19 +326,19 @@
 - (void)handleSubmitBankCard {
     // 验证输入
     if (!self.bankNoTextField.text || self.bankNoTextField.text.length == 0) {
-        [self showToast:@"请输入银行卡号"];
+        [JJRToastTool showToast:@"请输入银行卡号"];
         return;
     }
     
     if (!self.mobileTextField.text || self.mobileTextField.text.length == 0) {
-        [self showToast:@"请输入预留手机号"];
+        [JJRToastTool showToast:@"请输入预留手机号"];
         return;
     }
     
     // 银行卡号格式验证（去掉空格后验证）
     NSString *cleanBankNo = [self.bankNoTextField.text stringByReplacingOccurrencesOfString:@" " withString:@""];
     if (cleanBankNo.length < 16 || cleanBankNo.length > 19) {
-        [self showToast:@"请输入正确的银行卡号"];
+        [JJRToastTool showToast:@"请输入正确的银行卡号"];
         return;
     }
     
@@ -346,12 +346,12 @@
     NSString *mobileRegex = @"^1[3-9]\\d{9}$";
     NSPredicate *mobilePredicate = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", mobileRegex];
     if (![mobilePredicate evaluateWithObject:self.mobileTextField.text]) {
-        [self showToast:@"请输入正确预留手机号"];
+        [JJRToastTool showToast:@"请输入正确预留手机号"];
         return;
     }
     
     if (!self.checked) {
-        [self showToast:@"请同意用户服务协议"];
+        [JJRToastTool showToast:@"请同意用户服务协议"];
         return;
     }
     
@@ -380,7 +380,7 @@
         
         if ([code intValue] == 0) {
             // 成功
-            [self showToast:@"绑定成功"];
+            [JJRToastTool showSuccess:@"绑定成功"];
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
                 // 清空表单
                 self.bankNoTextField.text = @"";
@@ -390,10 +390,10 @@
         } else {
             // 失败，显示服务器返回的错误信息
             NSString *errorMsg = err[@"msg"] ?: @"绑定失败，请重试";
-            [self showToast:errorMsg];
+            [JJRToastTool showError:errorMsg];
         }
     } failure:^(NSError *error) {
-        [self showToast:@"网络错误，请重试"];
+        [JJRToastTool showError:@"网络错误，请重试"];
     }];
 }
 
@@ -410,14 +410,6 @@
     return [JJRNetworkService encryptMobileMd5:mobile];
 }
 
-- (void)showToast:(NSString *)message {
-    // 简单的Toast实现
-    UIAlertController *toast = [UIAlertController alertControllerWithTitle:nil message:message preferredStyle:UIAlertControllerStyleAlert];
-    [self presentViewController:toast animated:YES completion:nil];
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        [toast dismissViewControllerAnimated:YES completion:nil];
-    });
-}
 
 - (void)showAgreementWithType:(NSString *)type title:(NSString *)title {
     // 创建WebViewController来显示协议内容

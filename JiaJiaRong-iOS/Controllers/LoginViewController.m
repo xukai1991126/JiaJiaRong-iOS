@@ -486,12 +486,12 @@
                                                     success:^(NSDictionary *response) {
         [JJRNetworkService hideLoading];
         NSLog(@"🎯 验证码发送成功: %@", response);
-        [self showToast:@"验证码已发送"];
+        [JJRToastTool showToast:@"验证码已发送"];
         [self startCountdown];
     } failure:^(NSError *error) {
         [JJRNetworkService hideLoading];
         NSLog(@"🎯 验证码发送失败: %@", error.localizedDescription);
-        [self showToast:@"验证码发送失败，请稍后重试"];
+        [JJRToastTool showError:@"验证码发送失败，请稍后重试"];
     }];
 }
 
@@ -549,7 +549,7 @@
     }
     
     if (!self.protocolChecked) {
-        [self showToast:@"请阅读并勾选协议框"];
+        [JJRToastTool showToast:@"请阅读并勾选协议框"];
         return;
     }
     
@@ -573,7 +573,7 @@
             [self handleLoginSuccess:response mobile:mobile];
         } failure:^(NSError *error) {
             [JJRNetworkService hideLoading];
-            [self showToast:@"登录失败，请重试"];
+            [JJRToastTool showToast:@"登录失败，请重试"];
         }];
     } else {
         // 密码登录
@@ -585,7 +585,7 @@
             [self handleLoginSuccess:response mobile:mobile];
         } failure:^(NSError *error) {
             [JJRNetworkService hideLoading];
-            [self showToast:@"登录失败，请重试"];
+            [JJRToastTool showToast:@"登录失败，请重试"];
         }];
     }
 }
@@ -617,7 +617,7 @@
     NSLog(@"🎯 - token: %@", [defaults objectForKey:@"token"]);
     NSLog(@"🎯 - mobile: %@", [defaults objectForKey:@"mobile"]);
     
-    [self showToast:@"登录成功"];
+    [JJRToastTool showSuccess:@"登录成功"];
     
     // 跳转到主页面
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
@@ -654,14 +654,14 @@
 - (BOOL)validateMobile {
     NSString *mobile = [self.mobileTextField.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
     if (mobile.length == 0) {
-        [self showToast:@"请输入手机号"];
+        [JJRToastTool showToast:@"请输入手机号"];
         return NO;
     }
     
     NSString *phoneRegex = @"^1[3-9]\\d{9}$";
     NSPredicate *phoneTest = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", phoneRegex];
     if (![phoneTest evaluateWithObject:mobile]) {
-        [self showToast:@"请输入正确的手机号"];
+        [JJRToastTool showToast:@"请输入正确的手机号"];
         return NO;
     }
     
@@ -671,12 +671,12 @@
 - (BOOL)validateCaptcha {
     NSString *captcha = [self.codeTextField.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
     if (captcha.length == 0) {
-        [self showToast:@"请输入验证码"];
+        [JJRToastTool showToast:@"请输入验证码"];
         return NO;
     }
     
     if (captcha.length != 4) {
-        [self showToast:@"验证码格式不正确"];
+        [JJRToastTool showToast:@"验证码格式不正确"];
         return NO;
     }
     
@@ -686,21 +686,13 @@
 - (BOOL)validatePassword {
     NSString *password = [self.codeTextField.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
     if (password.length == 0) {
-        [self showToast:@"请输入密码"];
+        [JJRToastTool showToast:@"请输入密码"];
         return NO;
     }
     
     return YES;
 }
 
-- (void)showToast:(NSString *)message {
-    UIAlertController *alert = [UIAlertController alertControllerWithTitle:nil message:message preferredStyle:UIAlertControllerStyleAlert];
-    [self presentViewController:alert animated:YES completion:^{
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            [alert dismissViewControllerAnimated:YES completion:nil];
-        });
-    }];
-}
 
 - (void)fetchAppChannelInfo {
     NSLog(@"🎯 开始获取应用渠道信息");
