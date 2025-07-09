@@ -5,11 +5,11 @@
 //  Created by Assistant on 2024/01/01.
 //
 
-#import <UIKit/UIKit.h>
+#import "JJRBaseViewController.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface JJRRepaymentPlanViewController : UIViewController
+@interface JJRRepaymentPlanViewController : JJRBaseViewController
 
 @property (nonatomic, strong) NSString *loanNo;
 

@@ -163,11 +163,13 @@
     [self.periodLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(self.detailView).offset(16);
         make.top.equalTo(self.detailView).offset(0);
+        make.height.mas_equalTo(12);
     }];
     
     [self.payDateLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(self.periodLabel);
         make.top.equalTo(self.periodLabel.mas_bottom).offset(6);
+        make.height.mas_equalTo(12);
     }];
     
     [self.separatorLine mas_makeConstraints:^(MASConstraintMaker *make) {

@@ -363,7 +363,6 @@
     
     // 设置还款计划按钮
     repaymentButton.hidden = (status != 2);
-    repaymentButton.hidden = NO;
     [repaymentButton addTarget:self action:@selector(repaymentButtonTapped:) forControlEvents:UIControlEventTouchUpInside];
     repaymentButton.tag = indexPath.row;
     
