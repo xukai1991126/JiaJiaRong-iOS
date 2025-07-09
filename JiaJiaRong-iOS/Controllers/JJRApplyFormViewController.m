@@ -424,9 +424,9 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     if (indexPath.section == 0) {
-        return 120; // 步骤区域
+        return 60; // 步骤区域
     } else if (indexPath.section == 1) {
-        return 100; // 城市选择 + 提示
+        return 80; // 城市选择 + 提示
     } else if (indexPath.section == 2) {
         // 表单选项 - 根据展开/折叠状态计算高度
         if (indexPath.row < self.formData.count) {
