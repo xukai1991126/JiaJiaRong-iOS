@@ -9,7 +9,6 @@
 #import "JJRApplyRecordViewController.h"
 #import "JJRNetworkService.h"
 #import "JJRRepaymentPlanViewController.h"
-#import <Masonry/Masonry.h>
 
 @interface JJRApplyRecordViewController () <UITableViewDelegate, UITableViewDataSource>
 
@@ -25,9 +24,31 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    [self setupNavigationBar];
     [self setupUI];
     [self setupData];
     [self fetchApplyRecords];
+}
+
+- (void)setupNavigationBar {
+    // 设置导航栏为白色背景
+    if (@available(iOS 13.0, *)) {
+        UINavigationBarAppearance *appearance = [[UINavigationBarAppearance alloc] init];
+        [appearance configureWithOpaqueBackground];
+        appearance.backgroundColor = [UIColor whiteColor];
+        appearance.titleTextAttributes = @{NSForegroundColorAttributeName: [UIColor blackColor]};
+        // 隐藏导航栏下面的分隔线
+        appearance.shadowColor = [UIColor clearColor];
+        appearance.shadowImage = [[UIImage alloc] init];
+        self.navigationController.navigationBar.standardAppearance = appearance;
+        self.navigationController.navigationBar.scrollEdgeAppearance = appearance;
+    } else {
+        self.navigationController.navigationBar.barTintColor = [UIColor whiteColor];
+        self.navigationController.navigationBar.titleTextAttributes = @{NSForegroundColorAttributeName: [UIColor blackColor]};
+        // 隐藏导航栏下面的分隔线
+        [self.navigationController.navigationBar setShadowImage:[[UIImage alloc] init]];
+    }
+    self.navigationController.navigationBar.translucent = NO;
 }
 
 - (void)setupUI {
@@ -60,7 +81,7 @@
     [self.view addSubview:self.emptyView];
     
     UIImageView *emptyImageView = [[UIImageView alloc] init];
-    emptyImageView.image = [UIImage systemImageNamed:@"doc.text"];
+    emptyImageView.image = [UIImage imageNamed:@"img_67c7518aff85"];
     emptyImageView.tintColor = [UIColor lightGrayColor];
     [self.emptyView addSubview:emptyImageView];
     
@@ -71,8 +92,11 @@
     emptyLabel.textAlignment = NSTextAlignmentCenter;
     [self.emptyView addSubview:emptyLabel];
     
+    // 修改tableView约束，左右各15pt间距
     [self.tableView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.edges.equalTo(self.view);
+        make.top.bottom.equalTo(self.view);
+        make.left.equalTo(self.view).offset(15);
+        make.right.equalTo(self.view).offset(-15);
     }];
     
     [self.emptyView mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -128,8 +152,12 @@
 
 #pragma mark - UITableViewDataSource
 
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     return self.applyRecords.count;
+}
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    return 1; // 每个section只有一行，这样可以实现cell间距
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -221,20 +249,20 @@
         // 信息标签
         UILabel *applicantLabel = [[UILabel alloc] init];
         applicantLabel.tag = 112;
-        applicantLabel.font = [UIFont systemFontOfSize:14];
-        applicantLabel.textColor = [UIColor blackColor];
+        applicantLabel.font = [UIFont systemFontOfSize:12];
+        applicantLabel.textColor = [UIColor colorWithRed:118.0/255.0 green:118.0/255.0 blue:118.0/255.0 alpha:1.0];
         [cell.contentView addSubview:applicantLabel];
         
         UILabel *timeLabel = [[UILabel alloc] init];
         timeLabel.tag = 113;
-        timeLabel.font = [UIFont systemFontOfSize:14];
-        timeLabel.textColor = [UIColor blackColor];
+        timeLabel.font = [UIFont systemFontOfSize:12];
+        timeLabel.textColor = [UIColor colorWithRed:118.0/255.0 green:118.0/255.0 blue:118.0/255.0 alpha:1.0];
         [cell.contentView addSubview:timeLabel];
         
         UILabel *remarkLabel = [[UILabel alloc] init];
         remarkLabel.tag = 114;
-        remarkLabel.font = [UIFont systemFontOfSize:14];
-        remarkLabel.textColor = [UIColor blackColor];
+        remarkLabel.font = [UIFont systemFontOfSize:12];
+        remarkLabel.textColor = [UIColor colorWithRed:118.0/255.0 green:118.0/255.0 blue:118.0/255.0 alpha:1.0];
         remarkLabel.numberOfLines = 0;
         [cell.contentView addSubview:remarkLabel];
         
@@ -255,54 +283,54 @@
         }];
         
         [repaymentButton mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.right.equalTo(cell.contentView).offset(-15);
+            make.right.equalTo(cell.contentView).offset(-20);
             make.centerY.equalTo(statusView);
         }];
         
         [amountView mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.top.equalTo(statusView.mas_bottom).offset(15);
+            make.top.equalTo(statusView.mas_bottom).offset(12);
             make.left.right.equalTo(cell.contentView).inset(15);
             make.height.mas_equalTo(80);
         }];
         
         [loanAmountView mas_makeConstraints:^(MASConstraintMaker *make) {
             make.left.top.bottom.equalTo(amountView);
-            make.width.equalTo(amountView).multipliedBy(0.5);
+            make.right.equalTo(amountView.mas_centerX);
         }];
         
         [loanAmountTitleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.top.equalTo(loanAmountView).offset(10);
-            make.centerX.equalTo(loanAmountView);
+            make.top.equalTo(loanAmountView).offset(12);
+            make.left.right.equalTo(loanAmountView);
         }];
         
         [loanAmountLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.top.equalTo(loanAmountTitleLabel.mas_bottom).offset(5);
-            make.centerX.equalTo(loanAmountView);
-        }];
-        
-        [separatorLine mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.center.equalTo(amountView);
-            make.width.mas_equalTo(1);
-            make.height.equalTo(amountView).multipliedBy(0.5);
+            make.top.equalTo(loanAmountTitleLabel.mas_bottom).offset(8);
+            make.left.right.equalTo(loanAmountView);
         }];
         
         [rateView mas_makeConstraints:^(MASConstraintMaker *make) {
             make.right.top.bottom.equalTo(amountView);
-            make.width.equalTo(amountView).multipliedBy(0.5);
+            make.left.equalTo(amountView.mas_centerX);
         }];
         
         [rateTitleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.top.equalTo(rateView).offset(10);
-            make.centerX.equalTo(rateView);
+            make.top.equalTo(rateView).offset(12);
+            make.left.right.equalTo(rateView);
         }];
         
         [rateLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.top.equalTo(rateTitleLabel.mas_bottom).offset(5);
-            make.centerX.equalTo(rateView);
+            make.top.equalTo(rateTitleLabel.mas_bottom).offset(8);
+            make.left.right.equalTo(rateView);
+        }];
+        
+        [separatorLine mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.centerX.centerY.equalTo(amountView);
+            make.width.mas_equalTo(1);
+            make.height.mas_equalTo(40);
         }];
         
         [applicantLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.top.equalTo(amountView.mas_bottom).offset(15);
+            make.top.equalTo(amountView.mas_bottom).offset(12);
             make.left.right.equalTo(cell.contentView).inset(15);
         }];
         
@@ -319,9 +347,8 @@
     }
     
     // 配置数据
-    NSDictionary *record = self.applyRecords[indexPath.row];
+    NSDictionary *record = self.applyRecords[indexPath.section]; // 改为section索引
     
-    UIView *statusView = [cell.contentView viewWithTag:100];
     UIImageView *statusImageView = [cell.contentView viewWithTag:101];
     UILabel *statusLabel = [cell.contentView viewWithTag:102];
     UIButton *repaymentButton = [cell.contentView viewWithTag:103];
@@ -341,24 +368,24 @@
     switch (status) {
         case 1:
             statusColor = [UIColor colorWithRed:12.0/255.0 green:89.0/255.0 blue:205.0/255.0 alpha:1.0];
-            iconName = @"clock";
+            iconName = @"img_e37ba6e8d5cb";
             break;
         case 2:
             statusColor = [UIColor colorWithRed:82.0/255.0 green:205.0/255.0 blue:12.0/255.0 alpha:1.0];
-            iconName = @"checkmark.circle";
+            iconName = @"img_fa2686883e60";
             break;
         case 3:
             statusColor = [UIColor colorWithRed:240.0/255.0 green:2.0/255.0 blue:2.0/255.0 alpha:1.0];
-            iconName = @"xmark.circle";
+            iconName = @"img_8e0b3be1e1de";
             break;
         default:
             statusColor = [UIColor blackColor];
-            iconName = @"questionmark.circle";
+            iconName = @"img_e37ba6e8d5cb";
             break;
     }
     
     statusLabel.textColor = statusColor;
-    statusImageView.image = [UIImage systemImageNamed:iconName];
+    statusImageView.image = [UIImage imageNamed:@"img_e37ba6e8d5cb"];
     statusImageView.tintColor = statusColor;
     
     // 设置还款计划按钮
@@ -381,11 +408,20 @@
 #pragma mark - UITableViewDelegate
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    return 200;
+    // 动态计算cell高度
+    // 顶部状态区域: 30 + 15(top) = 45
+    // 金额区域: 80 + 12(top) = 92
+    // 申请人员: 20 + 12(top) = 32
+    // 申请时间: 20 + 8(top) = 28
+    // 备注: 20 + 8(top) = 28
+    // 底部间距: 15
+    // 总计: 45 + 92 + 32 + 28 + 28 + 15 = 240
+    return 240;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
-    return 15;
+    // 每个section都有15pt的间距，包括第一个
+    return 10;
 }
 
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
@@ -394,9 +430,20 @@
     return headerView;
 }
 
+- (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section {
+    return 0.01; // 防止系统默认footer高度
+}
+
+- (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section {
+    UIView *footerView = [[UIView alloc] init];
+    footerView.backgroundColor = [UIColor clearColor];
+    return footerView;
+}
+
 #pragma mark - Actions
 
 - (void)repaymentButtonTapped:(UIButton *)sender {
+    
     JJRRepaymentPlanViewController *vc = [[JJRRepaymentPlanViewController alloc] init];
     NSDictionary *record = self.applyRecords[sender.tag];
     vc.loanNo = record[@"loanNo"];
