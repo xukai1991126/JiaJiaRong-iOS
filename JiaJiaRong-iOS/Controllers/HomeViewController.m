@@ -774,9 +774,9 @@ typedef NS_ENUM(NSInteger, HomeTableViewSection) {
 ////    if (![self.userInfo[@"form"] boolValue]) {
 //        [self navigateToForm];
 ////    } else if (![self.userInfo[@"identity"] boolValue]) {
-        [self navigateToIDCard];
+//        [self navigateToIDCard];
 //    } else if (![self.userInfo[@"authority"] boolValue]) {
-//        [self navigateToAuthorization];
+        [self navigateToAuthorization];
 //    } else {
 //        if ([self.userInfo[@"model"] isEqualToString:@"A"]) {
 //            [self navigateToResult];

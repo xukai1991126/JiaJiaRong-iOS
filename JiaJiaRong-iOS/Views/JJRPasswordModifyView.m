@@ -69,7 +69,8 @@
     self.mobileTextField = [[UITextField alloc] init];
     self.mobileTextField.text = [[JJRUserManager sharedManager] mobile];
     self.mobileTextField.font = [UIFont systemFontOfSize:14];
-    self.mobileTextField.enabled = NO; // 不可编辑
+    self.mobileTextField.placeholder = [[JJRUserManager sharedManager] mobile].length ? nil : @"请输入手机号";
+    self.mobileTextField.enabled = [[JJRUserManager sharedManager] mobile].length ? NO : YES; // 不可编辑
     self.mobileTextField.backgroundColor = [UIColor colorWithRed:230.0/255.0 green:230.0/255.0 blue:230.0/255.0 alpha:1.0];
     self.mobileTextField.layer.cornerRadius = 6;
     self.mobileTextField.leftView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 20, 0)];

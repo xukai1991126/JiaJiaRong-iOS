@@ -22,6 +22,10 @@
 
 @implementation JJRPasswordModifyViewController
 
+- (BOOL)requiresLogin {
+    return NO;
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self setupUI];

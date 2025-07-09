@@ -110,6 +110,36 @@
             endingLineNumber = "422"
             landmarkName = "-setupAgreementContainer"
             landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "931A10BC-1D44-4132-9D59-B334D560F4A9 - af081d84913819be"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "-[JJRIdCardView setupAgreementContainer]"
+                  moduleName = "JiaJiaRong-iOS"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/abcd/Desktop/jiajiarong-new/JiaJiaRong-iOS/JiaJiaRong-iOS/Views/JJRIdCardView.m"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "422"
+                  endingLineNumber = "422">
+               </Location>
+               <Location
+                  uuid = "931A10BC-1D44-4132-9D59-B334D560F4A9 - 7f5b3eb9710e8444"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "__40-[JJRIdCardView setupAgreementContainer]_block_invoke_2"
+                  moduleName = "JiaJiaRong-iOS"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/abcd/Desktop/jiajiarong-new/JiaJiaRong-iOS/JiaJiaRong-iOS/Views/JJRIdCardView.m"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "423"
+                  endingLineNumber = "423">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -147,22 +177,6 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "3051FD3D-99CF-41F6-AC24-D6E7CA6E2180"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "JiaJiaRong-iOS/Controllers/LoginViewController.m"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "53"
-            endingLineNumber = "53"
-            landmarkName = "-viewDidLoad"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
             uuid = "3B0B06F6-C90C-4EA5-BA51-933BEC7C57BF"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
@@ -189,6 +203,22 @@
             startingLineNumber = "885"
             endingLineNumber = "885"
             landmarkName = "-handleTokenInvalid:"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "2E3525F5-4A70-4BBE-9F36-04E119EFC664"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "JiaJiaRong-iOS/Controllers/WebViewController.m"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "21"
+            endingLineNumber = "21"
+            landmarkName = "-requiresLogin"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

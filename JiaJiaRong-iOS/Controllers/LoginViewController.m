@@ -5,7 +5,7 @@
 #import "WebViewController.h"
 #import <CoreText/CoreText.h>
 #import <YYKit/YYKit.h>
-#import "JJRPasswordForgetViewController.h"
+#import "JJRPasswordModifyViewController.h"
 
 @interface LoginViewController ()
 
@@ -627,7 +627,7 @@
 }
 
 - (void)forgetPasswordTapped {
-    JJRPasswordForgetViewController *vc = [[JJRPasswordForgetViewController alloc] init];
+    JJRPasswordModifyViewController *vc = [[JJRPasswordModifyViewController alloc] init];
     [self.navigationController pushViewController:vc animated:YES];
 }
 
