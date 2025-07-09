@@ -82,7 +82,7 @@
 #define JJR_APPLY_RECORD @"/app/userinfo/apply"
 
 // 获取还款计划
-#define JJR_REPAYMENT_PLAN @"/app/repayment/plan"
+#define JJR_REPAYMENT_PLAN @"/app/userinfo/repayment/list"
 
 #pragma mark - 密码管理相关接口
 // 初始化密码

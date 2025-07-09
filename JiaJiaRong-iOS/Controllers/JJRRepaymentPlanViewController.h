@@ -2,15 +2,16 @@
 //  JJRRepaymentPlanViewController.h
 //  JiaJiaRong-iOS
 //
-//  Created by Assistant on 2024/7/5.
-//  Copyright © 2024年 JiaJiaRong. All rights reserved.
+//  Created by Assistant on 2024/01/01.
 //
 
-#import "JJRBaseViewController.h"
+#import <UIKit/UIKit.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface JJRRepaymentPlanViewController : JJRBaseViewController
+@interface JJRRepaymentPlanViewController : UIViewController
+
+@property (nonatomic, strong) NSString *loanNo;
 
 @end
 

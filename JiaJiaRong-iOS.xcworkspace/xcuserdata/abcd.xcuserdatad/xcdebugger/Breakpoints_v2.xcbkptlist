@@ -110,6 +110,36 @@
             endingLineNumber = "422"
             landmarkName = "-setupAgreementContainer"
             landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "931A10BC-1D44-4132-9D59-B334D560F4A9 - af081d84913819be"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "-[JJRIdCardView setupAgreementContainer]"
+                  moduleName = "JiaJiaRong-iOS"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/abcd/Desktop/jiajiarong-new/JiaJiaRong-iOS/JiaJiaRong-iOS/Views/JJRIdCardView.m"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "422"
+                  endingLineNumber = "422">
+               </Location>
+               <Location
+                  uuid = "931A10BC-1D44-4132-9D59-B334D560F4A9 - 7f5b3eb9710e8444"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "__40-[JJRIdCardView setupAgreementContainer]_block_invoke_2"
+                  moduleName = "JiaJiaRong-iOS"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/abcd/Desktop/jiajiarong-new/JiaJiaRong-iOS/JiaJiaRong-iOS/Views/JJRIdCardView.m"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "423"
+                  endingLineNumber = "423">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy

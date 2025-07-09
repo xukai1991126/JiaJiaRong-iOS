@@ -138,6 +138,11 @@ typedef void(^JJRFailureBlock)(NSError *error);
 - (void)getRepaymentPlanWithSuccess:(JJRSuccessBlock)success 
                            failure:(JJRFailureBlock)failure;
 
+// 获取还款计划（带贷款编号）
+- (void)getRepaymentPlanWithLoanNo:(NSString *)loanNo 
+                           success:(JJRSuccessBlock)success 
+                           failure:(JJRFailureBlock)failure;
+
 #pragma mark - 验证码相关接口
 // 发送验证码
 - (void)sendCaptchaWithParams:(NSDictionary *)params 

@@ -454,6 +454,16 @@
     [self POST:JJR_REPAYMENT_PLAN params:@{} success:success failure:failure];
 }
 
+// 获取还款计划（带贷款编号）
+- (void)getRepaymentPlanWithLoanNo:(NSString *)loanNo 
+                           success:(JJRSuccessBlock)success 
+                           failure:(JJRFailureBlock)failure {
+    NSDictionary *params = @{
+        @"loanNo": loanNo ?: @""
+    };
+    [self POST:JJR_REPAYMENT_PLAN params:params success:success failure:failure];
+}
+
 #pragma mark - 密码管理相关接口
 
 - (void)initPasswordWithParams:(NSDictionary *)params 
