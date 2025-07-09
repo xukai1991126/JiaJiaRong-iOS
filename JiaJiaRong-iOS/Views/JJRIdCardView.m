@@ -579,14 +579,18 @@
         @{@"key": @"idNo", @"label": @"身份证号", @"placeholder": @"请输入身份证号"},
         @{@"key": @"address", @"label": @"地址", @"placeholder": @"请输入地址"},
         @{@"key": @"issueAuthority", @"label": @"签发机关", @"placeholder": @"请输入签发机关"},
-        @{@"key": @"validPeriod", @"label": @"证件有效期", @"placeholder": @"请输入身份证有效期"}
+        @{@"key": @"validPeriod", @"label": @"有效期", @"placeholder": @"请输入身份证有效期"}
     ];
     
     NSMutableArray *inputs = [NSMutableArray array];
     
+    CGFloat currentY = 0;
+    
     // 为每个字段创建输入框
     for (NSInteger i = 0; i < formFields.count; i++) {
         NSDictionary *field = formFields[i];
+        
+        CGFloat itemHeight = 60; // 地址字段60pt
         
         // 创建表单项容器
         UIView *formItem = [[UIView alloc] init];
@@ -604,8 +608,7 @@
         label.font = [UIFont systemFontOfSize:14];
         label.textColor = [UIColor colorWithHexString:@"#767676"];
         [formItem addSubview:label];
-        
-        // 输入框
+        // 其他字段使用UITextField单行输入
         UITextField *textField = [[UITextField alloc] init];
         textField.placeholder = field[@"placeholder"];
         textField.font = [UIFont systemFontOfSize:14];
@@ -615,26 +618,23 @@
         textField.tag = i;
         [textField addTarget:self action:@selector(textFieldDidChange:) forControlEvents:UIControlEventEditingChanged];
         [formItem addSubview:textField];
-        
-        // 使用frame布局，确保不会有约束冲突
-        CGFloat itemHeight = 60;
-        CGFloat yPosition = i * itemHeight;
-        
-        formItem.frame = CGRectMake(0, yPosition, SCREEN_WIDTH -40, itemHeight); // 假设容器宽度为335
-        
-        // 设置内部元素的frame
-        label.frame = CGRectMake(15, 0, 80, itemHeight);
-        textField.frame = CGRectMake(105, 10, SCREEN_WIDTH -40 -155, 40);
-        separatorLine.frame = CGRectMake(0, itemHeight - 0.5, SCREEN_WIDTH -40, 0.5);
-        
         [inputs addObject:textField];
         
-        NSLog(@"🎯 创建表单项 %ld: %@ at y=%f", (long)i, field[@"label"], yPosition);
+        // 设置frame
+        formItem.frame = CGRectMake(0, currentY, SCREEN_WIDTH - 40, itemHeight);
+        label.frame = CGRectMake(15, 0, 70, itemHeight);
+        textField.frame = CGRectMake(95, 10, SCREEN_WIDTH - 40 - 95, 40);
+        separatorLine.frame = CGRectMake(0, itemHeight - 0.5, SCREEN_WIDTH - 40, 0.5);
+    
+        
+        currentY += itemHeight;
+        
+        NSLog(@"🎯 创建表单项 %ld: %@ at y=%f, height=%f", (long)i, field[@"label"], currentY - itemHeight, itemHeight);
     }
     
     self.formInputs = [inputs copy];
     
-    NSLog(@"🎯 setupFormInputs完成，创建了%ld个表单项", (long)formFields.count);
+    NSLog(@"🎯 setupFormInputs完成，创建了%ld个表单项，总高度=%f", (long)formFields.count, currentY);
 }
 
 - (void)setupConstraints {
@@ -852,41 +852,48 @@
         return;
     }
     
-    NSLog(@"🎯 更新表单数据:");
-    NSLog(@"🎯 姓名: %@", model.idName);
-    NSLog(@"🎯 身份证号: %@", model.idNo);
-    NSLog(@"🎯 地址: %@", model.address);
-    NSLog(@"🎯 签发机关: %@", model.issueAuthority);
-    NSLog(@"🎯 有效期: %@", model.validPeriod);
-    
-    // 更新表单输入框的值 - 确保顺序与setupFormInputs中的字段顺序一致
+    // 更新表单输入框的值
     NSArray *formFields = @[@"idName", @"idNo", @"address", @"issueAuthority", @"validPeriod"];
     
     for (NSInteger i = 0; i < self.formInputs.count && i < formFields.count; i++) {
-        UITextField *textField = self.formInputs[i];
+        id inputControl = self.formInputs[i];
         NSString *fieldKey = formFields[i];
         NSString *value = [model valueForKey:fieldKey];
-        textField.text = value ?: @"";
+        
+        if ([inputControl isKindOfClass:[UITextField class]]) {
+            UITextField *textField = (UITextField *)inputControl;
+            textField.text = value ?: @"";
+        } else if ([inputControl isKindOfClass:[UITextView class]]) {
+            UITextView *textView = (UITextView *)inputControl;
+            if (value && value.length > 0) {
+                textView.text = value;
+                textView.textColor = [UIColor colorWithHexString:@"#333333"];
+            } else {
+                textView.text = @"请输入地址";
+                textView.textColor = [UIColor colorWithHexString:@"#999999"];
+            }
+        }
         
         NSLog(@"🎯 设置字段 %@ = %@", fieldKey, value);
     }
     
     // 动态设置表单容器的高度
+    CGFloat totalHeight = 60 * 5; // 5个60pt字段
+    
     [self.formContainer mas_updateConstraints:^(MASConstraintMaker *make) {
-        make.height.mas_equalTo(300); // 设置为300pt以容纳5个表单项
+        make.height.mas_equalTo(totalHeight);
     }];
     
     // 显示表单
     self.formContainer.hidden = NO;
-    NSLog(@"🎯 表单已显示，高度已设置为300pt");
     
-    // 强制重新布局整个视图层次
-    [self.uploadContainer setNeedsLayout];
-    [self.uploadContainer layoutIfNeeded];
+    // 强制刷新布局
+    [UIView animateWithDuration:0.3 animations:^{
+        [self.uploadContainer layoutIfNeeded];
+        [self layoutIfNeeded];
+    }];
     
-    // 同时更新父视图的布局
-    [self setNeedsLayout];
-    [self layoutIfNeeded];
+    NSLog(@"🎯 表单已显示，高度已设置为%fpt", totalHeight);
     
     // 检查是否都有图片和数据，启用下一步按钮
     [self updateNextButtonState];
@@ -915,6 +922,64 @@
     
     // 更新按钮状态
     [self updateNextButtonState];
+}
+
+- (void)textViewDidChange:(NSNotification *)notification {
+    UITextView *textView = (UITextView *)notification.object;
+    
+    // 更新模型数据
+    NSArray *formFields = @[@"idName", @"idNo", @"address", @"issueAuthority", @"validPeriod"];
+    
+    if (textView.tag < formFields.count) {
+        NSString *fieldKey = formFields[textView.tag];
+        [self.form setValue:textView.text forKey:fieldKey];
+        
+        // 通知代理表单数据已更新
+        if ([self.delegate respondsToSelector:@selector(idCardViewDidChangeForm:)]) {
+            [self.delegate idCardViewDidChangeForm:self.form];
+        }
+    }
+    
+    // 更新按钮状态
+    [self updateNextButtonState];
+}
+
+- (void)textViewDidBeginEditing:(NSNotification *)notification {
+    UITextView *textView = (UITextView *)notification.object;
+    
+    // 清除占位符文本
+    if ([textView.text isEqualToString:@"请输入地址"]) {
+        textView.text = @"";
+        textView.textColor = [UIColor colorWithHexString:@"#333333"];
+    }
+}
+
+- (void)textViewDidEndEditing:(NSNotification *)notification {
+    UITextView *textView = (UITextView *)notification.object;
+    
+    // 如果文本为空，恢复占位符
+    if (textView.text.length == 0) {
+        textView.text = @"请输入地址";
+        textView.textColor = [UIColor colorWithHexString:@"#999999"];
+    }
+}
+
+- (NSString *)keyForTextView:(UITextView *)textView {
+    NSArray *keys = @[@"idName", @"idNo", @"address", @"issueAuthority", @"validPeriod"];
+    
+    if (textView.tag < keys.count) {
+        return keys[textView.tag];
+    }
+    return nil;
+}
+
+- (UILabel *)findLabelForTextView:(UITextView *)textView {
+    for (UIView *subview in textView.superview.subviews) {
+        if ([subview isKindOfClass:[UILabel class]] && subview.tag == textView.tag) {
+            return (UILabel *)subview;
+        }
+    }
+    return nil;
 }
 
 #pragma mark - Actions
