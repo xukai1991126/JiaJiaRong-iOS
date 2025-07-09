@@ -770,18 +770,18 @@ typedef NS_ENUM(NSInteger, HomeTableViewSection) {
     
     NSLog(@"🎯 用户已登录，继续业务流程");
     
-////    // 根据用户状态跳转不同页面
-////    if (![self.userInfo[@"form"] boolValue]) {
-//        [self navigateToForm];
-////    } else if (![self.userInfo[@"identity"] boolValue]) {
-//        [self navigateToIDCard];
-//    } else if (![self.userInfo[@"authority"] boolValue]) {
+    // 根据用户状态跳转不同页面
+    if (![self.userInfo[@"form"] boolValue]) {
+        [self navigateToForm];
+    } else if (![self.userInfo[@"identity"] boolValue]) {
+        [self navigateToIDCard];
+    } else if (![self.userInfo[@"authority"] boolValue]) {
         [self navigateToAuthorization];
-//    } else {
-//        if ([self.userInfo[@"model"] isEqualToString:@"A"]) {
-//            [self navigateToResult];
-//        }
-//    }
+    } else {
+        if ([self.userInfo[@"model"] isEqualToString:@"A"]) {
+            [self navigateToResult];
+        }
+    }
 }
 
 #pragma mark - Navigation
