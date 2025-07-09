@@ -406,8 +406,6 @@
                 
                 // 更新视图显示识别结果
                 [self.idCardView updateFormWithData:self.form];
-                
-                [JJRToastTool showSuccess:@"身份证人像面识别成功"];
             } else {
                 NSLog(@"🎯 人像面OCR识别失败: %@", responseObject[@"err"][@"msg"]);
                 [JJRToastTool showError:responseObject[@"err"][@"msg"] ?: @"身份证识别失败，请重新上传"];
@@ -439,8 +437,6 @@
                 
                 // 更新视图显示识别结果
                 [self.idCardView updateFormWithData:self.form];
-                
-                [JJRToastTool showSuccess:@"身份证国徽面识别成功"];
             } else {
                 NSLog(@"🎯 国徽面OCR识别失败: %@", responseObject[@"err"][@"msg"]);
                 [JJRToastTool showError:responseObject[@"err"][@"msg"] ?: @"身份证识别失败，请重新上传"];
