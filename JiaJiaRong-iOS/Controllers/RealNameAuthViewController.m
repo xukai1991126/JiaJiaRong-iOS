@@ -143,7 +143,7 @@
         
     } failure:^(NSError *error) {
         NSLog(@"❌ 获取用户信息失败: %@", error.localizedDescription);
-        [JJRToastTool showError:@"获取用户信息失败" inView:self.view];
+        [JJRToastTool showError:@"获取用户信息失败"];
     }];
 }
 

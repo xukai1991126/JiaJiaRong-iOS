@@ -364,7 +364,7 @@
         });
     } failure:^(NSError *error) {
         dispatch_async(dispatch_get_main_queue(), ^{
-            [JJRToastTool showError:@"登出失败，请重试" inView:self.view];
+            [JJRToastTool showError:@"登出失败，请重试"];
         });
     }];
 }
@@ -384,7 +384,7 @@
         });
     } failure:^(NSError *error) {
         dispatch_async(dispatch_get_main_queue(), ^{
-            [JJRToastTool showError:@"注销失败，请重试" inView:self.view];
+            [JJRToastTool showError:@"注销失败，请重试"];
         });
     }];
 }

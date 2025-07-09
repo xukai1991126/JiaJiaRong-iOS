@@ -54,7 +54,7 @@
     };
     
     [[JJRNetworkService sharedInstance] submitOpinionWithParams:params success:^(id responseObject) {
-        [JJRToastTool showSuccess:@"提交成功" inView:self.view];
+        [JJRToastTool showSuccess:@"提交成功"];
         [self.feedbackView clearContent];
         
         // 延迟0.5秒后返回上一页
@@ -62,7 +62,7 @@
             [self.navigationController popViewControllerAnimated:YES];
         });
     } failure:^(NSError *error) {
-        [JJRToastTool showError:@"提交失败，请稍后再试" inView:self.view];
+        [JJRToastTool showError:@"提交失败，请稍后再试"];
     }];
 }
 

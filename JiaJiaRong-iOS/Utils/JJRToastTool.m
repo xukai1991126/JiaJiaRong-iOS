@@ -10,6 +10,12 @@
 
 @implementation JJRToastTool
 
++ (void)showToast:(NSString *)message {
+    // 获取当前视图控制器检查是否在登录页面
+    UIViewController *currentVC = [self getCurrentViewController];
+    [self showToast:message inView:currentVC.view];
+}
+
 + (void)showToast:(NSString *)message inView:(UIView *)view {
     if (!view || !message.length) return;
     
@@ -45,6 +51,13 @@
     [MBProgressHUD hideHUDForView:view animated:YES];
 }
 
++ (void)showSuccess:(NSString *)message {
+    // 获取当前视图控制器检查是否在登录页面
+    UIViewController *currentVC = [self getCurrentViewController];
+    [self showSuccess:message inView:currentVC.view];
+    
+}
+
 + (void)showSuccess:(NSString *)message inView:(UIView *)view {
     if (!view || !message.length) return;
     MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:view animated:YES];
@@ -63,6 +76,12 @@
     [hud hideAnimated:YES afterDelay:2.0];
 }
 
++ (void)showError:(NSString *)message {
+    // 获取当前视图控制器检查是否在登录页面
+    UIViewController *currentVC = [self getCurrentViewController];
+    [self showError:message inView:currentVC.view];
+}
+
 + (void)showError:(NSString *)message inView:(UIView *)view {
     if (!view || !message.length) return;
     MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:view animated:YES];
@@ -79,6 +98,12 @@
     hud.label.text = message;
     hud.removeFromSuperViewOnHide = YES;
     [hud hideAnimated:YES afterDelay:2.0];
+}
+
++ (void)showWarning:(NSString *)message {
+    // 获取当前视图控制器检查是否在登录页面
+    UIViewController *currentVC = [self getCurrentViewController];
+    [self showWarning:message inView:currentVC.view];
 }
 
 + (void)showWarning:(NSString *)message inView:(UIView *)view {
@@ -181,6 +206,42 @@
     UIGraphicsEndImageContext();
     
     return image;
+}
+
+
+// 获取当前显示的视图控制器
++ (UIViewController *)getCurrentViewController {
+    UIWindow *keyWindow = [UIApplication sharedApplication].keyWindow;
+    
+    // iOS 13及以上版本的处理
+    if (!keyWindow) {
+        if (@available(iOS 13.0, *)) {
+            for (UIScene *scene in [UIApplication sharedApplication].connectedScenes) {
+                if (scene.activationState == UISceneActivationStateForegroundActive) {
+                    UIWindowScene *windowScene = (UIWindowScene *)scene;
+                    keyWindow = windowScene.windows.firstObject;
+                    break;
+                }
+            }
+        }
+    }
+    
+    UIViewController *rootVC = keyWindow.rootViewController;
+    return [self findCurrentViewController:rootVC];
+}
+
++ (UIViewController *)findCurrentViewController:(UIViewController *)vc {
+    if (vc.presentedViewController) {
+        return [self findCurrentViewController:vc.presentedViewController];
+    } else if ([vc isKindOfClass:[UINavigationController class]]) {
+        UINavigationController *navVC = (UINavigationController *)vc;
+        return [self findCurrentViewController:navVC.topViewController];
+    } else if ([vc isKindOfClass:[UITabBarController class]]) {
+        UITabBarController *tabVC = (UITabBarController *)vc;
+        return [self findCurrentViewController:tabVC.selectedViewController];
+    } else {
+        return vc;
+    }
 }
 
 @end

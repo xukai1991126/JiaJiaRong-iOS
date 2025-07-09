@@ -94,7 +94,13 @@
     
     // 修改tableView约束，左右各15pt间距
     [self.tableView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.bottom.equalTo(self.view);
+        if (@available(iOS 11.0, *)) {
+            make.top.equalTo(self.view.mas_safeAreaLayoutGuideTop);
+            make.bottom.equalTo(self.view.mas_safeAreaLayoutGuideBottom);
+        } else {
+            make.top.equalTo(self.mas_topLayoutGuide);
+            make.bottom.equalTo(self.view);
+        }
         make.left.equalTo(self.view).offset(15);
         make.right.equalTo(self.view).offset(-15);
     }];
@@ -134,7 +140,7 @@
     } failure:^(NSError *error) {
         dispatch_async(dispatch_get_main_queue(), ^{
             [self.loadingView stopAnimating];
-            [self showAlert:@"获取申请记录失败"];
+            [JJRToastTool showError:@"获取申请记录失败"];
         });
     }];
 }
@@ -421,7 +427,7 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
     // 每个section都有15pt的间距，包括第一个
-    return 10;
+    return 5;
 }
 
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
@@ -450,18 +456,6 @@
     [self.navigationController pushViewController:vc animated:YES];
 }
 
-#pragma mark - Helper
-
-- (void)showAlert:(NSString *)message {
-    UIAlertController *alert = [UIAlertController alertControllerWithTitle:nil
-                                                                   message:message
-                                                            preferredStyle:UIAlertControllerStyleAlert];
-    UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"确定"
-                                                       style:UIAlertActionStyleDefault
-                                                     handler:nil];
-    [alert addAction:okAction];
-    [self presentViewController:alert animated:YES completion:nil];
-}
 
 @end
 

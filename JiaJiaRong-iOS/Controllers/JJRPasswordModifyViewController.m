@@ -10,7 +10,6 @@
 #import <YYKit/YYKit.h>
 #import "JJRPasswordModifyView.h"
 #import "JJRNetworkService.h"
-#import "JJRToast.h"
 #import "JJRUserManager.h"
 #import "LoginViewController.h"
 

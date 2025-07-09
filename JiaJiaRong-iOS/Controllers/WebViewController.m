@@ -153,7 +153,7 @@
 
 - (void)webView:(WKWebView *)webView didFailNavigation:(WKNavigation *)navigation withError:(NSError *)error {
     self.progressView.hidden = YES;
-    [self showAlert:@"加载失败，请检查网络连接"];
+    [JJRToastTool showError:@"加载失败，请检查网络连接"];
 }
 
 #pragma mark - KVO
@@ -169,16 +169,6 @@
     [self.webView removeObserver:self forKeyPath:@"estimatedProgress"];
 }
 
-- (void)showAlert:(NSString *)message {
-    UIAlertController *alert = [UIAlertController alertControllerWithTitle:nil 
-                                                                   message:message 
-                                                            preferredStyle:UIAlertControllerStyleAlert];
-    UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"确定" 
-                                                       style:UIAlertActionStyleDefault 
-                                                     handler:nil];
-    [alert addAction:okAction];
-    [self presentViewController:alert animated:YES completion:nil];
-}
 
 // 获取当前显示的视图控制器
 - (UIViewController *)getCurrentViewController {
