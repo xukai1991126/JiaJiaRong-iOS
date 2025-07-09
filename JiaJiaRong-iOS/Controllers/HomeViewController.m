@@ -47,6 +47,10 @@ typedef NS_ENUM(NSInteger, HomeTableViewSection) {
 
 @implementation HomeViewController
 
+- (BOOL)requiresLogin {
+    return NO;
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self setupData];
@@ -306,23 +310,58 @@ typedef NS_ENUM(NSInteger, HomeTableViewSection) {
     [self.mainCheckboxButton addTarget:self action:@selector(protocolCheckboxTapped:) forControlEvents:UIControlEventTouchUpInside];
     [checkboxContainer addSubview:self.mainCheckboxButton];
     
-    // 协议文本
-    self.mainProtocolLabel = [[UILabel alloc] init];
-    self.mainProtocolLabel.font = [UIFont systemFontOfSize:12];
-    self.mainProtocolLabel.textColor = [UIColor colorWithHexString:@"#97999E"];
-    self.mainProtocolLabel.numberOfLines = 0;
-    [protocolView addSubview:self.mainProtocolLabel];
+    // 协议文本容器
+    UIView *protocolTextContainer = [[UIView alloc] init];
+    [protocolView addSubview:protocolTextContainer];
     
-    // 创建富文本
-    NSMutableAttributedString *attributedText = [[NSMutableAttributedString alloc] initWithString:@"我已阅读并同意《服务协议》《隐私协议》"];
-    [attributedText addAttribute:NSForegroundColorAttributeName value:[UIColor colorWithHexString:@"#FF772C"] range:[attributedText.string rangeOfString:@"《服务协议》"]];
-    [attributedText addAttribute:NSForegroundColorAttributeName value:[UIColor colorWithHexString:@"#FF772C"] range:[attributedText.string rangeOfString:@"《隐私协议》"]];
-    self.mainProtocolLabel.attributedText = attributedText;
+    // 创建"我已阅读并同意"文本
+    UILabel *protocolPrefixLabel = [[UILabel alloc] init];
+    protocolPrefixLabel.text = @"我已阅读并同意";
+    protocolPrefixLabel.font = [UIFont systemFontOfSize:12];
+    protocolPrefixLabel.textColor = [UIColor colorWithHexString:@"#97999E"];
+    [protocolTextContainer addSubview:protocolPrefixLabel];
     
-    // 添加点击手势到整个协议文本
-    self.mainProtocolLabel.userInteractionEnabled = YES;
-    UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(protocolLabelTapped:)];
-    [self.mainProtocolLabel addGestureRecognizer:tapGesture];
+    // 服务协议按钮
+    UIButton *serviceAgreementButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    [serviceAgreementButton setTitle:@" 《服务协议》" forState:UIControlStateNormal];
+    [serviceAgreementButton setTitleColor:[UIColor colorWithHexString:@"#FF772C"] forState:UIControlStateNormal];
+    serviceAgreementButton.titleLabel.font = [UIFont systemFontOfSize:12];
+    [serviceAgreementButton addTarget:self action:@selector(serviceAgreementTapped) forControlEvents:UIControlEventTouchUpInside];
+    [protocolTextContainer addSubview:serviceAgreementButton];
+    
+    // 隐私协议按钮
+    UIButton *privacyAgreementButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    [privacyAgreementButton setTitle:@" 《隐私协议》" forState:UIControlStateNormal];
+    [privacyAgreementButton setTitleColor:[UIColor colorWithHexString:@"#FF772C"] forState:UIControlStateNormal];
+    privacyAgreementButton.titleLabel.font = [UIFont systemFontOfSize:12];
+    [privacyAgreementButton addTarget:self action:@selector(privacyAgreementTapped) forControlEvents:UIControlEventTouchUpInside];
+    [protocolTextContainer addSubview:privacyAgreementButton];
+    
+    // 设置约束
+    [protocolPrefixLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.centerY.equalTo(protocolTextContainer);
+        make.height.mas_equalTo(20);
+    }];
+    
+    [serviceAgreementButton mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(protocolPrefixLabel.mas_right).offset(0);
+        make.centerY.equalTo(protocolTextContainer);
+        make.height.mas_equalTo(20);
+    }];
+    
+    [privacyAgreementButton mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(serviceAgreementButton.mas_right).offset(0);
+        make.centerY.equalTo(protocolTextContainer);
+        make.height.mas_equalTo(20);
+        make.right.lessThanOrEqualTo(protocolTextContainer).offset(-10);
+    }];
+    
+    [protocolTextContainer mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(self.mainCheckboxButton.mas_right).offset(10);
+        make.centerY.equalTo(protocolView);
+        make.right.equalTo(protocolView).offset(-10);
+        make.height.mas_equalTo(20);
+    }];
     
     // 给复选框容器也添加点击手势，扩大点击区域
     checkboxContainer.userInteractionEnabled = YES;
@@ -332,7 +371,7 @@ typedef NS_ENUM(NSInteger, HomeTableViewSection) {
     // 根据audit状态设置协议区域可见性
     BOOL shouldShowProtocol = [self.userInfo[@"audit"] integerValue] == 0;
     self.mainCheckboxButton.hidden = !shouldShowProtocol;
-    self.mainProtocolLabel.hidden = !shouldShowProtocol;
+    protocolTextContainer.hidden = !shouldShowProtocol;
     checkboxContainer.hidden = !shouldShowProtocol;
     
     // 设置约束
@@ -694,17 +733,14 @@ typedef NS_ENUM(NSInteger, HomeTableViewSection) {
     NSLog(@"🎯 协议勾选状态: %@", self.protocolChecked ? @"已勾选" : @"未勾选");
 }
 
-- (void)protocolLabelTapped:(UITapGestureRecognizer *)gesture {
-    NSLog(@"🎯 协议文本被点击");
-    UILabel *label = (UILabel *)gesture.view;
-    
-    // 简单的文本点击检测
-    NSString *text = label.text;
-    if ([text containsString:@"《服务协议》"]) {
-        [self handleAgreement:@"user" title:@"服务协议"];
-    } else if ([text containsString:@"《隐私协议》"]) {
-        [self handleAgreement:@"privacy" title:@"隐私协议"];
-    }
+- (void)serviceAgreementTapped {
+    NSLog(@"🎯 服务协议被点击");
+    [self handleAgreement:@"user" title:@"服务协议"];
+}
+
+- (void)privacyAgreementTapped {
+    NSLog(@"🎯 隐私协议被点击");
+    [self handleAgreement:@"privacy" title:@"隐私协议"];
 }
 
 - (void)handleAgreement:(NSString *)type title:(NSString *)title {
@@ -734,11 +770,11 @@ typedef NS_ENUM(NSInteger, HomeTableViewSection) {
     
     NSLog(@"🎯 用户已登录，继续业务流程");
     
-//    // 根据用户状态跳转不同页面
-//    if (![self.userInfo[@"form"] boolValue]) {
-        [self navigateToForm];
-//    } else if (![self.userInfo[@"identity"] boolValue]) {
-//        [self navigateToIDCard];
+////    // 根据用户状态跳转不同页面
+////    if (![self.userInfo[@"form"] boolValue]) {
+//        [self navigateToForm];
+////    } else if (![self.userInfo[@"identity"] boolValue]) {
+        [self navigateToIDCard];
 //    } else if (![self.userInfo[@"authority"] boolValue]) {
 //        [self navigateToAuthorization];
 //    } else {

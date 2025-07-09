@@ -5,6 +5,7 @@
 #import "WebViewController.h"
 #import <CoreText/CoreText.h>
 #import <YYKit/YYKit.h>
+#import "JJRPasswordForgetViewController.h"
 
 @interface LoginViewController ()
 
@@ -35,6 +36,10 @@
 @end
 
 @implementation LoginViewController
+
+- (BOOL)requiresLogin {
+    return NO;
+}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -331,18 +336,18 @@
     
     // 创建服务协议按钮
     UIButton *serviceButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [serviceButton setTitle:@"《服务协议》" forState:UIControlStateNormal];
-    [serviceButton setTitleColor:[UIColor colorWithHexString:@"#3B4FDE"] forState:UIControlStateNormal];
-    serviceButton.titleLabel.font = [UIFont systemFontOfSize:12];
+    [serviceButton setTitle:@" 《服务协议》" forState:UIControlStateNormal];
+    [serviceButton setTitleColor:[UIColor colorWithHexString:@"#FF772C"] forState:UIControlStateNormal];
+    serviceButton.titleLabel.font = [UIFont systemFontOfSize:14];
     serviceButton.contentHorizontalAlignment = UIControlContentHorizontalAlignmentLeft;
     [serviceButton addTarget:self action:@selector(showServiceAgreement) forControlEvents:UIControlEventTouchUpInside];
     [protocolContainer addSubview:serviceButton];
     
     // 创建隐私协议按钮
     UIButton *privacyButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [privacyButton setTitle:@"《隐私协议》" forState:UIControlStateNormal];
-    [privacyButton setTitleColor:[UIColor colorWithHexString:@"#3B4FDE"] forState:UIControlStateNormal];
-    privacyButton.titleLabel.font = [UIFont systemFontOfSize:12];
+    [privacyButton setTitle:@" 《隐私协议》" forState:UIControlStateNormal];
+    [privacyButton setTitleColor:[UIColor colorWithHexString:@"#FF772C"] forState:UIControlStateNormal];
+    privacyButton.titleLabel.font = [UIFont systemFontOfSize:14];
     privacyButton.contentHorizontalAlignment = UIControlContentHorizontalAlignmentLeft;
     [privacyButton addTarget:self action:@selector(showPrivacyAgreement) forControlEvents:UIControlEventTouchUpInside];
     [protocolContainer addSubview:privacyButton];
@@ -528,6 +533,7 @@
 }
 
 - (void)loginTapped {
+    [self.view endEditing:YES];
     if (![self validateMobile]) {
         return;
     }
@@ -621,13 +627,10 @@
 }
 
 - (void)forgetPasswordTapped {
-    // TODO: 跳转到忘记密码页面
-    NSLog(@"🎯 忘记密码");
+    JJRPasswordForgetViewController *vc = [[JJRPasswordForgetViewController alloc] init];
+    [self.navigationController pushViewController:vc animated:YES];
 }
 
-- (void)protocolLabelTapped:(UITapGestureRecognizer *)gesture {
-    // 这个方法现在不需要了，因为我们使用独立的按钮
-}
 
 - (void)showServiceAgreement {
     [self showAgreementWithType:@"user" title:@"服务协议"];
@@ -642,9 +645,8 @@
     WebViewController *webVC = [[WebViewController alloc] init];
     webVC.agreementType = type;
     webVC.title = title;
-    
-    UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:webVC];
-    [self presentViewController:navController animated:YES completion:nil];
+    webVC.hidesBottomBarWhenPushed = YES;
+    [self.navigationController pushViewController:webVC animated:YES];
 }
 
 #pragma mark - Validation

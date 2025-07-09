@@ -38,7 +38,6 @@
 @property (nonatomic, strong) UILabel *faceVerifyTipLabel;
 @property (nonatomic, strong) UIView *agreementContainer;
 @property (nonatomic, strong) UIButton *agreementCheckbox;
-@property (nonatomic, strong) UILabel *agreementLabel;
 @property (nonatomic, strong) JJRButton *faceVerifyButton;
 
 // 结果页面
@@ -210,9 +209,10 @@
     
     // 下一步按钮
     self.nextButton = [[JJRButton alloc] initWithTitle:@"下一步" type:JJRButtonTypePrimary];
+    WeakSelf
     [self.nextButton setClickAction:^(JJRButton *button) {
-        if ([self.delegate respondsToSelector:@selector(idCardViewDidTapNextStep)]) {
-            [self.delegate idCardViewDidTapNextStep];
+        if ([weakSelf.delegate respondsToSelector:@selector(idCardViewDidTapNextStep)]) {
+            [weakSelf.delegate idCardViewDidTapNextStep];
         }
     }];
     [self.uploadContainer addSubview:self.nextButton];
@@ -344,9 +344,12 @@
     
     // 开始识别按钮
     self.faceVerifyButton = [[JJRButton alloc] initWithTitle:@"开始识别" type:JJRButtonTypePrimary];
+    [self.faceVerifyButton setCornerRadius:23];
+    WeakSelf
     [self.faceVerifyButton setClickAction:^(JJRButton *button) {
-        if ([self.delegate respondsToSelector:@selector(idCardViewDidTapFaceVerify)]) {
-            [self.delegate idCardViewDidTapFaceVerify];
+        StrongSelf
+        if ([strongSelf.delegate respondsToSelector:@selector(idCardViewDidTapFaceVerify)]) {
+            [strongSelf.delegate idCardViewDidTapFaceVerify];
         }
     }];
     [self.faceVerifyContainer addSubview:self.faceVerifyButton];
@@ -387,19 +390,65 @@
     [self.agreementCheckbox addTarget:self action:@selector(agreementCheckboxTapped) forControlEvents:UIControlEventTouchUpInside];
     [self.agreementContainer addSubview:self.agreementCheckbox];
     
-    self.agreementLabel = [[UILabel alloc] init];
-    self.agreementLabel.text = @"我已阅读并同意《用户服务协议》《隐私协议》";
-    self.agreementLabel.font = [UIFont systemFontOfSize:14];
-    self.agreementLabel.textColor = [UIColor colorWithHexString:@"#666666"];
-    self.agreementLabel.numberOfLines = 0;
-    [self.agreementContainer addSubview:self.agreementLabel];
+    // 创建一个容器来放置协议文本
+    UILabel *agreementPrefixLabel = [[UILabel alloc] init];
+    agreementPrefixLabel.text = @"我已阅读并同意";
+    agreementPrefixLabel.font = [UIFont systemFontOfSize:12];
+    agreementPrefixLabel.textColor = [UIColor colorWithHexString:@"#97999E"];
+    [self.agreementContainer addSubview:agreementPrefixLabel];
     
-    // 添加协议点击手势
-    UITapGestureRecognizer *userTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(userAgreementTapped)];
-    UITapGestureRecognizer *privacyTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(privacyAgreementTapped)];
+    // 用户服务协议按钮
+    UIButton *userAgreementButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    [userAgreementButton setTitle:@" 《用户服务协议》" forState:UIControlStateNormal];
+    [userAgreementButton setTitleColor:[UIColor colorWithHexString:@"#FF772C"] forState:UIControlStateNormal];
+    userAgreementButton.titleLabel.font = [UIFont systemFontOfSize:12];
+    [userAgreementButton addTarget:self action:@selector(userAgreementTapped) forControlEvents:UIControlEventTouchUpInside];
+    [self.agreementContainer addSubview:userAgreementButton];
     
-    // 这里需要更复杂的文本点击处理，简化处理
+    // 隐私协议按钮
+    UIButton *privacyAgreementButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    [privacyAgreementButton setTitle:@" 《隐私协议》" forState:UIControlStateNormal];
+    [privacyAgreementButton setTitleColor:[UIColor colorWithHexString:@"#FF772C"] forState:UIControlStateNormal];
+    privacyAgreementButton.titleLabel.font = [UIFont systemFontOfSize:12];
+    [privacyAgreementButton addTarget:self action:@selector(privacyAgreementTapped) forControlEvents:UIControlEventTouchUpInside];
+    [self.agreementContainer addSubview:privacyAgreementButton];
+    
+    // 设置约束
+    [self.agreementCheckbox mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.centerY.equalTo(self.agreementContainer);
+        make.width.height.mas_equalTo(20);
+    }];
+    
+    [agreementPrefixLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(self.agreementCheckbox.mas_right).offset(10);
+        make.centerY.equalTo(self.agreementContainer);
+        make.height.mas_equalTo(20);
+    }];
+    
+    [userAgreementButton mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(agreementPrefixLabel.mas_right).offset(0);
+        make.centerY.equalTo(self.agreementContainer);
+        make.height.mas_equalTo(20);
+    }];
+    
+    [privacyAgreementButton mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(userAgreementButton.mas_right).offset(0);
+        make.centerY.equalTo(self.agreementContainer);
+        make.height.mas_equalTo(20);
+        make.right.lessThanOrEqualTo(self.agreementContainer).offset(-10);
+    }];
 }
+
+
+- (void)handleAgreement:(NSString *)type title:(NSString *)title {
+    NSLog(@"🎯 打开协议页面: %@", title);
+    // 通过委托回调给控制器处理跳转
+    if ([self.delegate respondsToSelector:@selector(idCardViewDidTapAgreement:title:)]) {
+        [self.delegate idCardViewDidTapAgreement:type title:title];
+    }
+}
+
+
 
 - (void)setupResultPage {
     self.resultContainer = [[UIView alloc] init];
@@ -421,9 +470,11 @@
     
     // 立即申请按钮
     self.resultButton = [[JJRButton alloc] initWithTitle:@"立即申请担保额度" type:JJRButtonTypePrimary];
+    WeakSelf
     [self.resultButton setClickAction:^(JJRButton *button) {
-        if ([self.delegate respondsToSelector:@selector(idCardViewDidTapGoShouquanshu)]) {
-            [self.delegate idCardViewDidTapGoShouquanshu];
+        StrongSelf
+        if ([strongSelf.delegate respondsToSelector:@selector(idCardViewDidTapGoShouquanshu)]) {
+            [strongSelf.delegate idCardViewDidTapGoShouquanshu];
         }
     }];
     [self.resultContainer addSubview:self.resultButton];
@@ -582,8 +633,10 @@
         make.bottom.equalTo(self).offset(-100);
     }];
     
+    // 修复头像位置：头像应该在副标题下方，而不是在容器顶部
     [self.faceVerifyImageView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.centerX.equalTo(self.faceVerifyContainer);
+        make.top.equalTo(self.faceVerifyContainer).offset(80); // 为标题和副标题留出空间
+        make.centerX.equalTo(self.faceVerifyContainer);
         make.width.height.mas_equalTo(200);
     }];
     
@@ -604,16 +657,10 @@
         make.width.height.mas_equalTo(20);
     }];
     
-    [self.agreementLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(self.agreementCheckbox.mas_right).offset(10);
-        make.right.centerY.equalTo(self.agreementContainer);
-        make.height.mas_equalTo(40);
-    }];
-    
     [self.faceVerifyButton mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.bottom.equalTo(self.faceVerifyContainer);
+        make.bottom.equalTo(self.faceVerifyContainer).offset(-30);
         make.left.right.equalTo(self.faceVerifyContainer);
-        make.height.mas_equalTo(44);
+        make.height.mas_equalTo(46);
     }];
     
     // 结果页面约束
@@ -748,14 +795,14 @@
 }
 
 - (void)userAgreementTapped {
-    if ([self.delegate respondsToSelector:@selector(idCardViewDidTapAgreement:)]) {
-        [self.delegate idCardViewDidTapAgreement:@"user"];
+    if ([self.delegate respondsToSelector:@selector(idCardViewDidTapAgreement:title:)]) {
+        [self.delegate idCardViewDidTapAgreement:@"user" title:@"用户服务协议"];
     }
 }
 
 - (void)privacyAgreementTapped {
-    if ([self.delegate respondsToSelector:@selector(idCardViewDidTapAgreement:)]) {
-        [self.delegate idCardViewDidTapAgreement:@"privacy"];
+    if ([self.delegate respondsToSelector:@selector(idCardViewDidTapAgreement:title:)]) {
+        [self.delegate idCardViewDidTapAgreement:@"privacy" title:@"隐私协议"];
     }
 }
 

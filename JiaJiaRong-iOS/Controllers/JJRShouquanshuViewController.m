@@ -9,6 +9,7 @@
 #import "JJRShouquanshuViewController.h"
 #import "JJRButton.h"
 #import "JJRApplyFormViewController.h"
+#import "WebViewController.h"
 
 @interface JJRShouquanshuViewController ()
 
@@ -18,7 +19,7 @@
 @property (nonatomic, strong) UITextView *contentTextView;
 @property (nonatomic, strong) UIView *agreementContainer;
 @property (nonatomic, strong) UIButton *agreementCheckbox;
-@property (nonatomic, strong) UILabel *agreementLabel;
+@property (nonatomic, strong) UIView *agreementTextContainer;
 @property (nonatomic, strong) JJRButton *agreeButton;
 
 @end
@@ -41,7 +42,7 @@
     
     [self.scrollView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.left.right.equalTo(self.view);
-        make.bottom.equalTo(self.view).offset(-100);
+        make.bottom.equalTo(self.view).offset(-200);
     }];
     
     // 内容视图
@@ -76,21 +77,50 @@
     [self.view addSubview:self.agreementContainer];
     
     self.agreementCheckbox = [UIButton buttonWithType:UIButtonTypeCustom];
-    [self.agreementCheckbox setImage:[UIImage imageNamed:@"checkbox_unchecked"] forState:UIControlStateNormal];
-    [self.agreementCheckbox setImage:[UIImage imageNamed:@"checkbox_checked"] forState:UIControlStateSelected];
+    [self.agreementCheckbox setImage:[UIImage imageNamed:@"img_2a5bf1c39141_unselect"] forState:UIControlStateNormal];
+    [self.agreementCheckbox setImage:[UIImage imageNamed:@"img_2a5bf1c39141"] forState:UIControlStateSelected];
     [self.agreementCheckbox addTarget:self action:@selector(agreementCheckboxTapped) forControlEvents:UIControlEventTouchUpInside];
     [self.agreementContainer addSubview:self.agreementCheckbox];
     
-    self.agreementLabel = [[UILabel alloc] init];
-    self.agreementLabel.text = @"我已阅读并同意《个人征信查询授权书》";
-    self.agreementLabel.font = [UIFont systemFontOfSize:14];
-    self.agreementLabel.textColor = [UIColor colorWithHexString:@"#666666"];
-    [self.agreementContainer addSubview:self.agreementLabel];
+    // 创建协议文本容器
+    self.agreementTextContainer = [[UIView alloc] init];
+    [self.agreementContainer addSubview:self.agreementTextContainer];
+    
+    // 创建"我已阅读并同意"文本
+    UILabel *agreementPrefixLabel = [[UILabel alloc] init];
+    agreementPrefixLabel.text = @"我已阅读并同意";
+    agreementPrefixLabel.font = [UIFont systemFontOfSize:14];
+    agreementPrefixLabel.textColor = [UIColor colorWithHexString:@"#666666"];
+    [self.agreementTextContainer addSubview:agreementPrefixLabel];
+    
+    // 个人征信查询授权书按钮
+    UIButton *authorizationButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    [authorizationButton setTitle:@" 《个人征信查询授权书》" forState:UIControlStateNormal];
+    [authorizationButton setTitleColor:[UIColor colorWithHexString:@"#FF772C"] forState:UIControlStateNormal];
+    authorizationButton.titleLabel.font = [UIFont systemFontOfSize:14];
+    [authorizationButton addTarget:self action:@selector(authorizationAgreementTapped) forControlEvents:UIControlEventTouchUpInside];
+    [self.agreementTextContainer addSubview:authorizationButton];
+    
+    // 设置协议文本容器内部约束
+    [agreementPrefixLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.centerY.equalTo(self.agreementTextContainer);
+        make.height.mas_equalTo(20);
+    }];
+    
+    [authorizationButton mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(agreementPrefixLabel.mas_right).offset(0);
+        make.centerY.equalTo(self.agreementTextContainer);
+        make.height.mas_equalTo(20);
+        make.right.lessThanOrEqualTo(self.agreementTextContainer);
+    }];
     
     // 同意按钮
     self.agreeButton = [[JJRButton alloc] initWithTitle:@"同意并继续" type:JJRButtonTypePrimary];
+    [self.agreeButton setCornerRadius:23];
+    WeakSelf
     [self.agreeButton setClickAction:^(JJRButton *button) {
-        [self agreeButtonTapped];
+        StrongSelf
+        [strongSelf agreeButtonTapped];
     }];
     [self.view addSubview:self.agreeButton];
     
@@ -122,7 +152,7 @@
         make.width.height.mas_equalTo(20);
     }];
     
-    [self.agreementLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+    [self.agreementTextContainer mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(self.agreementCheckbox.mas_right).offset(10);
         make.right.centerY.equalTo(self.agreementContainer);
         make.height.mas_equalTo(20);
@@ -137,6 +167,20 @@
 
 - (void)agreementCheckboxTapped {
     self.agreementCheckbox.selected = !self.agreementCheckbox.selected;
+}
+
+- (void)authorizationAgreementTapped {
+    NSLog(@"🎯 个人征信查询授权书被点击");
+    [self handleAgreement:@"authorization" title:@"个人征信查询授权书"];
+}
+
+- (void)handleAgreement:(NSString *)type title:(NSString *)title {
+    NSLog(@"🎯 打开协议页面: %@", title);
+    WebViewController *webVC = [[WebViewController alloc] init];
+    webVC.agreementType = type;
+    webVC.title = title;
+    webVC.hidesBottomBarWhenPushed = YES;
+    [self.navigationController pushViewController:webVC animated:YES];
 }
 
 - (void)agreeButtonTapped {

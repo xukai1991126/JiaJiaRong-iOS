@@ -48,12 +48,6 @@ NS_ASSUME_NONNULL_BEGIN
 // 设置渐变背景
 - (void)setGradientColors:(NSArray<UIColor *> *)colors direction:(JJRGradientDirection)direction;
 
-// 设置阴影
-- (void)setShadowColor:(UIColor *)color offset:(CGSize)offset radius:(CGFloat)radius opacity:(CGFloat)opacity;
-
-// 设置图标位置
-- (void)setImagePosition:(UIControlContentHorizontalAlignment)position spacing:(CGFloat)spacing;
-
 // 设置圆角位置
 - (void)setCornerRadius:(CGFloat)radius corners:(UIRectCorner)corners;
 

@@ -31,6 +31,10 @@
     [self setupUI];
 }
 
+- (BOOL)requiresLogin {
+    return NO;
+}
+
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     // 隐藏导航栏

@@ -12,6 +12,7 @@
 #import "JJRNetworkService.h"
 #import "JJRShouquanshuViewController.h"
 #import "JJRFaceVerifyManager.h"
+#import "WebViewController.h"
 #import <Photos/Photos.h>
 #import <AVFoundation/AVFoundation.h>
 
@@ -156,9 +157,9 @@
     [self startFaceVerify];
 }
 
-- (void)idCardViewDidTapAgreement:(NSString *)type {
+- (void)idCardViewDidTapAgreement:(NSString *)type title:(NSString *)title {
     // 跳转到协议页面
-    [self openAgreement:type];
+    [self openAgreement:type title:title];
 }
 
 - (void)idCardViewDidTapGoShouquanshu {
@@ -323,10 +324,13 @@
     NSLog(@"🎯 人脸识别进度: %.2f, 提示: %@", progress, tip);
 }
 
-- (void)openAgreement:(NSString *)type {
-    // 跳转到协议页面
-    // 这里需要根据type跳转到对应的协议页面
-    NSLog(@"打开协议: %@", type);
+- (void)openAgreement:(NSString *)type title:(NSString *)title {
+    NSLog(@"🎯 打开协议页面: %@", title);
+    WebViewController *webVC = [[WebViewController alloc] init];
+    webVC.agreementType = type;
+    webVC.title = title;
+    webVC.hidesBottomBarWhenPushed = YES;
+    [self.navigationController pushViewController:webVC animated:YES];
 }
 
 - (void)showToast:(NSString *)message {

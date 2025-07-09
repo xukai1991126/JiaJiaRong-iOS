@@ -22,9 +22,10 @@ typedef NS_ENUM(NSInteger, JJRIdCardStep) {
 - (void)idCardViewDidTapUpload:(UIImageView *)imageView type:(NSString *)type;
 - (void)idCardViewDidTapNextStep;
 - (void)idCardViewDidTapFaceVerify;
-- (void)idCardViewDidTapAgreement:(NSString *)type;
 - (void)idCardViewDidTapGoShouquanshu;
 - (void)idCardViewDidChangeForm:(JJRIdCardModel *)form;
+// 协议跳转的委托方法
+- (void)idCardViewDidTapAgreement:(NSString *)type title:(NSString *)title;
 
 @end
 

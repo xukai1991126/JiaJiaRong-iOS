@@ -20,6 +20,10 @@
 
 @implementation JJRPasswordForgetViewController
 
+- (BOOL)requiresLogin {
+    return NO;
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self setupUI];
@@ -61,11 +65,6 @@
     }
     
     [JJRNetworkService showLoading];
-    
-    NSDictionary *params = @{
-        @"phone": phone,
-        @"type": @"reset_password"
-    };
     
     [[JJRNetworkService sharedInstance] sendCaptchaWithType:@"REPWD" mobile:[JJRNetworkService encryptMobile:phone] md5:[JJRNetworkService encryptMobileMd5:phone] success:^(id responseObject) {
         [JJRNetworkService hideLoading];

@@ -193,7 +193,7 @@ typedef NS_ENUM(NSInteger, JJRFileType) {
 };
 
 typedef NS_ENUM(NSInteger, JJRButtonType) {
-    JJRButtonTypePrimary,    // 主要按钮（蓝色背景）
+    JJRButtonTypePrimary,    // 主要按钮（橙色背景）
     JJRButtonTypeSecondary,  // 次要按钮（白色背景，蓝色边框）
     JJRButtonTypeDanger,     // 危险按钮（红色背景）
     JJRButtonTypeSuccess,    // 成功按钮（绿色背景）

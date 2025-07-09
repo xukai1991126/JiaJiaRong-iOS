@@ -826,12 +826,54 @@
     return NO;
 }
 
+// 获取当前显示的视图控制器
+- (UIViewController *)getCurrentViewController {
+    UIWindow *keyWindow = [UIApplication sharedApplication].keyWindow;
+    
+    // iOS 13及以上版本的处理
+    if (!keyWindow) {
+        if (@available(iOS 13.0, *)) {
+            for (UIScene *scene in [UIApplication sharedApplication].connectedScenes) {
+                if (scene.activationState == UISceneActivationStateForegroundActive) {
+                    UIWindowScene *windowScene = (UIWindowScene *)scene;
+                    keyWindow = windowScene.windows.firstObject;
+                    break;
+                }
+            }
+        }
+    }
+    
+    UIViewController *rootVC = keyWindow.rootViewController;
+    return [self findCurrentViewController:rootVC];
+}
+
+- (UIViewController *)findCurrentViewController:(UIViewController *)vc {
+    if (vc.presentedViewController) {
+        return [self findCurrentViewController:vc.presentedViewController];
+    } else if ([vc isKindOfClass:[UINavigationController class]]) {
+        UINavigationController *navVC = (UINavigationController *)vc;
+        return [self findCurrentViewController:navVC.topViewController];
+    } else if ([vc isKindOfClass:[UITabBarController class]]) {
+        UITabBarController *tabVC = (UITabBarController *)vc;
+        return [self findCurrentViewController:tabVC.selectedViewController];
+    } else {
+        return vc;
+    }
+}
+
 // 处理token失效
 - (void)handleTokenInvalid:(NSString *)message {
     NSLog(@"🚨 处理token失效，清除用户数据并跳转到登录页");
     
     // 主线程执行UI相关操作
     dispatch_async(dispatch_get_main_queue(), ^{
+        // 检查当前是否已经在登录页面，避免重复跳转
+        UIViewController *currentVC = [self getCurrentViewController];
+        if ([currentVC isKindOfClass:NSClassFromString(@"LoginViewController")]) {
+            NSLog(@"🚨 当前已在登录页面，不重复跳转");
+            return;
+        }
+        
         // 显示提示信息
         [JJRNetworkService showToast:message ?: @"登录信息已失效"];
         

@@ -165,7 +165,7 @@
     
     // 设置协议文本
     NSMutableAttributedString *protocolText = [[NSMutableAttributedString alloc] initWithString:@"我已阅读并同意"];
-    NSAttributedString *agreementText = [[NSAttributedString alloc] initWithString:@"《用户服务协议》" 
+    NSAttributedString *agreementText = [[NSAttributedString alloc] initWithString:@" 《用户服务协议》" 
                                                                         attributes:@{NSForegroundColorAttributeName: [UIColor colorWithRed:0.231 green:0.31 blue:0.871 alpha:1.0]}]; // #3b4fde
     [protocolText appendAttributedString:agreementText];
     self.protocolLabel.attributedText = protocolText;

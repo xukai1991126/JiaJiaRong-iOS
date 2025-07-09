@@ -87,8 +87,8 @@
 - (void)setupButtonType:(JJRButtonType)type {
     switch (type) {
         case JJRButtonTypePrimary:
-            [self setBackgroundColor:[UIColor colorWithHexString:@"#007AFF"] forState:UIControlStateNormal];
-            [self setBackgroundColor:[UIColor colorWithHexString:@"#0056CC"] forState:UIControlStateHighlighted];
+            [self setBackgroundColor:[UIColor colorWithHexString:@"#FF772C"] forState:UIControlStateNormal];
+            [self setBackgroundColor:[UIColor colorWithHexString:@"#FF772C"] forState:UIControlStateHighlighted];
             [self setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
             break;
             
