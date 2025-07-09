@@ -389,6 +389,8 @@
             if ([responseObject[@"code"] integerValue] == 0) {
                 // 解析识别结果并更新表单
                 NSDictionary *data = responseObject[@"data"];
+                NSLog(@"🎯 人像面OCR识别结果: %@", data);
+                
                 self.form.faceImage = imageUrl;
                 self.form.idName = data[@"name"] ?: @"";
                 self.form.idNo = data[@"idNumber"] ?: @"";
@@ -397,8 +399,17 @@
                 self.form.ethnicity = data[@"ethnicity"] ?: @"";
                 self.form.sex = data[@"sex"] ?: @"";
                 
+                NSLog(@"🎯 设置到模型:");
+                NSLog(@"🎯 姓名: %@", self.form.idName);
+                NSLog(@"🎯 身份证号: %@", self.form.idNo);
+                NSLog(@"🎯 地址: %@", self.form.address);
+                
+                // 更新视图显示识别结果
+                [self.idCardView updateFormWithData:self.form];
+                
                 [JJRToastTool showSuccess:@"身份证人像面识别成功"];
             } else {
+                NSLog(@"🎯 人像面OCR识别失败: %@", responseObject[@"err"][@"msg"]);
                 [JJRToastTool showError:responseObject[@"err"][@"msg"] ?: @"身份证识别失败，请重新上传"];
                 // 清空图片
                 self.form.faceImage = @"";
@@ -416,12 +427,22 @@
             if ([responseObject[@"code"] integerValue] == 0) {
                 // 解析识别结果并更新表单
                 NSDictionary *data = responseObject[@"data"];
+                NSLog(@"🎯 国徽面OCR识别结果: %@", data);
+                
                 self.form.backImage = imageUrl;
                 self.form.issueAuthority = data[@"issueAuthority"] ?: @"";
                 self.form.validPeriod = data[@"validPeriod"] ?: @"";
                 
+                NSLog(@"🎯 设置到模型:");
+                NSLog(@"🎯 签发机关: %@", self.form.issueAuthority);
+                NSLog(@"🎯 有效期: %@", self.form.validPeriod);
+                
+                // 更新视图显示识别结果
+                [self.idCardView updateFormWithData:self.form];
+                
                 [JJRToastTool showSuccess:@"身份证国徽面识别成功"];
             } else {
+                NSLog(@"🎯 国徽面OCR识别失败: %@", responseObject[@"err"][@"msg"]);
                 [JJRToastTool showError:responseObject[@"err"][@"msg"] ?: @"身份证识别失败，请重新上传"];
                 // 清空图片
                 self.form.backImage = @"";

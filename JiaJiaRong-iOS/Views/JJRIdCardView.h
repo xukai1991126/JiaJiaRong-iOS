@@ -41,6 +41,7 @@ typedef NS_ENUM(NSInteger, JJRIdCardStep) {
 - (void)setStep:(JJRIdCardStep)step animated:(BOOL)animated;
 - (void)showResult:(BOOL)success;
 - (void)setFormVisible:(BOOL)visible;
+- (void)updateFormWithData:(JJRIdCardModel *)model;
 
 @end
 

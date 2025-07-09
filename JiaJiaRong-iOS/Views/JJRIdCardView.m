@@ -137,8 +137,25 @@
 }
 
 - (void)setupUploadPage {
+    // 创建滚动视图
+    UIScrollView *scrollView = [[UIScrollView alloc] init];
+    [self addSubview:scrollView];
+    
     self.uploadContainer = [[UIView alloc] init];
-    [self addSubview:self.uploadContainer];
+    [scrollView addSubview:self.uploadContainer];
+    
+    // 设置滚动视图约束
+    [scrollView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.stepTitleLabels.firstObject.mas_bottom).offset(20);
+        make.left.right.bottom.equalTo(self);
+    }];
+    
+    // 设置内容容器约束
+    [self.uploadContainer mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.edges.equalTo(scrollView);
+        make.width.equalTo(scrollView);
+        // 不设置height，让内容自动决定高度
+    }];
     
     // 标题
     self.uploadTitleLabel = [[UILabel alloc] init];
@@ -202,9 +219,10 @@
     // 拍摄注意事项
     [self setupTipsContainer];
     
-    // 表单容器
+    // 表单容器（识别结果显示）
     self.formContainer = [[UIView alloc] init];
-    self.formContainer.hidden = YES;
+    self.formContainer.hidden = YES; // 初始隐藏
+    self.formContainer.backgroundColor = [UIColor colorWithWhite:0.95 alpha:1.0]; // 添加背景色便于调试
     [self.uploadContainer addSubview:self.formContainer];
     
     // 下一步按钮
@@ -216,6 +234,80 @@
         }
     }];
     [self.uploadContainer addSubview:self.nextButton];
+    
+    // 设置约束
+    [self setupUploadPageConstraints];
+}
+
+- (void)setupUploadPageConstraints {
+    // 标题约束
+    [self.uploadTitleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.uploadContainer).offset(20);
+        make.left.right.equalTo(self.uploadContainer).inset(20);
+        make.height.mas_equalTo(25);
+    }];
+    
+    // 副标题约束
+    [self.uploadSubtitleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.uploadTitleLabel.mas_bottom).offset(10);
+        make.left.right.equalTo(self.uploadContainer).inset(20);
+        make.height.mas_equalTo(20);
+    }];
+    
+    // 图片容器约束
+    [self.uploadImageContainer mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.uploadSubtitleLabel.mas_bottom).offset(20);
+        make.left.right.equalTo(self.uploadContainer).inset(20);
+        make.height.mas_equalTo(150);
+    }];
+    
+    // 正面图片约束
+    [self.faceImageView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.left.equalTo(self.uploadImageContainer);
+        make.width.equalTo(self.uploadImageContainer).multipliedBy(0.48);
+        make.height.mas_equalTo(120);
+    }];
+    
+    [self.faceLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.faceImageView.mas_bottom).offset(5);
+        make.centerX.equalTo(self.faceImageView);
+        make.height.mas_equalTo(15);
+    }];
+    
+    // 背面图片约束
+    [self.backImageView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.right.equalTo(self.uploadImageContainer);
+        make.width.equalTo(self.uploadImageContainer).multipliedBy(0.48);
+        make.height.mas_equalTo(120);
+    }];
+    
+    [self.backLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.backImageView.mas_bottom).offset(5);
+        make.centerX.equalTo(self.backImageView);
+        make.height.mas_equalTo(15);
+    }];
+    
+    // 拍摄注意事项约束
+    [self.tipsContainer mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.uploadImageContainer.mas_bottom).offset(20);
+        make.left.right.equalTo(self.uploadContainer).inset(20);
+        make.height.mas_equalTo(100);
+    }];
+    
+    // 表单容器约束
+    [self.formContainer mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.tipsContainer.mas_bottom).offset(20);
+        make.left.right.equalTo(self.uploadContainer).inset(20);
+        make.height.mas_equalTo(0); // 初始高度为0，在有数据时再动态设置
+    }];
+    
+    // 下一步按钮约束
+    [self.nextButton mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.formContainer.mas_bottom).offset(30);
+        make.left.right.equalTo(self.uploadContainer).inset(20);
+        make.height.mas_equalTo(44);
+        make.bottom.equalTo(self.uploadContainer).offset(-30); // 设置底部约束，确定scrollView的contentSize
+    }];
 }
 
 - (void)setupTipsContainer {
@@ -481,7 +573,68 @@
 }
 
 - (void)setupFormInputs {
-    // 简化的表单输入设置
+    // 表单字段定义
+    NSArray *formFields = @[
+        @{@"key": @"idName", @"label": @"姓名", @"placeholder": @"请输入姓名"},
+        @{@"key": @"idNo", @"label": @"身份证号", @"placeholder": @"请输入身份证号"},
+        @{@"key": @"address", @"label": @"地址", @"placeholder": @"请输入地址"},
+        @{@"key": @"issueAuthority", @"label": @"签发机关", @"placeholder": @"请输入签发机关"},
+        @{@"key": @"validPeriod", @"label": @"证件有效期", @"placeholder": @"请输入身份证有效期"}
+    ];
+    
+    NSMutableArray *inputs = [NSMutableArray array];
+    
+    // 为每个字段创建输入框
+    for (NSInteger i = 0; i < formFields.count; i++) {
+        NSDictionary *field = formFields[i];
+        
+        // 创建表单项容器
+        UIView *formItem = [[UIView alloc] init];
+        formItem.backgroundColor = [UIColor whiteColor];
+        [self.formContainer addSubview:formItem];
+        
+        // 添加底部分割线
+        UIView *separatorLine = [[UIView alloc] init];
+        separatorLine.backgroundColor = [UIColor colorWithHexString:@"#EEEEEE"];
+        [formItem addSubview:separatorLine];
+        
+        // 标签
+        UILabel *label = [[UILabel alloc] init];
+        label.text = field[@"label"];
+        label.font = [UIFont systemFontOfSize:14];
+        label.textColor = [UIColor colorWithHexString:@"#767676"];
+        [formItem addSubview:label];
+        
+        // 输入框
+        UITextField *textField = [[UITextField alloc] init];
+        textField.placeholder = field[@"placeholder"];
+        textField.font = [UIFont systemFontOfSize:14];
+        textField.textColor = [UIColor colorWithHexString:@"#333333"];
+        textField.borderStyle = UITextBorderStyleNone;
+        textField.clearButtonMode = UITextFieldViewModeWhileEditing;
+        textField.tag = i;
+        [textField addTarget:self action:@selector(textFieldDidChange:) forControlEvents:UIControlEventEditingChanged];
+        [formItem addSubview:textField];
+        
+        // 使用frame布局，确保不会有约束冲突
+        CGFloat itemHeight = 60;
+        CGFloat yPosition = i * itemHeight;
+        
+        formItem.frame = CGRectMake(0, yPosition, SCREEN_WIDTH -40, itemHeight); // 假设容器宽度为335
+        
+        // 设置内部元素的frame
+        label.frame = CGRectMake(15, 0, 80, itemHeight);
+        textField.frame = CGRectMake(105, 10, SCREEN_WIDTH -40 -155, 40);
+        separatorLine.frame = CGRectMake(0, itemHeight - 0.5, SCREEN_WIDTH -40, 0.5);
+        
+        [inputs addObject:textField];
+        
+        NSLog(@"🎯 创建表单项 %ld: %@ at y=%f", (long)i, field[@"label"], yPosition);
+    }
+    
+    self.formInputs = [inputs copy];
+    
+    NSLog(@"🎯 setupFormInputs完成，创建了%ld个表单项", (long)formFields.count);
 }
 
 - (void)setupConstraints {
@@ -542,89 +695,7 @@
     }
     
     // 上传页面约束
-    [self.uploadContainer mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.stepTitleLabels.firstObject.mas_bottom).offset(20);
-        make.left.right.equalTo(self).inset(20);
-        make.bottom.equalTo(self).offset(-200);
-    }];
-    
-    [self.uploadTitleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.left.right.equalTo(self.uploadContainer);
-        make.height.mas_equalTo(25);
-    }];
-    
-    [self.uploadSubtitleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.uploadTitleLabel.mas_bottom).offset(10);
-        make.left.right.equalTo(self.uploadContainer);
-        make.height.mas_equalTo(20);
-    }];
-    
-    [self.uploadImageContainer mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.uploadSubtitleLabel.mas_bottom).offset(20);
-        make.left.right.equalTo(self.uploadContainer);
-        make.height.mas_equalTo(150);
-    }];
-    
-    // 正面图片约束
-    [self.faceImageView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.left.equalTo(self.uploadImageContainer);
-        make.width.equalTo(self.uploadImageContainer).multipliedBy(0.48);
-        make.height.mas_equalTo(120);
-    }];
-    
-    [self.faceLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.faceImageView.mas_bottom).offset(5);
-        make.centerX.equalTo(self.faceImageView);
-        make.height.mas_equalTo(15);
-    }];
-    
-    // 背面图片约束
-    [self.backImageView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.right.equalTo(self.uploadImageContainer);
-        make.width.equalTo(self.uploadImageContainer).multipliedBy(0.48);
-        make.height.mas_equalTo(120);
-    }];
-    
-    [self.backLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.backImageView.mas_bottom).offset(5);
-        make.centerX.equalTo(self.backImageView);
-        make.height.mas_equalTo(15);
-    }];
-    
-    // 提示容器约束
-    [self.tipsContainer mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.uploadImageContainer.mas_bottom).offset(20);
-        make.left.right.equalTo(self.uploadContainer);
-        make.height.mas_equalTo(120);
-    }];
-    
-    // 表单容器约束
-    [self.formContainer mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.tipsContainer.mas_bottom).offset(20);
-        make.left.right.equalTo(self.uploadContainer);
-        make.height.mas_equalTo(300);
-    }];
-    
-    // 表单输入约束
-    for (int i = 0; i < self.formInputs.count; i++) {
-        JJRInputView *input = self.formInputs[i];
-        [input mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.left.right.equalTo(self.formContainer);
-            make.height.mas_equalTo(60);
-            if (i == 0) {
-                make.top.equalTo(self.formContainer);
-            } else {
-                make.top.equalTo(self.formInputs[i-1].mas_bottom).offset(10);
-            }
-        }];
-    }
-    
-    // 下一步按钮约束
-    [self.nextButton mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.bottom.equalTo(self.uploadContainer);
-        make.left.right.equalTo(self.uploadContainer);
-        make.height.mas_equalTo(44);
-    }];
+    // 这些约束已经移至setupUploadPageConstraints
     
     // 人脸识别页面约束
     [self.faceVerifyContainer mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -773,6 +844,77 @@
 
 - (void)setFormVisible:(BOOL)visible {
     self.formContainer.hidden = !visible;
+}
+
+- (void)updateFormWithData:(JJRIdCardModel *)model {
+    if (!model || !self.formInputs) {
+        NSLog(@"🎯 updateFormWithData: model或formInputs为空");
+        return;
+    }
+    
+    NSLog(@"🎯 更新表单数据:");
+    NSLog(@"🎯 姓名: %@", model.idName);
+    NSLog(@"🎯 身份证号: %@", model.idNo);
+    NSLog(@"🎯 地址: %@", model.address);
+    NSLog(@"🎯 签发机关: %@", model.issueAuthority);
+    NSLog(@"🎯 有效期: %@", model.validPeriod);
+    
+    // 更新表单输入框的值 - 确保顺序与setupFormInputs中的字段顺序一致
+    NSArray *formFields = @[@"idName", @"idNo", @"address", @"issueAuthority", @"validPeriod"];
+    
+    for (NSInteger i = 0; i < self.formInputs.count && i < formFields.count; i++) {
+        UITextField *textField = self.formInputs[i];
+        NSString *fieldKey = formFields[i];
+        NSString *value = [model valueForKey:fieldKey];
+        textField.text = value ?: @"";
+        
+        NSLog(@"🎯 设置字段 %@ = %@", fieldKey, value);
+    }
+    
+    // 动态设置表单容器的高度
+    [self.formContainer mas_updateConstraints:^(MASConstraintMaker *make) {
+        make.height.mas_equalTo(300); // 设置为300pt以容纳5个表单项
+    }];
+    
+    // 显示表单
+    self.formContainer.hidden = NO;
+    NSLog(@"🎯 表单已显示，高度已设置为300pt");
+    
+    // 强制重新布局整个视图层次
+    [self.uploadContainer setNeedsLayout];
+    [self.uploadContainer layoutIfNeeded];
+    
+    // 同时更新父视图的布局
+    [self setNeedsLayout];
+    [self layoutIfNeeded];
+    
+    // 检查是否都有图片和数据，启用下一步按钮
+    [self updateNextButtonState];
+}
+
+- (void)updateNextButtonState {
+    BOOL hasImages = self.form.faceImage.length > 0 && self.form.backImage.length > 0;
+    BOOL hasBasicInfo = self.form.idName.length > 0 && self.form.idNo.length > 0;
+    
+    self.nextButton.enabled = hasImages && hasBasicInfo;
+}
+
+- (void)textFieldDidChange:(UITextField *)textField {
+    // 更新模型数据
+    NSArray *formFields = @[@"idName", @"idNo", @"address", @"issueAuthority", @"validPeriod"];
+    
+    if (textField.tag < formFields.count) {
+        NSString *fieldKey = formFields[textField.tag];
+        [self.form setValue:textField.text forKey:fieldKey];
+        
+        // 通知代理表单数据已更新
+        if ([self.delegate respondsToSelector:@selector(idCardViewDidChangeForm:)]) {
+            [self.delegate idCardViewDidChangeForm:self.form];
+        }
+    }
+    
+    // 更新按钮状态
+    [self updateNextButtonState];
 }
 
 #pragma mark - Actions
