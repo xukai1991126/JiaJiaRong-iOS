@@ -446,10 +446,23 @@
             }
             
             if (isExpanded) {
-                // 展开状态：标题(50) + 提示(30) + 选项区域 + 底部间距(15) + 分隔线(1)
+                // 展开状态：标题(50) + 标题下间距(8) + 提示(24) + 提示下间距(10) + 选项区域 + 底部间距(15) + 分隔线(1)
                 NSArray *options = item[@"conditionList"];
-                NSInteger rows = (options.count + 2) / 3; // 3列布局
-                return 50 + 30 + (rows * 45) + 15 + 1; // 增加1px分隔线高度
+                
+                // 使用与createOptionsForView相同的列数计算逻辑
+                NSInteger actualColumns;
+                if (options.count == 2) {
+                    actualColumns = 2;
+                } else {
+                    actualColumns = 3;
+                }
+                
+                NSInteger rows = (options.count + actualColumns - 1) / actualColumns;
+                // 实际按钮高度35pt + 行间距8pt，但最后一行不需要间距
+                CGFloat optionsHeight = rows * 35 + (rows - 1) * 8; // 精确计算选项区域高度
+                
+                // 总高度 = 标题高度 + 标题下间距 + 提示高度 + 提示下间距 + 选项高度 + 底部间距 + 分割线高度
+                return 50 + 8 + 24 + 10 + optionsHeight + 15 + 1;
             } else {
                 // 折叠状态：只显示标题行 + 分隔线
                 return 50 + 1; // 增加1px分隔线高度
@@ -739,18 +752,14 @@
                 
                 [hintLabel mas_makeConstraints:^(MASConstraintMaker *make) {
                     make.left.equalTo(cell.contentView).offset(15);
+                    make.right.equalTo(cell.contentView).offset(-15);
                     make.top.equalTo(headerView.mas_bottom).offset(8);
+                    make.height.mas_equalTo(24);
                 }];
                 
                 // 选项按钮区域
                 UIView *optionsView = [[UIView alloc] init];
                 [cell.contentView addSubview:optionsView];
-                
-                [optionsView mas_makeConstraints:^(MASConstraintMaker *make) {
-                    make.left.right.equalTo(cell.contentView);
-                    make.top.equalTo(hintLabel.mas_bottom).offset(15);
-                    make.bottom.equalTo(cell.contentView).offset(-16); // 为分隔线留出空间
-                }];
                 
                 // 根据选项数量设置布局
                 NSInteger optionCount = options.count;
@@ -761,6 +770,12 @@
                     // 三个及以上选项：一行三个
                     [self createOptionsForView:optionsView options:options field:field columns:3];
                 }
+                
+                // 设置optionsView约束 - 不设置bottom约束，让高度由createOptionsForView中的高度约束决定
+                [optionsView mas_makeConstraints:^(MASConstraintMaker *make) {
+                    make.left.right.equalTo(cell.contentView);
+                    make.top.equalTo(hintLabel.mas_bottom).offset(10);
+                }];
             } else {
                 // 折叠状态：只显示标题行，不显示选中的值
                 // 不添加任何额外的视图，只保留标题行
@@ -1083,7 +1098,7 @@
     }
     
     CGFloat buttonHeight = 35;
-    CGFloat rowSpacing = 12;
+    CGFloat rowSpacing = 8;
     
     for (NSInteger i = 0; i < options.count; i++) {
         NSDictionary *option = options[i];
@@ -1118,19 +1133,16 @@
         
         // 左对齐布局，按钮宽度统一
         CGFloat leftOffset = 15 + col * (buttonWidth + buttonSpacing);
+        CGFloat topOffset = row * (buttonHeight + rowSpacing);
         
-        [optionButton mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.left.equalTo(containerView).offset(leftOffset);
-            make.top.equalTo(containerView).offset(row * (buttonHeight + rowSpacing));
-            make.width.mas_equalTo(buttonWidth);
-            make.height.mas_equalTo(buttonHeight);
-        }];
+        optionButton.frame = CGRectMake(leftOffset, topOffset, buttonWidth, buttonHeight);
     }
     
-    // 设置容器高度
+    // 计算总高度：行数 × 按钮高度 + (行数-1) × 行间距
     NSInteger totalRows = (options.count + actualColumns - 1) / actualColumns;
     CGFloat totalHeight = totalRows * buttonHeight + (totalRows - 1) * rowSpacing;
     
+    // 设置容器的固定高度
     [containerView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.height.mas_equalTo(totalHeight);
     }];
