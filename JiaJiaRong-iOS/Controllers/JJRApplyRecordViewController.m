@@ -58,13 +58,19 @@
     // 状态文本
     self.statusTexts = @[@"", @"放款中", @"放款成功", @"放款失败"];
     
-    // 表格视图
+    // 配置tableView
     self.tableView = [[UITableView alloc] init];
-    self.tableView.delegate = self;
-    self.tableView.dataSource = self;
-    self.tableView.backgroundColor = [UIColor clearColor];
+    self.tableView.backgroundColor = [UIColor colorWithRed:248.0/255.0 green:248.0/255.0 blue:248.0/255.0 alpha:1.0];
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     self.tableView.showsVerticalScrollIndicator = NO;
+    self.tableView.delegate = self;
+    self.tableView.dataSource = self;
+    // 设置更紧凑的间距
+    self.tableView.sectionHeaderHeight = 15.0; // 减小section间距到15pt
+    self.tableView.sectionFooterHeight = 0.01;
+    if (@available(iOS 15.0, *)) {
+        self.tableView.sectionHeaderTopPadding = 0; // iOS 15+ 去掉额外的顶部间距
+    }
     [self.view addSubview:self.tableView];
     
     // 加载指示器
@@ -391,8 +397,8 @@
     }
     
     statusLabel.textColor = statusColor;
-    statusImageView.image = [UIImage imageNamed:@"img_e37ba6e8d5cb"];
-    statusImageView.tintColor = statusColor;
+    statusImageView.image = [UIImage imageNamed:iconName];
+    statusImageView.contentMode = UIViewContentModeScaleAspectFit;
     
     // 设置还款计划按钮
     repaymentButton.hidden = (status != 2);
@@ -426,8 +432,8 @@
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
-    // 每个section都有15pt的间距，包括第一个
-    return 5;
+    // cell之间的间距设置为15pt，更紧凑
+    return 15.0;
 }
 
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
