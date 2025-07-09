@@ -87,8 +87,8 @@
     [self.submitButton setTitle:@"确认提交" forState:UIControlStateNormal];
     [self.submitButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     self.submitButton.titleLabel.font = [UIFont systemFontOfSize:14]; // 28rpx -> 14pt
-    self.submitButton.backgroundColor = [UIColor colorWithHexString:@"#3B4FDE"]; // 使用正确的蓝色
-    self.submitButton.layer.cornerRadius = 8.0;
+    self.submitButton.backgroundColor =[UIColor colorWithHexString:@"#FF772C"]; // 使用正确的蓝色
+    self.submitButton.layer.cornerRadius = 23.0;
     [self.submitButton addTarget:self action:@selector(submitButtonTapped) forControlEvents:UIControlEventTouchUpInside];
     [self addSubview:self.submitButton];
 }
@@ -115,9 +115,9 @@
     
     [self.submitButton mas_makeConstraints:^(MASConstraintMaker *make) {
         make.bottom.equalTo(self.mas_safeAreaLayoutGuideBottom).offset(-15); // 30rpx -> 15pt
-        make.left.equalTo(self).offset(16); // 32rpx -> 16pt
-        make.right.equalTo(self).offset(-16);
-        make.height.mas_equalTo(49); // 98rpx -> 49pt
+        make.left.equalTo(self).offset(20); // 32rpx -> 16pt
+        make.right.equalTo(self).offset(-20);
+        make.height.mas_equalTo(46); // 98rpx -> 49pt
     }];
 }
 

@@ -305,7 +305,7 @@
         make.centerX.equalTo(self.footerView);
         make.left.mas_equalTo(20);
         make.right.mas_offset(-20);
-        make.height.mas_equalTo(50); // 98rpx -> 49pt
+        make.height.mas_equalTo(46); // 98rpx -> 49pt
         make.bottom.lessThanOrEqualTo(self.view.mas_safeAreaLayoutGuideBottom).offset(-10);
     }];
 }

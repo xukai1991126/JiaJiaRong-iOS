@@ -213,8 +213,8 @@
     
     [self.confirmButton mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.agreementTextView.mas_bottom).offset(18);
-        make.left.right.equalTo(self.modalView).inset(15);
-        make.height.mas_equalTo(49); // 对应uni-app的98rpx
+        make.left.right.equalTo(self.modalView).inset(20);
+        make.height.mas_equalTo(46); // 对应uni-app的98rpx
         make.bottom.equalTo(self.modalView).offset(-27.5);
     }];
 }

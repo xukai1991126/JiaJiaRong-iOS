@@ -257,7 +257,7 @@
         }];
         
         [repaymentButton mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.right.equalTo(cell.contentView).offset(-15);
+            make.right.equalTo(cell.contentView).offset(-20);
             make.centerY.equalTo(statusView);
         }];
         

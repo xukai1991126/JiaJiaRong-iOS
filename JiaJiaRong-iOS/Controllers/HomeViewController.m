@@ -419,7 +419,7 @@ typedef NS_ENUM(NSInteger, HomeTableViewSection) {
     }];
     
     [self.mainApplyButton mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.right.equalTo(contentView).inset(23);
+        make.left.right.equalTo(contentView).inset(20);
         make.top.equalTo(rateLabel.mas_bottom).offset(20);
         make.height.mas_equalTo(46);
     }];

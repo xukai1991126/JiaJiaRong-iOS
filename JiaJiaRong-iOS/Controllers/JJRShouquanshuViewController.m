@@ -161,7 +161,7 @@
     [self.agreeButton mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.agreementContainer.mas_bottom).offset(10);
         make.left.right.equalTo(self.view).inset(20);
-        make.height.mas_equalTo(44);
+        make.height.mas_equalTo(46);
     }];
 }
 

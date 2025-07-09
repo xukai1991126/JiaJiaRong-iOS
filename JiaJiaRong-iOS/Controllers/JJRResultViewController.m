@@ -304,7 +304,7 @@
     
     [self.homeButton mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.resultDescLabel.mas_bottom).offset(25);
-        make.left.right.equalTo(self.resultContentView).inset(15);
+        make.left.right.equalTo(self.resultContentView).inset(20);
         make.height.mas_equalTo(46);
     }];
     

@@ -398,7 +398,7 @@
     [self.submitButton mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.right.equalTo(self.nameTextField);
         make.top.equalTo(tipView.mas_bottom).offset(20);
-        make.height.mas_equalTo(50);
+        make.height.mas_equalTo(46);
     }];
     
     // 添加点击遮罩关闭弹窗
@@ -848,10 +848,10 @@
             }];
             
             [nextButton mas_makeConstraints:^(MASConstraintMaker *make) {
-                make.left.right.equalTo(cell.contentView).inset(15);
+                make.left.right.equalTo(cell.contentView).inset(20);
                 make.top.equalTo(titleLabel.mas_bottom).offset(20);
-                make.height.mas_equalTo(50);
-                make.bottom.equalTo(cell.contentView).offset(-15);
+                make.height.mas_equalTo(46);
+                make.bottom.equalTo(cell.contentView).offset(-20);
             }];
         }
         
