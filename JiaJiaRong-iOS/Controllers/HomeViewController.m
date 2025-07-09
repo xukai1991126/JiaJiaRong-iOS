@@ -379,7 +379,7 @@ typedef NS_ENUM(NSInteger, HomeTableViewSection) {
         make.left.right.equalTo(cell.contentView).inset(18);
         make.top.equalTo(cell.contentView).offset(20);
         make.bottom.equalTo(cell.contentView).offset(-16);
-        make.height.mas_equalTo(shouldShowProtocol ? 340 : 300);
+        make.height.mas_equalTo(shouldShowProtocol ? 300 : 260);
     }];
     
     [backgroundImageView mas_makeConstraints:^(MASConstraintMaker *make) {
