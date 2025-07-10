@@ -703,6 +703,24 @@
             return; // 如果token失效，不继续执行success回调
         }
         
+        // 检查响应码（和uni-app保持一致，只有code == 0才算成功）
+        NSNumber *code = responseObject[@"code"];
+        if (!code || [code integerValue] != 0) {
+            // 如果code不是0，表示失败
+            NSDictionary *error = responseObject[@"err"];
+            NSString *errorMsg = error[@"msg"] ?: @"请求失败";
+            
+            NSLog(@"❌ 请求失败: code=%@, msg=%@", code, errorMsg);
+            
+            NSError *requestError = [NSError errorWithDomain:@"JJRNetworkError" 
+                                                        code:[code integerValue] 
+                                                    userInfo:@{NSLocalizedDescriptionKey: errorMsg}];
+            if (failure) {
+                failure(requestError);
+            }
+            return;
+        }
+        
         if (success) {
             success(responseObject);
         }
@@ -768,6 +786,24 @@
         // 检查token失效
         if ([self checkTokenInvalid:responseObject]) {
             return; // 如果token失效，不继续执行success回调
+        }
+        
+        // 检查响应码（和uni-app保持一致，只有code == 0才算成功）
+        NSNumber *code = responseObject[@"code"];
+        if (!code || [code integerValue] != 0) {
+            // 如果code不是0，表示失败
+            NSDictionary *error = responseObject[@"err"];
+            NSString *errorMsg = error[@"msg"] ?: @"请求失败";
+            
+            NSLog(@"❌ 请求失败: code=%@, msg=%@", code, errorMsg);
+            
+            NSError *requestError = [NSError errorWithDomain:@"JJRNetworkError" 
+                                                        code:[code integerValue] 
+                                                    userInfo:@{NSLocalizedDescriptionKey: errorMsg}];
+            if (failure) {
+                failure(requestError);
+            }
+            return;
         }
         
         if (success) {
