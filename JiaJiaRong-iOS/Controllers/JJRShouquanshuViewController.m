@@ -9,7 +9,10 @@
 #import "JJRShouquanshuViewController.h"
 #import "JJRButton.h"
 #import "JJRApplyFormViewController.h"
+#import "JJRResultViewController.h"
 #import "WebViewController.h"
+#import "JJRNetworkService.h"
+#import "JJRUserManager.h"
 
 @interface JJRShouquanshuViewController ()
 
@@ -189,10 +192,45 @@
         return;
     }
     
-    // 跳转到申请表单页面
-    JJRApplyFormViewController *formVC = [[JJRApplyFormViewController alloc] init];
-    formVC.hidesBottomBarWhenPushed = YES; // 隐藏tabbar
-    [self.navigationController pushViewController:formVC animated:YES];
+    // 调用授权申请接口
+    [self submitMerchantApply];
+}
+
+- (void)submitMerchantApply {
+    [JJRNetworkService showLoading];
+    
+    [[JJRNetworkService sharedInstance] submitMerchantApplyWithSuccess:^(NSDictionary *response) {
+        [JJRNetworkService hideLoading];
+        
+        NSLog(@"✅ 提交授权成功: %@", response);
+        
+        if ([response[@"code"] integerValue] == 0) {
+            // 更新用户信息
+            JJRUserManager *userManager = [JJRUserManager sharedManager];
+            NSMutableDictionary *userInfo = [NSMutableDictionary dictionaryWithDictionary:userManager.userInfo];
+            userInfo[@"authority"] = @YES;
+            [userManager updateUserInfo:userInfo];
+            
+            [JJRToastTool showSuccess:@"授权成功"];
+            
+            // 延迟跳转到结果页面
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                [self navigateToResult];
+            });
+        } else {
+            [JJRToastTool showError:response[@"msg"] ?: @"授权失败"];
+        }
+    } failure:^(NSError *error) {
+        [JJRNetworkService hideLoading];
+        NSLog(@"❌ 提交授权失败: %@", error);
+        [JJRToastTool showError:@"网络错误，请重试"];
+    }];
+}
+
+- (void)navigateToResult {
+    JJRResultViewController *resultVC = [[JJRResultViewController alloc] init];
+    resultVC.hidesBottomBarWhenPushed = YES;
+    [self.navigationController pushViewController:resultVC animated:YES];
 }
 
 
