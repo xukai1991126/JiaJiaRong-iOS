@@ -237,7 +237,11 @@
         
     } failure:^(NSError *error) {
         NSLog(@"❌ 获取应用信息失败: %@", error.localizedDescription);
-        [JJRToastTool showError:@"获取应用信息失败"];
+        NSString *errorMessage = error.localizedDescription;
+        if (!errorMessage || errorMessage.length == 0) {
+            errorMessage = @"获取应用信息失败";
+        }
+        [JJRToastTool showError:errorMessage];
     }];
 }
 

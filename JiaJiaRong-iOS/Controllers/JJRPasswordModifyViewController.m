@@ -105,7 +105,11 @@
     } failure:^(NSError *error) {
         [JJRNetworkService hideLoading];
         dispatch_async(dispatch_get_main_queue(), ^{
-            [JJRToastTool showToast:@"验证码发送失败，请重试" inView:self.view];
+            NSString *errorMessage = error.localizedDescription;
+            if (!errorMessage || errorMessage.length == 0) {
+                errorMessage = @"验证码发送失败，请重试";
+            }
+            [JJRToastTool showToast:errorMessage inView:self.view];
         });
     }];
 }
@@ -182,7 +186,11 @@
     } failure:^(NSError *error) {
         [JJRNetworkService hideLoading];
         dispatch_async(dispatch_get_main_queue(), ^{
-            [JJRToastTool showToast:@"密码修改失败，请重试" inView:self.view];
+            NSString *errorMessage = error.localizedDescription;
+            if (!errorMessage || errorMessage.length == 0) {
+                errorMessage = @"密码修改失败，请重试";
+            }
+            [JJRToastTool showToast:errorMessage inView:self.view];
         });
     }];
 }

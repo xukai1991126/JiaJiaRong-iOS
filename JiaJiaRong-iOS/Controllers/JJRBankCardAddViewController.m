@@ -393,7 +393,11 @@
             [JJRToastTool showError:errorMsg];
         }
     } failure:^(NSError *error) {
-        [JJRToastTool showError:@"网络错误，请重试"];
+        NSString *errorMessage = error.localizedDescription;
+        if (!errorMessage || errorMessage.length == 0) {
+            errorMessage = @"网络错误，请重试";
+        }
+        [JJRToastTool showError:errorMessage];
     }];
 }
 

@@ -364,7 +364,11 @@
         });
     } failure:^(NSError *error) {
         dispatch_async(dispatch_get_main_queue(), ^{
-            [JJRToastTool showError:@"登出失败，请重试"];
+            NSString *errorMessage = error.localizedDescription;
+            if (!errorMessage || errorMessage.length == 0) {
+                errorMessage = @"登出失败，请重试";
+            }
+            [JJRToastTool showError:errorMessage];
         });
     }];
 }
@@ -384,7 +388,11 @@
         });
     } failure:^(NSError *error) {
         dispatch_async(dispatch_get_main_queue(), ^{
-            [JJRToastTool showError:@"注销失败，请重试"];
+            NSString *errorMessage = error.localizedDescription;
+            if (!errorMessage || errorMessage.length == 0) {
+                errorMessage = @"注销失败，请重试";
+            }
+            [JJRToastTool showError:errorMessage];
         });
     }];
 }

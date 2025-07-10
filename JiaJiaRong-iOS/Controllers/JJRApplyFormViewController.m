@@ -1061,7 +1061,11 @@
             [JJRToastTool showError:responseObject[@"err"][@"msg"] ?: @"提交失败"];
         }
     } failure:^(NSError *error) {
-        [JJRToastTool showError:@"网络错误，请重试"];
+        NSString *errorMessage = error.localizedDescription;
+        if (!errorMessage || errorMessage.length == 0) {
+            errorMessage = @"网络错误，请重试";
+        }
+        [JJRToastTool showError:errorMessage];
         NSLog(@"提交表单失败: %@", error);
     }];
 }

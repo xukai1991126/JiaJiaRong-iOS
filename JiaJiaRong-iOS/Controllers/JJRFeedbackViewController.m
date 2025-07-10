@@ -62,7 +62,11 @@
             [self.navigationController popViewControllerAnimated:YES];
         });
     } failure:^(NSError *error) {
-        [JJRToastTool showError:@"提交失败，请稍后再试"];
+        NSString *errorMessage = error.localizedDescription;
+        if (!errorMessage || errorMessage.length == 0) {
+            errorMessage = @"提交失败，请稍后再试";
+        }
+        [JJRToastTool showError:errorMessage];
     }];
 }
 

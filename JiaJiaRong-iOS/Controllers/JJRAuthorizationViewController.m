@@ -243,7 +243,11 @@
     } failure:^(NSError *error) {
         [JJRNetworkService hideLoading];
         NSLog(@"❌ POST请求失败: %@", error);
-        [JJRToastTool showError:@"网络错误，请重试"];
+        NSString *errorMessage = error.localizedDescription;
+        if (!errorMessage || errorMessage.length == 0) {
+            errorMessage = @"网络错误，请重试";
+        }
+        [JJRToastTool showError:errorMessage];
     }];
 }
 
@@ -261,7 +265,11 @@
         }
     } failure:^(NSError *error) {
         NSLog(@"❌ GET请求失败: %@", error);
-        [JJRToastTool showError:@"获取协议内容失败"];
+        NSString *errorMessage = error.localizedDescription;
+        if (!errorMessage || errorMessage.length == 0) {
+            errorMessage = @"获取协议内容失败";
+        }
+        [JJRToastTool showError:errorMessage];
     }];
 }
 
@@ -350,7 +358,11 @@
     } failure:^(NSError *error) {
         [JJRNetworkService hideLoading];
         NSLog(@"❌ 提交授权失败: %@", error);
-        [JJRToastTool showError:@"网络错误，请重试"];
+        NSString *errorMessage = error.localizedDescription;
+        if (!errorMessage || errorMessage.length == 0) {
+            errorMessage = @"网络错误，请重试";
+        }
+        [JJRToastTool showError:errorMessage];
     }];
 }
 

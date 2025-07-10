@@ -491,7 +491,11 @@
     } failure:^(NSError *error) {
         [JJRNetworkService hideLoading];
         NSLog(@"🎯 验证码发送失败: %@", error.localizedDescription);
-        [JJRToastTool showError:@"验证码发送失败，请稍后重试"];
+        NSString *errorMessage = error.localizedDescription;
+        if (!errorMessage || errorMessage.length == 0) {
+            errorMessage = @"验证码发送失败，请稍后重试";
+        }
+        [JJRToastTool showError:errorMessage];
     }];
 }
 

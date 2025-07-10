@@ -235,7 +235,11 @@
         }
     } failure:^(NSError *error) {
         [JJRNetworkService hideLoading];
-        [JJRToastTool showError:@"网络错误，请重试"];
+        NSString *errorMessage = error.localizedDescription;
+        if (!errorMessage || errorMessage.length == 0) {
+            errorMessage = @"网络错误，请重试";
+        }
+        [JJRToastTool showError:errorMessage];
     }];
 }
 
@@ -289,7 +293,11 @@
         }
     } failure:^(NSError *error) {
         [JJRNetworkService hideLoading];
-        [JJRToastTool showError:@"网络错误，请重试"];
+        NSString *errorMessage = error.localizedDescription;
+        if (!errorMessage || errorMessage.length == 0) {
+            errorMessage = @"网络错误，请重试";
+        }
+        [JJRToastTool showError:errorMessage];
     }];
 }
 
@@ -368,7 +376,8 @@
                 [self recognizeIdCardWithImageUrl:imageUrl forType:type];
             } else {
                 [JJRNetworkService hideLoading];
-                [JJRToastTool showError:@"图片上传失败，请重试"];
+                NSString *errorMessage = responseObject[@"err"][@"msg"] ?: @"图片上传失败，请重试";
+                [JJRToastTool showError:errorMessage];
             }
         } else {
             [JJRNetworkService hideLoading];
@@ -376,7 +385,11 @@
         }
     } failure:^(NSError *error) {
         [JJRNetworkService hideLoading];
-        [JJRToastTool showError:@"网络错误，请重试"];
+        NSString *errorMessage = error.localizedDescription;
+        if (!errorMessage || errorMessage.length == 0) {
+            errorMessage = @"网络错误，请重试";
+        }
+        [JJRToastTool showError:errorMessage];
     }];
 }
 
@@ -415,7 +428,11 @@
             }
         } failure:^(NSError *error) {
             [JJRNetworkService hideLoading];
-            [JJRToastTool showError:@"网络错误，请重试"];
+            NSString *errorMessage = error.localizedDescription;
+            if (!errorMessage || errorMessage.length == 0) {
+                errorMessage = @"网络错误，请重试";
+            }
+            [JJRToastTool showError:errorMessage];
         }];
     } else if ([type isEqualToString:@"back"]) {
         // 识别身份证国徽面
@@ -446,7 +463,11 @@
             }
         } failure:^(NSError *error) {
             [JJRNetworkService hideLoading];
-            [JJRToastTool showError:@"网络错误，请重试"];
+            NSString *errorMessage = error.localizedDescription;
+            if (!errorMessage || errorMessage.length == 0) {
+                errorMessage = @"网络错误，请重试";
+            }
+            [JJRToastTool showError:errorMessage];
         }];
     }
 }
