@@ -113,6 +113,38 @@
     self.agreementView = [[UIView alloc] init];
     [self.contentView addSubview:self.agreementView];
     
+    // 金融资质声明
+    UILabel *qualificationLabel = [[UILabel alloc] init];
+    qualificationLabel.text = @"金融资质声明";
+    qualificationLabel.font = [UIFont boldSystemFontOfSize:16];
+    qualificationLabel.textColor = [UIColor blackColor];
+    qualificationLabel.textAlignment = NSTextAlignmentCenter;
+    [self.contentView addSubview:qualificationLabel];
+    
+    UILabel *qualificationDescLabel = [[UILabel alloc] init];
+    qualificationDescLabel.text = @"本平台为合规融资担保机构，严格遵循国家金融监管要求，为用户提供安全、透明的金融服务。所有业务均在监管部门备案，用户资金安全有保障。";
+    qualificationDescLabel.font = [UIFont systemFontOfSize:14];
+    qualificationDescLabel.textColor = [UIColor grayColor];
+    qualificationDescLabel.textAlignment = NSTextAlignmentLeft;
+    qualificationDescLabel.numberOfLines = 0;
+    [self.contentView addSubview:qualificationDescLabel];
+    
+    // 风险提示
+    UILabel *riskLabel = [[UILabel alloc] init];
+    riskLabel.text = @"风险提示";
+    riskLabel.font = [UIFont boldSystemFontOfSize:16];
+    riskLabel.textColor = [UIColor redColor];
+    riskLabel.textAlignment = NSTextAlignmentCenter;
+    [self.contentView addSubview:riskLabel];
+    
+    UILabel *riskDescLabel = [[UILabel alloc] init];
+    riskDescLabel.text = @"借款有风险，申请需谨慎。请根据个人实际情况合理借贷，避免过度负债。如遇困难，请及时与我们联系寻求帮助。";
+    riskDescLabel.font = [UIFont systemFontOfSize:14];
+    riskDescLabel.textColor = [UIColor redColor];
+    riskDescLabel.textAlignment = NSTextAlignmentLeft;
+    riskDescLabel.numberOfLines = 0;
+    [self.contentView addSubview:riskDescLabel];
+
     // 创建协议按钮
     [self createAgreementButtonWithTitle:@"用户服务协议" type:@"user" tag:100];
     [self createAgreementButtonWithTitle:@"个人信息授权书" type:@"authorization" tag:101];
@@ -186,9 +218,64 @@
         make.bottom.equalTo(self.appInfoView).offset(-30); // 60rpx -> 30pt
     }];
     
+    // 获取金融资质声明和风险提示标签
+    UILabel *qualificationLabel = nil;
+    UILabel *qualificationDescLabel = nil;
+    UILabel *riskLabel = nil;
+    UILabel *riskDescLabel = nil;
+    
+    for (UIView *subview in self.contentView.subviews) {
+        if ([subview isKindOfClass:[UILabel class]]) {
+            UILabel *label = (UILabel *)subview;
+            if ([label.text isEqualToString:@"金融资质声明"]) {
+                qualificationLabel = label;
+            } else if ([label.text containsString:@"本平台为合规融资担保机构"]) {
+                qualificationDescLabel = label;
+            } else if ([label.text isEqualToString:@"风险提示"]) {
+                riskLabel = label;
+            } else if ([label.text containsString:@"借款有风险"]) {
+                riskDescLabel = label;
+            }
+        }
+    }
+    
+    // 设置金融资质声明约束
+    if (qualificationLabel) {
+        [qualificationLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.top.equalTo(self.appInfoView.mas_bottom).offset(30);
+            make.left.right.equalTo(self.contentView).inset(15);
+        }];
+    }
+    
+    if (qualificationDescLabel) {
+        [qualificationDescLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.top.equalTo(qualificationLabel.mas_bottom).offset(10);
+            make.left.right.equalTo(self.contentView).inset(15);
+        }];
+    }
+    
+    // 设置风险提示约束
+    if (riskLabel) {
+        [riskLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.top.equalTo(qualificationDescLabel.mas_bottom).offset(20);
+            make.left.right.equalTo(self.contentView).inset(15);
+        }];
+    }
+    
+    if (riskDescLabel) {
+        [riskDescLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.top.equalTo(riskLabel.mas_bottom).offset(10);
+            make.left.right.equalTo(self.contentView).inset(15);
+        }];
+    }
+    
     // 协议区域
     [self.agreementView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.appInfoView.mas_bottom);
+        if (riskDescLabel) {
+            make.top.equalTo(riskDescLabel.mas_bottom).offset(20);
+        } else {
+            make.top.equalTo(self.appInfoView.mas_bottom);
+        }
         make.left.right.equalTo(self.contentView).inset(16); // 32rpx -> 16pt
         make.bottom.equalTo(self.contentView).offset(-20);
     }];

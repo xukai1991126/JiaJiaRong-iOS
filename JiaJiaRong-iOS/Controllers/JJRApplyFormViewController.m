@@ -1031,6 +1031,22 @@
         return;
     }
     
+    // 显示费用说明确认弹窗
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"费用说明"
+                                                                   message:@"本平台不收取任何隐藏费用，所有费用均透明公开。最终利率以金融机构审批为准，您有权拒绝任何不合理的收费。确认继续申请吗？"
+                                                            preferredStyle:UIAlertControllerStyleAlert];
+    
+    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil];
+    UIAlertAction *confirmAction = [UIAlertAction actionWithTitle:@"确认申请" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        [self performFormSubmission];
+    }];
+    
+    [alert addAction:cancelAction];
+    [alert addAction:confirmAction];
+    [self presentViewController:alert animated:YES completion:nil];
+}
+
+- (void)performFormSubmission {
     // 构建提交参数
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
     [params addEntriesFromDictionary:self.formValues];
@@ -1063,10 +1079,9 @@
     } failure:^(NSError *error) {
         NSString *errorMessage = error.localizedDescription;
         if (!errorMessage || errorMessage.length == 0) {
-            errorMessage = @"网络错误，请重试";
+            errorMessage = @"提交失败，请重试";
         }
         [JJRToastTool showError:errorMessage];
-        NSLog(@"提交表单失败: %@", error);
     }];
 }
 

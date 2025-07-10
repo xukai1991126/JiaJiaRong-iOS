@@ -496,7 +496,29 @@ typedef NS_ENUM(NSInteger, HomeTableViewSection) {
     cardView.layer.cornerRadius = 16;
     [cell.contentView addSubview:cardView];
     
-    // 标题
+    // 风险提示标题 - 红色醒目
+    UILabel *riskTitleLabel = [[UILabel alloc] init];
+    riskTitleLabel.text = @"⚠️ 风险提示";
+    riskTitleLabel.font = [UIFont boldSystemFontOfSize:16];
+    riskTitleLabel.textColor = [UIColor redColor];
+    riskTitleLabel.textAlignment = NSTextAlignmentCenter;
+    [cardView addSubview:riskTitleLabel];
+    
+    // 风险提示内容
+    UILabel *riskContentLabel = [[UILabel alloc] init];
+    riskContentLabel.text = @"借款有风险，请谨慎申请。请根据个人实际情况合理借贷，避免过度负债。如遇困难，请及时联系我们寻求帮助。";
+    riskContentLabel.font = [UIFont systemFontOfSize:14];
+    riskContentLabel.textColor = [UIColor redColor];
+    riskContentLabel.numberOfLines = 0;
+    riskContentLabel.textAlignment = NSTextAlignmentCenter;
+    [cardView addSubview:riskContentLabel];
+    
+    // 分隔线
+    UIView *separatorLine = [[UIView alloc] init];
+    separatorLine.backgroundColor = [UIColor colorWithRed:240.0/255.0 green:240.0/255.0 blue:240.0/255.0 alpha:1.0];
+    [cardView addSubview:separatorLine];
+    
+    // 申请须知标题
     UILabel *titleLabel = [[UILabel alloc] init];
     titleLabel.text = @"申请须知";
     titleLabel.font = [UIFont boldSystemFontOfSize:16];
@@ -519,15 +541,31 @@ typedef NS_ENUM(NSInteger, HomeTableViewSection) {
         make.bottom.equalTo(cell.contentView).offset(-16);
     }];
     
+    [riskTitleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(cardView).offset(20);
+        make.left.right.equalTo(cardView).inset(18);
+    }];
+    
+    [riskContentLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(riskTitleLabel.mas_bottom).offset(10);
+        make.left.right.equalTo(cardView).inset(18);
+    }];
+    
+    [separatorLine mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(riskContentLabel.mas_bottom).offset(15);
+        make.left.right.equalTo(cardView).inset(18);
+        make.height.mas_equalTo(1);
+    }];
+    
     [titleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.centerX.equalTo(cardView);
-        make.top.equalTo(cardView).offset(16);
+        make.top.equalTo(separatorLine.mas_bottom).offset(15);
+        make.left.right.equalTo(cardView).inset(18);
     }];
     
     [contentLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.right.equalTo(cardView).inset(20);
-        make.top.equalTo(titleLabel.mas_bottom).offset(14);
-        make.bottom.equalTo(cardView).offset(-16);
+        make.top.equalTo(titleLabel.mas_bottom).offset(12);
+        make.left.right.equalTo(cardView).inset(18);
+        make.bottom.equalTo(cardView).offset(-20);
     }];
 }
 
