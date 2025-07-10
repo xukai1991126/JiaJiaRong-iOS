@@ -12,6 +12,7 @@
 #import "JJRBankCardModel.h"
 #import <YYKit/YYKit.h>
 #import <QuartzCore/QuartzCore.h>
+#import <SDWebImage/SDWebImage.h>
 
 @interface JJRBankCardListViewController () <UITableViewDelegate, UITableViewDataSource>
 
@@ -373,7 +374,7 @@
     
     // 银行Logo
     UIImageView *bankLogo = [[UIImageView alloc] init];
-    bankLogo.layer.cornerRadius = 30; // 60rpx -> 30pt
+    bankLogo.layer.cornerRadius = 15; // 60rpx -> 30pt
     bankLogo.clipsToBounds = YES;
     bankLogo.backgroundColor = [UIColor lightGrayColor];
     bankLogo.tag = 101;
@@ -469,22 +470,7 @@
     bankLogo.contentMode = UIViewContentModeScaleAspectFit;
     
     if (bankCard.bankLogo && bankCard.bankLogo.length > 0) {
-        // 使用异步加载网络图片
-        NSURL *logoURL = [NSURL URLWithString:bankCard.bankLogo];
-        if (logoURL) {
-            NSURLSessionDataTask *task = [[NSURLSession sharedSession] dataTaskWithURL:logoURL completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
-                if (data && !error) {
-                    UIImage *image = [UIImage imageWithData:data];
-                    if (image) {
-                        dispatch_async(dispatch_get_main_queue(), ^{
-                            bankLogo.image = image;
-                            bankLogo.backgroundColor = [UIColor clearColor];
-                        });
-                    }
-                }
-            }];
-            [task resume];
-        }
+        [bankLogo sd_setImageWithURL:[NSURL URLWithString:bankCard.bankLogo]];
     }
     
     // 银行名称和卡类型
