@@ -7,6 +7,7 @@
 //
 
 #import "JJRAboutUsView.h"
+#import "UIColor+Hex.h"
 
 @interface JJRAboutUsView ()
 
@@ -53,7 +54,7 @@
     
     // 应用名称
     self.appNameLabel = [[UILabel alloc] init];
-    self.appNameLabel.text = @"家家融";
+    self.appNameLabel.text = @"佳佳融";
     self.appNameLabel.font = [UIFont systemFontOfSize:24 weight:UIFontWeightBold];
     self.appNameLabel.textColor = [UIColor colorWithHexString:@"#333333"];
     self.appNameLabel.textAlignment = NSTextAlignmentCenter;
@@ -61,7 +62,22 @@
     
     // 版本号
     self.versionLabel = [[UILabel alloc] init];
-    self.versionLabel.text = @"版本 1.0.0";
+    // 从应用Info.plist读取版本号
+    NSString *appVersion = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"];
+    NSString *buildVersion = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleVersion"];
+    
+    NSLog(@"🔍 Debug - 读取到的版本号信息:");
+    NSLog(@"🔍 appVersion: %@", appVersion);
+    NSLog(@"🔍 buildVersion: %@", buildVersion);
+    
+    if (appVersion) {
+        self.versionLabel.text = [NSString stringWithFormat:@"版本 %@", appVersion];
+    } else {
+        self.versionLabel.text = @"版本 1.0.0"; // 默认版本号
+    }
+    
+    NSLog(@"🔍 最终显示的版本号: %@", self.versionLabel.text);
+    
     self.versionLabel.font = [UIFont systemFontOfSize:14];
     self.versionLabel.textColor = [UIColor colorWithHexString:@"#666666"];
     self.versionLabel.textAlignment = NSTextAlignmentCenter;
@@ -69,7 +85,7 @@
     
     // 应用描述
     self.descriptionLabel = [[UILabel alloc] init];
-    self.descriptionLabel.text = @"家家融是一款专业的金融服务平台，致力于为用户提供便捷、安全、透明的借贷服务。我们拥有专业的团队和先进的技术，为用户提供全方位的金融解决方案。";
+    self.descriptionLabel.text = @"佳佳融是一款专业的金融服务平台，致力于为用户提供便捷、安全、透明的借贷服务。我们拥有专业的团队和先进的技术，为用户提供全方位的金融解决方案。";
     self.descriptionLabel.font = [UIFont systemFontOfSize:16];
     self.descriptionLabel.textColor = [UIColor colorWithHexString:@"#666666"];
     self.descriptionLabel.numberOfLines = 0;
@@ -78,11 +94,13 @@
     
     // 版权信息
     self.copyrightLabel = [[UILabel alloc] init];
-    self.copyrightLabel.text = @"© 2024 家家融. All rights reserved.";
+    self.copyrightLabel.text = @"© 2025 佳佳融. All rights reserved.";
     self.copyrightLabel.font = [UIFont systemFontOfSize:12];
     self.copyrightLabel.textColor = [UIColor colorWithHexString:@"#999999"];
     self.copyrightLabel.textAlignment = NSTextAlignmentCenter;
     [self.contentView addSubview:self.copyrightLabel];
+    
+    NSLog(@"🔍 版权信息设置完成: %@", self.copyrightLabel.text);
 }
 
 - (void)setupConstraints {

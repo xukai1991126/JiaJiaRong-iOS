@@ -471,7 +471,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 20250710;
 				DEVELOPMENT_TEAM = J6Q5PP3ZS4;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -496,7 +496,7 @@
 				GCC_PREFIX_HEADER = "JiaJiaRong-iOS/JiaJiaRong-iOS-Prefix.pch";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "JiaJiaRong-iOS/Info.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = "家家融";
+				INFOPLIST_KEY_CFBundleDisplayName = "佳佳融";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
@@ -516,7 +516,7 @@
 					"$(PROJECT_DIR)/JiaJiaRong-iOS/Utils/SDK/ShareSDK/Support/PlatformSDK/WeChatSDK",
 					"$(PROJECT_DIR)/JiaJiaRong-iOS/Utils/XBZChatKeyBoard/Lame",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.0.5;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -576,7 +576,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 20250710;
 				DEVELOPMENT_TEAM = J6Q5PP3ZS4;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -601,7 +601,7 @@
 				GCC_PREFIX_HEADER = "JiaJiaRong-iOS/JiaJiaRong-iOS-Prefix.pch";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "JiaJiaRong-iOS/Info.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = "家家融";
+				INFOPLIST_KEY_CFBundleDisplayName = "佳佳融";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
@@ -621,7 +621,7 @@
 					"$(PROJECT_DIR)/JiaJiaRong-iOS/Utils/SDK/ShareSDK/Support/PlatformSDK/WeChatSDK",
 					"$(PROJECT_DIR)/JiaJiaRong-iOS/Utils/XBZChatKeyBoard/Lame",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.0.5;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
