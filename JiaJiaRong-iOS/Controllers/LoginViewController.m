@@ -574,7 +574,11 @@
             [self handleLoginSuccess:response mobile:mobile];
         } failure:^(NSError *error) {
             [JJRNetworkService hideLoading];
-            [JJRToastTool showToast:@"登录失败，请重试"];
+            NSString *errorMessage = error.localizedDescription;
+            if (!errorMessage || errorMessage.length == 0) {
+                errorMessage = @"登录失败，请重试";
+            }
+            [JJRToastTool showToast:errorMessage];
         }];
     } else {
         // 密码登录
@@ -586,7 +590,11 @@
             [self handleLoginSuccess:response mobile:mobile];
         } failure:^(NSError *error) {
             [JJRNetworkService hideLoading];
-            [JJRToastTool showToast:@"登录失败，请重试"];
+            NSString *errorMessage = error.localizedDescription;
+            if (!errorMessage || errorMessage.length == 0) {
+                errorMessage = @"登录失败，请重试";
+            }
+            [JJRToastTool showToast:errorMessage];
         }];
     }
 }
