@@ -443,6 +443,8 @@
         
         dispatch_async(dispatch_get_main_queue(), ^{
             self.cacheSize = cacheSize;
+            // 缓存计算完成后，刷新界面显示
+            [self loadUserInfo];
         });
     });
 }

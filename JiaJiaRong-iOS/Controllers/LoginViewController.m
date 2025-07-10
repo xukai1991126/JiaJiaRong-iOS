@@ -528,6 +528,7 @@
 }
 
 - (void)protocolCheckboxTapped {
+    [self.view endEditing:YES];
     self.protocolChecked = !self.protocolChecked;
     self.protocolCheckbox.selected = self.protocolChecked;
 }
