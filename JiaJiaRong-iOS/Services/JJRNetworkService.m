@@ -299,7 +299,8 @@
     [self.sessionManager.requestSerializer setValue:nil forHTTPHeaderField:@"Content-Type"];
     
     [self.sessionManager POST:fullURL 
-                   parameters:nil 
+                   parameters:nil
+                      headers:nil
      constructingBodyWithBlock:^(id<AFMultipartFormData>  _Nonnull formData) {
         NSData *imageData = UIImageJPEGRepresentation(image, 0.8);
         [formData appendPartWithFileData:imageData 
@@ -353,7 +354,8 @@
     NSLog(@"📤 请求头: %@", headers);
     
     [self.sessionManager POST:fullURL 
-                   parameters:nil 
+                   parameters:nil
+                      headers:nil
      constructingBodyWithBlock:^(id<AFMultipartFormData>  _Nonnull formData) {
         NSData *imageData = UIImageJPEGRepresentation(image, 0.8);
         NSLog(@"📤 图片数据大小: %.2f KB", imageData.length / 1024.0);
@@ -584,7 +586,8 @@
     [self.sessionManager.requestSerializer setValue:nil forHTTPHeaderField:@"Content-Type"];
     
     [self.sessionManager POST:fullURL 
-                   parameters:nil 
+                   parameters:nil
+                      headers:nil
      constructingBodyWithBlock:^(id<AFMultipartFormData>  _Nonnull formData) {
         NSData *imageData = UIImageJPEGRepresentation(image, 0.8);
         [formData appendPartWithFileData:imageData 
@@ -626,7 +629,8 @@
     [self.sessionManager.requestSerializer setValue:nil forHTTPHeaderField:@"Content-Type"];
     
     [self.sessionManager POST:fullURL 
-                   parameters:nil 
+                   parameters:nil
+                      headers:nil
      constructingBodyWithBlock:^(id<AFMultipartFormData>  _Nonnull formData) {
         [formData appendPartWithFileData:fileData 
                                     name:@"file" 
@@ -687,10 +691,10 @@
     }
     
     [self.sessionManager GET:fullURL 
-                  parameters:params 
-                     
-                    
-                     success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+                  parameters:params
+                      headers:nil
+                     progress:nil
+                      success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         NSLog(@"✅ GET请求成功: %@", fullURL);
         
         // 格式化输出响应数据，支持中文显示
@@ -775,6 +779,8 @@
     
     [self.sessionManager POST:fullURL 
                    parameters:params
+                      headers:nil
+                     progress:nil
                       success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         NSLog(@"✅ POST请求成功: %@", fullURL);
         

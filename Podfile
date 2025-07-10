@@ -5,7 +5,8 @@ platform :ios, '12.0'
 target 'JiaJiaRong-iOS' do
 
     # 网络请求
-  pod 'AFNetworking', '~> 3.2.1'
+#  pod 'AFNetworking', '~> 3.2.1'
+   pod 'AFNetworking', '~> 4.0.1'
   
   # 自动布局
   pod 'Masonry', '1.1.0'
