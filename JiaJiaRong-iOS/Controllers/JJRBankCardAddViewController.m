@@ -10,7 +10,6 @@
 #import "JJRNetworkService.h"
 #import "WebViewController.h"
 #import <YYKit/YYKit.h>
-#import "ZJGeneraMacros.h"
 
 @interface JJRBankCardAddViewController ()
 
@@ -279,7 +278,7 @@
     // 底部区域约束
     [self.footerView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.right.bottom.equalTo(self.view);
-        make.height.mas_equalTo(120+kBottomSafeAreaHeight); // 根据内容调整高度
+        make.height.mas_equalTo(120+SAFE_AREA_BOTTOM); // 根据内容调整高度
     }];
     
     [self.protocolView mas_makeConstraints:^(MASConstraintMaker *make) {
