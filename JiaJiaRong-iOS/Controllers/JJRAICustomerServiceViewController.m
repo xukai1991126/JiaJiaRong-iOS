@@ -73,6 +73,13 @@
     self.chatTableView.backgroundColor = [UIColor clearColor];
     self.chatTableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     self.chatTableView.allowsSelection = NO;
+    
+    // 🔧 设置自动行高，解决消息重叠问题
+    self.chatTableView.rowHeight = UITableViewAutomaticDimension;
+    self.chatTableView.estimatedRowHeight = 100.0; // 🔧 调整估计行高以适应新布局
+    self.chatTableView.contentInset = UIEdgeInsetsMake(10, 0, 10, 0);
+    self.chatTableView.scrollIndicatorInsets = self.chatTableView.contentInset;
+    
     [self.view addSubview:self.chatTableView];
     
     // 快捷回复
@@ -86,6 +93,7 @@
     self.inputContainer.layer.shadowOpacity = 0.1;
     self.inputContainer.layer.shadowRadius = 2;
     [self.view addSubview:self.inputContainer];
+    
     
     // 输入框
     self.messageTextField = [[UITextField alloc] init];
@@ -333,8 +341,13 @@
 
 - (void)scrollToBottom {
     if (self.messages.count > 0) {
-        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:self.messages.count - 1 inSection:0];
-        [self.chatTableView scrollToRowAtIndexPath:indexPath atScrollPosition:UITableViewScrollPositionBottom animated:YES];
+        // 🔧 延迟滚动，确保自动布局计算完成
+        dispatch_async(dispatch_get_main_queue(), ^{
+            NSIndexPath *indexPath = [NSIndexPath indexPathForRow:self.messages.count - 1 inSection:0];
+            [self.chatTableView scrollToRowAtIndexPath:indexPath 
+                                      atScrollPosition:UITableViewScrollPositionBottom 
+                                              animated:YES];
+        });
     }
 }
 
@@ -351,12 +364,15 @@
         cell = [[JJRChatCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellId];
     }
     
-    cell.message = self.messages[indexPath.row];
+    JJRChatMessage *message = self.messages[indexPath.row];
+    cell.message = message;
     return cell;
 }
 
 #pragma mark - UITableViewDelegate
 
+// 🔧 移除手动行高计算，使用自动行高
+/*
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     JJRChatMessage *message = self.messages[indexPath.row];
     
@@ -368,6 +384,7 @@
     
     return MAX(60, height + 40); // 最小高度60，内容高度+边距
 }
+*/
 
 #pragma mark - UITextFieldDelegate
 
@@ -394,13 +411,18 @@
     self.selectionStyle = UITableViewCellSelectionStyleNone;
 }
 
+- (void)prepareForReuse {
+    [super prepareForReuse];
+    // 🔧 prepareForReuse不需要清理视图，在updateUI中处理
+}
+
 - (void)setMessage:(JJRChatMessage *)message {
     _message = message;
     [self updateUI];
 }
 
 - (void)updateUI {
-    // 清除之前的子视图
+    // 🔧 清除之前的子视图
     for (UIView *view in self.contentView.subviews) {
         [view removeFromSuperview];
     }
@@ -408,10 +430,10 @@
     // 头像
     UILabel *avatarLabel = [[UILabel alloc] init];
     avatarLabel.text = self.message.isFromUser ? @"👤" : @"🤖";
-    avatarLabel.font = [UIFont systemFontOfSize:24];
+    avatarLabel.font = FONT_REGULAR(24); // 🔧 使用项目字体宏
     avatarLabel.textAlignment = NSTextAlignmentCenter;
     avatarLabel.backgroundColor = self.message.isFromUser ? 
-        [UIColor colorWithRed:0.2 green:0.6 blue:1.0 alpha:0.1] : 
+        [MAIN_COLOR colorWithAlphaComponent:0.1] : // 🔧 使用项目主色调
         [UIColor colorWithRed:0.9 green:0.9 blue:0.9 alpha:1.0];
     avatarLabel.layer.cornerRadius = 20;
     avatarLabel.layer.masksToBounds = YES;
@@ -420,7 +442,7 @@
     // 消息气泡
     UIView *bubbleView = [[UIView alloc] init];
     bubbleView.backgroundColor = self.message.isFromUser ? 
-        [UIColor colorWithRed:0.2 green:0.6 blue:1.0 alpha:1.0] : 
+        MAIN_COLOR : // 🔧 使用项目主色调
         [UIColor whiteColor];
     bubbleView.layer.cornerRadius = 12;
     bubbleView.layer.shadowColor = [UIColor blackColor].CGColor;
@@ -432,11 +454,16 @@
     // 消息内容
     UILabel *contentLabel = [[UILabel alloc] init];
     contentLabel.text = self.message.content;
-    contentLabel.font = [UIFont systemFontOfSize:16];
-    contentLabel.textColor = self.message.isFromUser ? [UIColor whiteColor] : [UIColor colorWithRed:0.2 green:0.2 blue:0.2 alpha:1.0];
+    contentLabel.font = FONT_REGULAR(16); // 🔧 使用项目字体宏
+    contentLabel.textColor = self.message.isFromUser ? [UIColor whiteColor] : TEXT_COLOR; // 🔧 使用项目颜色宏
     contentLabel.numberOfLines = 0;
+    
+    // 🔧 设置内容压缩阻力优先级，确保文本完全显示
+    [contentLabel setContentCompressionResistancePriority:UILayoutPriorityRequired forAxis:UILayoutConstraintAxisVertical];
+    [contentLabel setContentHuggingPriority:UILayoutPriorityDefaultHigh forAxis:UILayoutConstraintAxisVertical];
+    
     if (self.message.isTyping) {
-        contentLabel.textColor = [UIColor colorWithRed:0.6 green:0.6 blue:0.6 alpha:1.0];
+        contentLabel.textColor = PLACEHOLDER_COLOR; // 🔧 使用项目颜色宏
         contentLabel.font = [UIFont italicSystemFontOfSize:16];
     }
     [bubbleView addSubview:contentLabel];
@@ -446,8 +473,8 @@
     NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
     formatter.dateFormat = @"HH:mm";
     timeLabel.text = [formatter stringFromDate:self.message.timestamp];
-    timeLabel.font = [UIFont systemFontOfSize:12];
-    timeLabel.textColor = [UIColor colorWithRed:0.6 green:0.6 blue:0.6 alpha:1.0];
+    timeLabel.font = FONT_REGULAR(12); // 🔧 使用项目字体宏
+    timeLabel.textColor = PLACEHOLDER_COLOR; // 🔧 使用项目颜色宏
     [self.contentView addSubview:timeLabel];
     
     // 布局
@@ -455,37 +482,39 @@
         // 用户消息居右
         [avatarLabel mas_makeConstraints:^(MASConstraintMaker *make) {
             make.right.equalTo(self.contentView).offset(-16);
-            make.top.equalTo(self.contentView).offset(12);
+            make.top.equalTo(self.contentView).offset(16); // 🔧 增加顶部间距
             make.width.height.equalTo(@40);
         }];
         
         [bubbleView mas_makeConstraints:^(MASConstraintMaker *make) {
             make.right.equalTo(avatarLabel.mas_left).offset(-8);
-            make.top.equalTo(self.contentView).offset(12);
+            make.top.equalTo(self.contentView).offset(16); // 🔧 增加顶部间距
             make.left.greaterThanOrEqualTo(self.contentView).offset(80);
         }];
         
         [timeLabel mas_makeConstraints:^(MASConstraintMaker *make) {
             make.right.equalTo(bubbleView);
-            make.top.equalTo(bubbleView.mas_bottom).offset(4);
+            make.top.equalTo(bubbleView.mas_bottom).offset(6); // 🔧 增加间距
+            make.bottom.lessThanOrEqualTo(self.contentView).offset(-16); // 🔧 增加底部间距
         }];
     } else {
         // AI消息居左
         [avatarLabel mas_makeConstraints:^(MASConstraintMaker *make) {
             make.left.equalTo(self.contentView).offset(16);
-            make.top.equalTo(self.contentView).offset(12);
+            make.top.equalTo(self.contentView).offset(16); // 🔧 增加顶部间距
             make.width.height.equalTo(@40);
         }];
         
         [bubbleView mas_makeConstraints:^(MASConstraintMaker *make) {
             make.left.equalTo(avatarLabel.mas_right).offset(8);
-            make.top.equalTo(self.contentView).offset(12);
+            make.top.equalTo(self.contentView).offset(16); // 🔧 增加顶部间距
             make.right.lessThanOrEqualTo(self.contentView).offset(-80);
         }];
         
         [timeLabel mas_makeConstraints:^(MASConstraintMaker *make) {
             make.left.equalTo(bubbleView);
-            make.top.equalTo(bubbleView.mas_bottom).offset(4);
+            make.top.equalTo(bubbleView.mas_bottom).offset(6); // 🔧 增加间距
+            make.bottom.lessThanOrEqualTo(self.contentView).offset(-16); // 🔧 增加底部间距
         }];
     }
     
