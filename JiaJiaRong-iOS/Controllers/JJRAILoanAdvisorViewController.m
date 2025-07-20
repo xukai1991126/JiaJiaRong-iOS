@@ -177,7 +177,7 @@ typedef NS_ENUM(NSInteger, JJRAIAdvisorState) {
     [self.quickInputView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(hintLabel.mas_bottom).offset(20);
         make.left.right.equalTo(self.contentView).inset(16);
-        make.height.mas_greaterThanOrEqualTo(400); // 设置最小高度
+        make.height.mas_equalTo(400); // 设置固定高度
     }];
     
     [self.analyzeButton mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -259,22 +259,8 @@ typedef NS_ENUM(NSInteger, JJRAIAdvisorState) {
     // 停止进度动画（如果正在运行）
     [self.progressView stopAnimation];
     
-    // 🔧 异步进行布局更新，确保重置完成后再布局
-    dispatch_async(dispatch_get_main_queue(), ^{
-        // 重新设置quickInputView的高度约束
-        [self.quickInputView mas_updateConstraints:^(MASConstraintMaker *make) {
-            make.height.mas_greaterThanOrEqualTo(400); // 确保最小高度
-        }];
-        
-        // 强制重新布局以确保高度正确
-        [self.view setNeedsLayout];
-        [self.view layoutIfNeeded];
-        
-        // 更新内容视图约束以确保滚动正常
-        [self updateContentViewConstraints];
-        
-        NSLog(@"🔧 布局更新完成，quickInputView frame: %@", NSStringFromCGRect(self.quickInputView.frame));
-    });
+    // 🔧 简化布局更新
+    [self updateContentViewConstraints];
     
     NSLog(@"✅ 输入状态显示完成：quickInputView.hidden=%@, analyzeButton.hidden=%@, analyzeButton.enabled=%@", 
           @(self.quickInputView.hidden), @(self.analyzeButton.hidden), @(self.analyzeButton.enabled));

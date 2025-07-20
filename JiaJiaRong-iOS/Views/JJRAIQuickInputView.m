@@ -53,6 +53,8 @@
     self.tableView.backgroundColor = [UIColor clearColor];
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     self.tableView.showsVerticalScrollIndicator = NO;
+    self.tableView.bounces = YES; // 允许弹性滚动
+    self.tableView.alwaysBounceVertical = NO; // 内容不足时不允许垂直弹性
     [self addSubview:self.tableView];
     
     [self.tableView mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -316,17 +318,6 @@
     return YES;
 }
 
-- (CGSize)intrinsicContentSize {
-    // 返回内容的固有尺寸，确保高度正确
-    CGFloat tableHeight = self.tableView.contentSize.height;
-    CGFloat totalHeight = tableHeight + 32; // 加上内边距
-    
-    // 确保最小高度
-    totalHeight = MAX(totalHeight, 400);
-    
-    return CGSizeMake(UIViewNoIntrinsicMetric, totalHeight);
-}
-
 - (void)resetToDefault {
     NSLog(@"🔄 重置快速输入视图到默认状态");
     
@@ -339,28 +330,15 @@
     // 刷新表格视图
     [self.tableView reloadData];
     
-    // 🔧 确保在主线程中进行UI更新，并延迟一帧以确保reloadData完成
-    dispatch_async(dispatch_get_main_queue(), ^{
-        dispatch_async(dispatch_get_main_queue(), ^{
-            // 滚动到顶部，显示第一个选择框
-            [self.tableView setContentOffset:CGPointZero animated:NO];
-            
-            // 通知系统重新计算内容尺寸
-            [self invalidateIntrinsicContentSize];
-            
-            // 强制重新布局以确保正确的高度
-            [self setNeedsLayout];
-            [self layoutIfNeeded];
-            
-            // 确保表格视图也重新布局
-            [self.tableView setNeedsLayout];
-            [self.tableView layoutIfNeeded];
-            
-            NSLog(@"🔧 重置后的表格视图frame: %@", NSStringFromCGRect(self.tableView.frame));
-            NSLog(@"🔧 重置后的输入视图frame: %@", NSStringFromCGRect(self.frame));
-            NSLog(@"🔧 重置后的表格内容尺寸: %@", NSStringFromCGSize(self.tableView.contentSize));
-        });
-    });
+    // 🔧 滚动到顶部，显示第一个选择框
+    if (self.tableView.numberOfSections > 0) {
+        NSIndexPath *topIndexPath = [NSIndexPath indexPathForRow:0 inSection:0];
+        [self.tableView scrollToRowAtIndexPath:topIndexPath atScrollPosition:UITableViewScrollPositionTop animated:NO];
+        NSLog(@"🔧 重置完成 - 滚动到第一行");
+    } else {
+        [self.tableView setContentOffset:CGPointZero animated:NO];
+        NSLog(@"🔧 重置完成 - 滚动到顶部");
+    }
     
     // 通知代理更新
     if (self.delegate && [self.delegate respondsToSelector:@selector(quickInputView:didUpdateUserProfile:)]) {
