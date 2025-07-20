@@ -15,6 +15,7 @@
 #import "JJRAuthorizationViewController.h"
 #import "JJRResultViewController.h"
 #import "WebViewController.h"
+#import "JJRNewFeaturesViewController.h"
 
 // 定义TableView的section类型
 typedef NS_ENUM(NSInteger, HomeTableViewSection) {
@@ -281,6 +282,18 @@ typedef NS_ENUM(NSInteger, HomeTableViewSection) {
     rateLabel.textAlignment = NSTextAlignmentCenter;
     [contentView addSubview:rateLabel];
     
+    // 新功能入口按钮
+    UIButton *newFeaturesButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    [newFeaturesButton setTitle:@"智慧金融服务" forState:UIControlStateNormal];
+    [newFeaturesButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    newFeaturesButton.titleLabel.font = [UIFont boldSystemFontOfSize:15];
+    [newFeaturesButton setBackgroundColor:[UIColor colorWithRed:0.2 green:0.6 blue:1.0 alpha:1.0]];
+    newFeaturesButton.layer.cornerRadius = 20;
+    newFeaturesButton.clipsToBounds = YES;
+    
+    [newFeaturesButton addTarget:self action:@selector(newFeaturesButtonTapped) forControlEvents:UIControlEventTouchUpInside];
+    [contentView addSubview:newFeaturesButton];
+    
     // 申请按钮
     self.mainApplyButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [self.mainApplyButton setTitle:self.applyBtnText forState:UIControlStateNormal];
@@ -418,9 +431,16 @@ typedef NS_ENUM(NSInteger, HomeTableViewSection) {
         make.top.equalTo(amountValueLabel.mas_bottom).offset(12);
     }];
     
+    // 新功能按钮约束
+    [newFeaturesButton mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.right.equalTo(contentView).inset(20);
+        make.top.equalTo(rateLabel.mas_bottom).offset(15);
+        make.height.mas_equalTo(46);
+    }];
+    
     [self.mainApplyButton mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.right.equalTo(contentView).inset(20);
-        make.top.equalTo(rateLabel.mas_bottom).offset(20);
+        make.top.equalTo(newFeaturesButton.mas_bottom).offset(10);
         make.height.mas_equalTo(46);
     }];
     
@@ -788,6 +808,14 @@ typedef NS_ENUM(NSInteger, HomeTableViewSection) {
     webVC.title = title;
     webVC.hidesBottomBarWhenPushed = YES;
     [self.navigationController pushViewController:webVC animated:YES];
+}
+
+- (void)newFeaturesButtonTapped {
+    NSLog(@"🚀 新功能按钮被点击，切换到智能服务Tab");
+    // 切换到TabBar的智能服务标签（假设是第2个tab，index为1）
+    if (self.tabBarController) {
+        self.tabBarController.selectedIndex = 1;
+    }
 }
 
 - (void)applyButtonTapped {

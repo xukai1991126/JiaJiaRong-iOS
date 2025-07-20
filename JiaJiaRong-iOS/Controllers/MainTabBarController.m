@@ -1,6 +1,7 @@
 #import "MainTabBarController.h"
 #import "HomeViewController.h"
 #import "MyViewController.h"
+#import "JJRNewFeaturesViewController.h"
 
 @interface MainTabBarController ()
 
@@ -22,6 +23,13 @@
                                                        image:[UIImage imageNamed:@"1"] 
                                                selectedImage:[UIImage imageNamed:@"s-1"]];
     
+    // 智能服务
+    JJRNewFeaturesViewController *servicesVC = [[JJRNewFeaturesViewController alloc] init];
+    UINavigationController *servicesNav = [[UINavigationController alloc] initWithRootViewController:servicesVC];
+    servicesNav.tabBarItem = [[UITabBarItem alloc] initWithTitle:@"智能服务"
+                                                           image:[UIImage systemImageNamed:@"brain.head.profile"]
+                                                   selectedImage:[UIImage systemImageNamed:@"brain.head.profile.fill"]];
+    
     // 我的
     MyViewController *myVC = [[MyViewController alloc] init];
     UINavigationController *myNav = [[UINavigationController alloc] initWithRootViewController:myVC];
@@ -29,8 +37,8 @@
                                                      image:[UIImage imageNamed:@"2"]
                                              selectedImage:[UIImage imageNamed:@"s-2"]];
     
-    // 只设置首页和我的两个tab
-    self.viewControllers = @[homeNav, myNav];
+    // 设置三个tab：首页、智能服务、我的
+    self.viewControllers = @[homeNav, servicesNav, myNav];
 }
 
 - (void)setupTabBarAppearance {
