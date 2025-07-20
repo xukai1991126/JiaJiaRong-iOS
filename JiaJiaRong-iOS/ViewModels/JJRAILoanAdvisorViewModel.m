@@ -31,10 +31,12 @@
 }
 
 - (void)generateLoanAdvices {
+    NSLog(@"🧠 ViewModel开始生成贷款建议");
     [self startLoading];
     
     // 模拟AI分析过程
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2.0 * NSEC_PER_SEC)), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3.0 * NSEC_PER_SEC)), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        NSLog(@"🔍 AI分析后台处理中...");
         
         NSMutableArray *advices = [NSMutableArray array];
         
@@ -61,8 +63,16 @@
         self.loanAdvices = [advices copy];
         self.bestAdvice = advices.firstObject;
         
+        NSLog(@"✅ 生成了 %lu 个贷款建议", (unsigned long)advices.count);
+        
         [self finishLoading];
-        [self updateData];
+        
+        // 发送通知而不是使用delegate
+        dispatch_async(dispatch_get_main_queue(), ^{
+            NSLog(@"📢 发送ViewModel更新通知");
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"JJRAILoanAdvisorViewModel_AdvicesUpdated" 
+                                                                object:self];
+        });
     });
 }
 
