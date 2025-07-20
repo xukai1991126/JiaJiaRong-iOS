@@ -57,6 +57,9 @@ static NSString * const kPlaceholderText = @"请输入您收到的可疑短信�
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    // 🔧 隐藏底部 TabBar
+    self.hidesBottomBarWhenPushed = YES;
+    
     self.title = @"防诈骗指南";
     self.view.backgroundColor = [UIColor colorWithRed:0.95 green:0.95 blue:0.97 alpha:1.0];
     
@@ -235,7 +238,7 @@ static NSString * const kPlaceholderText = @"请输入您收到的可疑短信�
 
 - (void)setupConstraints {
     [self.scrollView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.edges.equalTo(self.view.mas_safeAreaLayoutGuide);
+        make.edges.equalTo(self.view);
     }];
     
     [self.contentView mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -245,7 +248,7 @@ static NSString * const kPlaceholderText = @"请输入您收到的可疑短信�
     
     [self.headerView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.right.equalTo(self.contentView).inset(16);
-        make.top.equalTo(self.contentView).offset(16);
+        make.top.equalTo(self.contentView).offset(100); // 增加顶部间距避免导航栏遮挡
     }];
     
     [self.riskCheckView mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -495,25 +498,102 @@ static NSString * const kPlaceholderText = @"请输入您收到的可疑短信�
 }
 
 - (void)showFraudCaseDetail:(JJRFraudCase *)fraudCase {
-    UIAlertController *alert = [UIAlertController alertControllerWithTitle:fraudCase.title message:nil preferredStyle:UIAlertControllerStyleAlert];
+    // 🔧 使用安全的方式替代私有API，创建专门的详情页面
+    [self showFraudCaseDetailViewController:fraudCase];
+}
+
+- (void)showFraudCaseDetailViewController:(JJRFraudCase *)fraudCase {
+    // 🔧 安全检查
+    if (!fraudCase) {
+        NSLog(@"⚠️ fraudCase is nil, cannot show detail");
+        return;
+    }
     
+    // 创建详情页面
+    UIViewController *detailVC = [[UIViewController alloc] init];
+    detailVC.title = fraudCase.title ?: @"诈骗案例详情";
+    detailVC.view.backgroundColor = [UIColor whiteColor];
+    
+    // 创建导航控制器
+    UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:detailVC];
+    
+    // 添加关闭按钮
+    UIBarButtonItem *closeButton = [[UIBarButtonItem alloc] initWithTitle:@"关闭" 
+                                                                    style:UIBarButtonItemStylePlain 
+                                                                   target:self 
+                                                                   action:@selector(dismissDetailViewController)];
+    detailVC.navigationItem.rightBarButtonItem = closeButton;
+    
+    // 创建滚动视图和内容
+    UIScrollView *scrollView = [[UIScrollView alloc] init];
+    scrollView.backgroundColor = [UIColor whiteColor];
+    [detailVC.view addSubview:scrollView];
+    
+    UIView *contentView = [[UIView alloc] init];
+    [scrollView addSubview:contentView];
+    
+    // 构建详细内容 - 添加安全检查
     NSMutableString *detail = [NSMutableString string];
-    [detail appendFormat:@"类型：%@\n", [self.viewModel fraudTypeDescription:fraudCase.fraudType]];
-    [detail appendFormat:@"风险等级：%@\n\n", [self.viewModel riskLevelDescription:fraudCase.riskLevel]];
-    [detail appendFormat:@"案例描述：\n%@\n\n", fraudCase.caseDescription];
-    [detail appendFormat:@"诈骗手段：\n%@\n\n", fraudCase.fraudMethod];
-    [detail appendFormat:@"预警信号：\n%@\n\n", [fraudCase.warningSignals componentsJoinedByString:@"\n"]];
-    [detail appendFormat:@"防范措施：\n%@", [fraudCase.preventionTips componentsJoinedByString:@"\n"]];
     
-    UITextView *textView = [[UITextView alloc] initWithFrame:CGRectMake(0, 0, 250, 300)];
+    // 安全地获取描述信息
+    NSString *typeDesc = [self.viewModel fraudTypeDescription:fraudCase.fraudType] ?: @"未知";
+    NSString *riskDesc = [self.viewModel riskLevelDescription:fraudCase.riskLevel] ?: @"未知";
+    NSString *caseDesc = fraudCase.caseDescription ?: @"暂无描述";
+    NSString *methodDesc = fraudCase.fraudMethod ?: @"暂无信息";
+    
+    [detail appendFormat:@"类型：%@\n\n", typeDesc];
+    [detail appendFormat:@"风险等级：%@\n\n", riskDesc];
+    [detail appendFormat:@"案例描述：\n%@\n\n", caseDesc];
+    [detail appendFormat:@"诈骗手段：\n%@\n\n", methodDesc];
+    
+    // 安全地处理数组
+    if (fraudCase.warningSignals && fraudCase.warningSignals.count > 0) {
+        [detail appendFormat:@"预警信号：\n• %@\n\n", [fraudCase.warningSignals componentsJoinedByString:@"\n• "]];
+    } else {
+        [detail appendString:@"预警信号：\n暂无信息\n\n"];
+    }
+    
+    if (fraudCase.preventionTips && fraudCase.preventionTips.count > 0) {
+        [detail appendFormat:@"防范措施：\n• %@", [fraudCase.preventionTips componentsJoinedByString:@"\n• "]];
+    } else {
+        [detail appendString:@"防范措施：\n暂无信息"];
+    }
+    
+    // 创建文本视图
+    UITextView *textView = [[UITextView alloc] init];
     textView.text = detail;
     textView.editable = NO;
-    textView.font = [UIFont systemFontOfSize:14];
+    textView.font = [UIFont systemFontOfSize:16];
+    textView.backgroundColor = [UIColor clearColor];
+    textView.textColor = [UIColor blackColor];
+    [contentView addSubview:textView];
     
-    [alert setValue:textView forKey:@"contentViewController"];
-    [alert addAction:[UIAlertAction actionWithTitle:@"关闭" style:UIAlertActionStyleCancel handler:nil]];
+    // 设置约束
+    [scrollView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.edges.equalTo(detailVC.view);
+    }];
     
-    [self presentViewController:alert animated:YES completion:nil];
+    [contentView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.edges.equalTo(scrollView);
+        make.width.equalTo(scrollView);
+    }];
+    
+    [textView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.edges.equalTo(contentView).inset(16);
+        make.height.mas_greaterThanOrEqualTo(500);
+    }];
+    
+    // 模态展示 - 兼容不同iOS版本
+    if (@available(iOS 13.0, *)) {
+        navController.modalPresentationStyle = UIModalPresentationPageSheet;
+    } else {
+        navController.modalPresentationStyle = UIModalPresentationFormSheet;
+    }
+    [self presentViewController:navController animated:YES completion:nil];
+}
+
+- (void)dismissDetailViewController {
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (void)showTipDetail:(JJRFraudPreventionTip *)tip {

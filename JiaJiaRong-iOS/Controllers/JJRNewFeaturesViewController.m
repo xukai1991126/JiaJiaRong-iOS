@@ -71,16 +71,16 @@
     fraudPrevention.backgroundColor = [UIColor colorWithHexString:@"#FF8000"];
     fraudPrevention.isNew = YES;
     [features addObject:fraudPrevention];
-    
-    // 信用评估工具
-    JJRFeatureItem *creditAssessment = [[JJRFeatureItem alloc] init];
-    creditAssessment.title = @"信用评估工具";
-    creditAssessment.subtitle = @"专业信用分析报告";
-    creditAssessment.icon = @"📊";
-    creditAssessment.viewControllerClass = nil; // 待实现
-    creditAssessment.backgroundColor = [UIColor colorWithHexString:@"#33CC66"];
-    creditAssessment.isNew = YES;
-    [features addObject:creditAssessment];
+//    
+//    // 信用评估工具
+//    JJRFeatureItem *creditAssessment = [[JJRFeatureItem alloc] init];
+//    creditAssessment.title = @"信用评估工具";
+//    creditAssessment.subtitle = @"专业信用分析报告";
+//    creditAssessment.icon = @"📊";
+//    creditAssessment.viewControllerClass = nil; // 待实现
+//    creditAssessment.backgroundColor = [UIColor colorWithHexString:@"#33CC66"];
+//    creditAssessment.isNew = YES;
+//    [features addObject:creditAssessment];
     
     // 贷款计算器
     JJRFeatureItem *calculator = [[JJRFeatureItem alloc] init];
@@ -237,6 +237,7 @@
     
     if (item.viewControllerClass) {
         UIViewController *vc = [[item.viewControllerClass alloc] init];
+        vc.hidesBottomBarWhenPushed = YES;
         [self.navigationController pushViewController:vc animated:YES];
     } else {
         [self showComingSoonAlert:item.title];

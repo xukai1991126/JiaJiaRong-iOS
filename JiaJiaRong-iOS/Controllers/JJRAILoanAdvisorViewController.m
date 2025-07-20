@@ -48,6 +48,10 @@ typedef NS_ENUM(NSInteger, JJRAIAdvisorState) {
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    // 🔧 隐藏底部 TabBar
+    self.hidesBottomBarWhenPushed = YES;
+    
     [self setupViewModel];
     [self setupUI];
     [self setupObservers];

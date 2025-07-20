@@ -40,13 +40,17 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    // 🔧 隐藏底部 TabBar
+    self.hidesBottomBarWhenPushed = YES;
+    
     self.title = @"AI智能客服";
-    self.view.backgroundColor = [UIColor colorWithRed:0.95 green:0.95 blue:0.97 alpha:1.0];
+    self.view.backgroundColor = BACKGROUND_COLOR; // 🔧 使用项目背景色宏
     
     [self setupData];
     [self setupUI];
     [self setupConstraints];
     [self setupInitialMessages];
+    [self setupKeyboardObservers];
 }
 
 - (void)setupData {
@@ -89,14 +93,16 @@
     self.messageTextField.borderStyle = UITextBorderStyleRoundedRect;
     self.messageTextField.delegate = self;
     self.messageTextField.returnKeyType = UIReturnKeySend;
+    self.messageTextField.font = FONT_REGULAR(16); // 🔧 使用项目字体宏
+    self.messageTextField.textColor = TEXT_COLOR; // 🔧 使用项目颜色宏
     [self.inputContainer addSubview:self.messageTextField];
     
     // 发送按钮
     self.sendButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [self.sendButton setTitle:@"发送" forState:UIControlStateNormal];
-    [self.sendButton setBackgroundColor:[UIColor colorWithRed:0.2 green:0.6 blue:1.0 alpha:1.0]];
+    [self.sendButton setBackgroundColor:MAIN_COLOR]; // 🔧 使用项目主色调
     self.sendButton.layer.cornerRadius = 6;
-    self.sendButton.titleLabel.font = [UIFont systemFontOfSize:16];
+    self.sendButton.titleLabel.font = FONT_MEDIUM(16); // 🔧 使用项目字体宏
     [self.sendButton addTarget:self action:@selector(sendMessage) forControlEvents:UIControlEventTouchUpInside];
     [self.inputContainer addSubview:self.sendButton];
 }
@@ -108,8 +114,8 @@
     
     UILabel *titleLabel = [[UILabel alloc] init];
     titleLabel.text = @"常见问题";
-    titleLabel.font = [UIFont boldSystemFontOfSize:16];
-    titleLabel.textColor = [UIColor colorWithRed:0.3 green:0.3 blue:0.3 alpha:1.0];
+    titleLabel.font = FONT_BOLD(16); // 🔧 使用项目字体宏
+    titleLabel.textColor = TEXT_COLOR; // 🔧 使用项目颜色宏
     [self.quickRepliesView addSubview:titleLabel];
     
     CGFloat buttonWidth = (CGRectGetWidth([UIScreen mainScreen].bounds) - 48) / 2;
@@ -118,9 +124,9 @@
     for (int i = 0; i < self.quickReplies.count; i++) {
         UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
         [button setTitle:self.quickReplies[i] forState:UIControlStateNormal];
-        [button setTitleColor:[UIColor colorWithRed:0.2 green:0.6 blue:1.0 alpha:1.0] forState:UIControlStateNormal];
-        button.titleLabel.font = [UIFont systemFontOfSize:14];
-        button.layer.borderColor = [UIColor colorWithRed:0.2 green:0.6 blue:1.0 alpha:1.0].CGColor;
+        [button setTitleColor:MAIN_COLOR forState:UIControlStateNormal]; // 🔧 使用项目主色调
+        button.titleLabel.font = FONT_REGULAR(14); // 🔧 使用项目字体宏
+        button.layer.borderColor = MAIN_COLOR.CGColor; // 🔧 使用项目主色调
         button.layer.borderWidth = 1;
         button.layer.cornerRadius = 6;
         button.tag = i;
@@ -153,12 +159,13 @@
 - (void)setupConstraints {
     [self.quickRepliesView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.right.equalTo(self.view);
-        make.top.equalTo(self.view.mas_safeAreaLayoutGuide);
+        make.top.equalTo(self.view).offset(SAFE_AREA_TOP); // 🔧 使用项目宏定义
         make.height.equalTo(@120);
     }];
     
     [self.inputContainer mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.right.bottom.equalTo(self.view);
+        make.left.right.equalTo(self.view);
+        make.bottom.equalTo(self.view).offset(-SAFE_AREA_BOTTOM); // 🔧 使用底部安全区域宏
         make.height.equalTo(@80);
     }];
     
@@ -192,6 +199,55 @@
     
     [self.chatTableView reloadData];
     [self scrollToBottom];
+}
+
+- (void)setupKeyboardObservers {
+    // 🔧 监听键盘弹出和隐藏，调整输入框位置
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(keyboardWillShow:)
+                                                 name:UIKeyboardWillShowNotification
+                                               object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(keyboardWillHide:)
+                                                 name:UIKeyboardWillHideNotification
+                                               object:nil];
+}
+
+- (void)keyboardWillShow:(NSNotification *)notification {
+    NSDictionary *userInfo = notification.userInfo;
+    CGRect keyboardFrame = [userInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue];
+    NSTimeInterval duration = [userInfo[UIKeyboardAnimationDurationUserInfoKey] doubleValue];
+    
+    // 调整输入容器位置，避免被键盘遮挡
+    [self.inputContainer mas_updateConstraints:^(MASConstraintMaker *make) {
+        make.bottom.equalTo(self.view).offset(-keyboardFrame.size.height);
+    }];
+    
+    [UIView animateWithDuration:duration animations:^{
+        [self.view layoutIfNeeded];
+    } completion:^(BOOL finished) {
+        // 🔧 键盘弹出后自动滚动到底部，确保用户看到最新消息
+        [self scrollToBottom];
+    }];
+}
+
+- (void)keyboardWillHide:(NSNotification *)notification {
+    NSDictionary *userInfo = notification.userInfo;
+    NSTimeInterval duration = [userInfo[UIKeyboardAnimationDurationUserInfoKey] doubleValue];
+    
+    // 恢复输入容器位置到底部安全区域
+    [self.inputContainer mas_updateConstraints:^(MASConstraintMaker *make) {
+        make.bottom.equalTo(self.view).offset(-SAFE_AREA_BOTTOM);
+    }];
+    
+    [UIView animateWithDuration:duration animations:^{
+        [self.view layoutIfNeeded];
+    }];
+}
+
+- (void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 - (void)quickReplyTapped:(UIButton *)sender {

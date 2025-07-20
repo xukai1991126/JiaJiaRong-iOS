@@ -23,6 +23,9 @@
 - (instancetype)initWithLoanAdvice:(JJRAILoanAdvice *)advice {
     if (self = [super init]) {
         self.loanAdvice = advice;
+        
+        // 🔧 隐藏底部 TabBar
+        self.hidesBottomBarWhenPushed = YES;
     }
     return self;
 }

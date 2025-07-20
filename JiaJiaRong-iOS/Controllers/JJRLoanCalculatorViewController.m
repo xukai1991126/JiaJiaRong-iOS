@@ -41,6 +41,9 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    // 🔧 隐藏底部 TabBar
+    self.hidesBottomBarWhenPushed = YES;
+    
     self.title = @"贷款计算器";
     self.view.backgroundColor = [UIColor colorWithRed:0.95 green:0.95 blue:0.97 alpha:1.0];
     
@@ -142,7 +145,7 @@
     // 布局
     [inputSection mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.right.equalTo(self.contentView).inset(16);
-        make.top.equalTo(self.contentView).offset(16);
+        make.top.equalTo(self.contentView).offset(100); // 增加顶部间距避免导航栏遮挡
     }];
     
     [titleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -278,7 +281,7 @@
 
 - (void)setupConstraints {
     [self.scrollView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.edges.equalTo(self.view.mas_safeAreaLayoutGuide);
+        make.edges.equalTo(self.view);
     }];
     
     [self.contentView mas_makeConstraints:^(MASConstraintMaker *make) {
