@@ -11,6 +11,7 @@
 #import "JJRFraudPreventionViewController.h"
 #import "JJRLoanCalculatorViewController.h"
 #import "JJRAICustomerServiceViewController.h"
+#import "JJRRiskAssessmentViewController.h"
 #import <Masonry/Masonry.h>
 
 @interface JJRFeatureItem : NSObject
@@ -92,35 +93,35 @@
     calculator.isNew = YES;
     [features addObject:calculator];
     
-    // 财务规划助手
-    JJRFeatureItem *financialPlanner = [[JJRFeatureItem alloc] init];
-    financialPlanner.title = @"财务规划助手";
-    financialPlanner.subtitle = @"个人财务管理建议";
-    financialPlanner.icon = @"💰";
-    financialPlanner.viewControllerClass = nil;
-    financialPlanner.backgroundColor = [UIColor colorWithHexString:@"#FF9900"];
-    financialPlanner.isNew = YES;
-    [features addObject:financialPlanner];
+//    // 财务规划助手
+//    JJRFeatureItem *financialPlanner = [[JJRFeatureItem alloc] init];
+//    financialPlanner.title = @"财务规划助手";
+//    financialPlanner.subtitle = @"个人财务管理建议";
+//    financialPlanner.icon = @"💰";
+//    financialPlanner.viewControllerClass = nil;
+//    financialPlanner.backgroundColor = [UIColor colorWithHexString:@"#FF9900"];
+//    financialPlanner.isNew = YES;
+//    [features addObject:financialPlanner];
     
     // 风险评估
     JJRFeatureItem *riskAssessment = [[JJRFeatureItem alloc] init];
     riskAssessment.title = @"风险评估";
     riskAssessment.subtitle = @"智能风险分析";
     riskAssessment.icon = @"⚠️";
-    riskAssessment.viewControllerClass = nil;
+    riskAssessment.viewControllerClass = [JJRRiskAssessmentViewController class];
     riskAssessment.backgroundColor = [UIColor colorWithHexString:@"#FF4D4D"];
     riskAssessment.isNew = YES;
     [features addObject:riskAssessment];
     
-    // 教育中心
-    JJRFeatureItem *educationCenter = [[JJRFeatureItem alloc] init];
-    educationCenter.title = @"金融教育中心";
-    educationCenter.subtitle = @"金融知识学习";
-    educationCenter.icon = @"📚";
-    educationCenter.viewControllerClass = nil;
-    educationCenter.backgroundColor = [UIColor colorWithHexString:@"#6699FF"];
-    educationCenter.isNew = YES;
-    [features addObject:educationCenter];
+//    // 教育中心
+//    JJRFeatureItem *educationCenter = [[JJRFeatureItem alloc] init];
+//    educationCenter.title = @"金融教育中心";
+//    educationCenter.subtitle = @"金融知识学习";
+//    educationCenter.icon = @"📚";
+//    educationCenter.viewControllerClass = nil;
+//    educationCenter.backgroundColor = [UIColor colorWithHexString:@"#6699FF"];
+//    educationCenter.isNew = YES;
+//    [features addObject:educationCenter];
     
     // 智能客服
     JJRFeatureItem *aiCustomerService = [[JJRFeatureItem alloc] init];
@@ -132,45 +133,45 @@
     aiCustomerService.isNew = YES;
     [features addObject:aiCustomerService];
     
-    // 数据分析仪表板
-    JJRFeatureItem *dataDashboard = [[JJRFeatureItem alloc] init];
-    dataDashboard.title = @"数据分析仪表板";
-    dataDashboard.subtitle = @"个人贷款数据分析";
-    dataDashboard.icon = @"📈";
-    dataDashboard.viewControllerClass = nil;
-    dataDashboard.backgroundColor = [UIColor colorWithHexString:@"#CC6699"];
-    dataDashboard.isNew = YES;
-    [features addObject:dataDashboard];
+//    // 数据分析仪表板
+//    JJRFeatureItem *dataDashboard = [[JJRFeatureItem alloc] init];
+//    dataDashboard.title = @"数据分析仪表板";
+//    dataDashboard.subtitle = @"个人贷款数据分析";
+//    dataDashboard.icon = @"📈";
+//    dataDashboard.viewControllerClass = nil;
+//    dataDashboard.backgroundColor = [UIColor colorWithHexString:@"#CC6699"];
+//    dataDashboard.isNew = YES;
+//    [features addObject:dataDashboard];
     
-    // 社区论坛
-    JJRFeatureItem *communityForum = [[JJRFeatureItem alloc] init];
-    communityForum.title = @"社区论坛";
-    communityForum.subtitle = @"用户交流平台";
-    communityForum.icon = @"👥";
-    communityForum.viewControllerClass = nil;
-    communityForum.backgroundColor = [UIColor colorWithHexString:@"#3399CC"];
-    communityForum.isNew = YES;
-    [features addObject:communityForum];
+//    // 社区论坛
+//    JJRFeatureItem *communityForum = [[JJRFeatureItem alloc] init];
+//    communityForum.title = @"社区论坛";
+//    communityForum.subtitle = @"用户交流平台";
+//    communityForum.icon = @"👥";
+//    communityForum.viewControllerClass = nil;
+//    communityForum.backgroundColor = [UIColor colorWithHexString:@"#3399CC"];
+//    communityForum.isNew = YES;
+//    [features addObject:communityForum];
     
-    // 投资理财建议
-    JJRFeatureItem *investmentAdvisor = [[JJRFeatureItem alloc] init];
-    investmentAdvisor.title = @"投资理财建议";
-    investmentAdvisor.subtitle = @"理财产品推荐";
-    investmentAdvisor.icon = @"💎";
-    investmentAdvisor.viewControllerClass = nil;
-    investmentAdvisor.backgroundColor = [UIColor colorWithHexString:@"#FFCC00"];
-    investmentAdvisor.isNew = YES;
-    [features addObject:investmentAdvisor];
-    
-    // 紧急贷款助手
-    JJRFeatureItem *emergencyLoan = [[JJRFeatureItem alloc] init];
-    emergencyLoan.title = @"紧急贷款助手";
-    emergencyLoan.subtitle = @"应急资金快速申请";
-    emergencyLoan.icon = @"🚨";
-    emergencyLoan.viewControllerClass = nil;
-    emergencyLoan.backgroundColor = [UIColor colorWithHexString:@"#CC3333"];
-    emergencyLoan.isNew = YES;
-    [features addObject:emergencyLoan];
+//    // 投资理财建议
+//    JJRFeatureItem *investmentAdvisor = [[JJRFeatureItem alloc] init];
+//    investmentAdvisor.title = @"投资理财建议";
+//    investmentAdvisor.subtitle = @"理财产品推荐";
+//    investmentAdvisor.icon = @"💎";
+//    investmentAdvisor.viewControllerClass = nil;
+//    investmentAdvisor.backgroundColor = [UIColor colorWithHexString:@"#FFCC00"];
+//    investmentAdvisor.isNew = YES;
+//    [features addObject:investmentAdvisor];
+//    
+//    // 紧急贷款助手
+//    JJRFeatureItem *emergencyLoan = [[JJRFeatureItem alloc] init];
+//    emergencyLoan.title = @"紧急贷款助手";
+//    emergencyLoan.subtitle = @"应急资金快速申请";
+//    emergencyLoan.icon = @"🚨";
+//    emergencyLoan.viewControllerClass = nil;
+//    emergencyLoan.backgroundColor = [UIColor colorWithHexString:@"#CC3333"];
+//    emergencyLoan.isNew = YES;
+//    [features addObject:emergencyLoan];
     
     self.features = [features copy];
     NSLog(@"🚀 数据源: %lu 个功能", (unsigned long)self.features.count);
