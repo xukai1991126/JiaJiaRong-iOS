@@ -136,18 +136,18 @@
     [textField addTarget:self action:@selector(textFieldDidChange:) forControlEvents:UIControlEventEditingChanged];
     [self.contentView addSubview:textField];
     
-    // 设置约束
+    // 设置约束 (优化间距)
     NSInteger currentIndex = self.contentView.subviews.count / 2 - 1;
     
     [titleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.right.equalTo(self.contentView).inset(20);
-        make.top.equalTo(self.contentView).offset(20 + currentIndex * 80);
+        make.top.equalTo(self.contentView).offset(20 + currentIndex * 70);
     }];
     
     [textField mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.right.equalTo(self.contentView).inset(20);
         make.top.equalTo(titleLabel.mas_bottom).offset(8);
-        make.height.equalTo(@44);
+        make.height.equalTo(@40);
     }];
     
     return textField;
@@ -176,13 +176,13 @@
     
     [titleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.right.equalTo(self.contentView).inset(20);
-        make.top.equalTo(self.contentView).offset(20 + currentIndex * 80);
+        make.top.equalTo(self.contentView).offset(20 + currentIndex * 70);
     }];
     
     [segment mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.right.equalTo(self.contentView).inset(20);
         make.top.equalTo(titleLabel.mas_bottom).offset(8);
-        make.height.equalTo(@36);
+        make.height.equalTo(@32);
     }];
     
     return segment;
@@ -210,14 +210,14 @@
     [switchControl addTarget:self action:@selector(switchValueChanged:) forControlEvents:UIControlEventValueChanged];
     [containerView addSubview:switchControl];
     
-    // 设置约束
+    // 设置约束 (优化间距)
     NSInteger currentIndex = self.contentView.subviews.count - 1;
-    NSInteger baseOffset = 20 + 6 * 80; // 前6个输入框的高度
+    NSInteger baseOffset = 20 + 6 * 70 + 50; // 前6个输入框的高度 + 选择器高度
     
     [containerView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.right.equalTo(self.contentView).inset(20);
-        make.top.equalTo(self.contentView).offset(baseOffset + (currentIndex - 12) * 60);
-        make.height.equalTo(@50);
+        make.top.equalTo(self.contentView).offset(baseOffset + (currentIndex - 13) * 55);
+        make.height.equalTo(@45);
     }];
     
     [titleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -243,14 +243,14 @@
         make.width.equalTo(self.scrollView);
     }];
     
-    // 评估按钮约束
-    CGFloat totalHeight = 20 + 6 * 80 + 3 * 60 + 80; // 计算总高度
+    // 评估按钮约束 (优化布局)
+    CGFloat totalHeight = 20 + 6 * 70 + 50 + 3 * 55; // 与Controller中的计算保持一致
     
     [self.assessmentButton mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.right.equalTo(self.contentView).inset(40);
-        make.top.equalTo(self.contentView).offset(totalHeight);
-        make.height.equalTo(@50);
-        make.bottom.equalTo(self.contentView).offset(-30);
+        make.top.equalTo(self.contentView).offset(totalHeight + 60);
+        make.height.equalTo(@46);
+        make.bottom.equalTo(self.contentView).offset(-20);
     }];
 }
 

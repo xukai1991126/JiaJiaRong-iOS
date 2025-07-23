@@ -104,12 +104,21 @@
 }
 
 - (void)setupInputForm {
+    // 重置ViewModel状态
+    self.viewModel.assessmentResult = nil;
+    
     self.inputFormView = [[JJRRiskInputFormView alloc] initWithUserProfile:self.viewModel.userProfile];
     self.inputFormView.delegate = self;
     
+    // 计算合适的高度 (更紧凑的布局)
+    CGFloat formHeight = 20 + 6 * 70 + 50 + 3 * 55 + 80; // 优化间距：输入框70，选择器50，开关55，底部80
+    
     // 设置表格头部视图
-    self.inputFormView.frame = CGRectMake(0, 0, SCREEN_WIDTH, 800);
+    self.inputFormView.frame = CGRectMake(0, 0, SCREEN_WIDTH, formHeight);
     self.tableView.tableHeaderView = self.inputFormView;
+    
+    // 清除结果头部视图
+    self.resultHeaderView = nil;
 }
 
 - (void)setupGradientBackground {
@@ -239,13 +248,14 @@
 - (void)riskAssessmentDidFinishWithResult:(JJRRiskAssessmentResult *)result {
     [self.inputFormView updateAssessmentButtonState:NO];
     
-    // 隐藏输入表单，显示结果
+    // 完全隐藏输入表单
     self.tableView.tableHeaderView = nil;
+    self.inputFormView = nil;
     
     // 创建结果头部视图
     self.resultHeaderView = [[JJRRiskResultHeaderView alloc] initWithResult:result viewModel:self.viewModel];
     
-    // 重新加载数据
+    // 重新加载数据以显示结果
     [self.tableView reloadData];
     
     // 滚动到顶部
