@@ -15,6 +15,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) NSArray *testimonialData;
 
 - (void)updateWithTestimonialData:(NSArray *)testimonialData;
+- (void)startAutoScroll;
+- (void)stopAutoScroll;
 
 @end
 

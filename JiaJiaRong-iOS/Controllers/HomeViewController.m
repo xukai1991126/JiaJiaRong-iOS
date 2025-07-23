@@ -61,6 +61,9 @@
     [super viewWillDisappear:animated];
     // 显示导航栏
     [self.navigationController setNavigationBarHidden:NO animated:animated];
+    
+    // 停止自动滚动
+    [self.testimonialView stopAutoScroll];
 }
 
 #pragma mark - Setup
@@ -187,6 +190,11 @@
     
     // 更新用户证明视图
     [self.testimonialView updateWithTestimonialData:self.viewModel.testimonialData];
+    
+    // 如果页面可见，启动自动滚动
+    if (self.viewIfLoaded && self.view.window) {
+        [self.testimonialView startAutoScroll];
+    }
 }
 
 #pragma mark - JJRBaseViewModelDelegate
