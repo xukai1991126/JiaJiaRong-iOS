@@ -30,7 +30,7 @@
     _yearlyRate = @"7%起";
     
     // 服务机构信息
-    _institutionName = @"广东南枫";
+    _institutionName = @"佳佳融";
     _institutionFullName = @"广东南枫融资担保集团有限公司";
     _institutionIcon = @"img_akfjfkjakjfjk";
     

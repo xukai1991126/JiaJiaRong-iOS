@@ -21,14 +21,14 @@
 
 - (void)setupMockData {
     // 成功消息
-    _successMessage = @"恭喜！广东南枫贷款申请成功！";
+    _successMessage = @"恭喜！佳佳融融资担保预估授信成功！";
     
     // 额度信息
     _approvedAmount = @"200,000";
     _processingTime = @"60分钟内";
     
     // 机构信息
-    _institutionName = @"广东南枫";
+    _institutionName = @"佳佳融";
     _institutionFullName = @"广东南枫融资担保集团有限公司";
     
     // 提醒信息

@@ -31,33 +31,33 @@
     
     // 助贷机构
     UILabel *institutionTitleLabel = [[UILabel alloc] init];
-    institutionTitleLabel.text = @"助贷机构：";
+    institutionTitleLabel.text = @"融担担保：";
     institutionTitleLabel.font = FONT_REGULAR(14);
     institutionTitleLabel.textColor = [UIColor colorWithHexString:@"#333333"];
     institutionTitleLabel.textAlignment = NSTextAlignmentLeft;
     [self addSubview:institutionTitleLabel];
 
     UILabel *institutionContentLabel = [[UILabel alloc] init];
-    institutionContentLabel.text = @"广东南枫";
+    institutionContentLabel.text = @"广东南枫融资担保集团有限公司";
     institutionContentLabel.font = FONT_REGULAR(14);
     institutionContentLabel.textColor = [UIColor colorWithHexString:@"#666666"];
     institutionContentLabel.textAlignment = NSTextAlignmentLeft;
     [self addSubview:institutionContentLabel];
 
-    // 资金来源
-    UILabel *fundingTitleLabel = [[UILabel alloc] init];
-    fundingTitleLabel.text = @"资金来源：";
-    fundingTitleLabel.font = FONT_REGULAR(14);
-    fundingTitleLabel.textColor = [UIColor colorWithHexString:@"#333333"];
-    fundingTitleLabel.textAlignment = NSTextAlignmentLeft;
-    [self addSubview:fundingTitleLabel];
-
-    UILabel *fundingContentLabel = [[UILabel alloc] init];
-    fundingContentLabel.text = @"广东南枫融资担保有限公司";
-    fundingContentLabel.font = FONT_REGULAR(14);
-    fundingContentLabel.textColor = [UIColor colorWithHexString:@"#666666"];
-    fundingContentLabel.textAlignment = NSTextAlignmentLeft;
-    [self addSubview:fundingContentLabel];
+//    // 资金来源
+//    UILabel *fundingTitleLabel = [[UILabel alloc] init];
+//    fundingTitleLabel.text = @"资金来源：";
+//    fundingTitleLabel.font = FONT_REGULAR(14);
+//    fundingTitleLabel.textColor = [UIColor colorWithHexString:@"#333333"];
+//    fundingTitleLabel.textAlignment = NSTextAlignmentLeft;
+//    [self addSubview:fundingTitleLabel];
+//
+//    UILabel *fundingContentLabel = [[UILabel alloc] init];
+//    fundingContentLabel.text = @"广东南枫融资担保集团有限公司";
+//    fundingContentLabel.font = FONT_REGULAR(14);
+//    fundingContentLabel.textColor = [UIColor colorWithHexString:@"#666666"];
+//    fundingContentLabel.textAlignment = NSTextAlignmentLeft;
+//    [self addSubview:fundingContentLabel];
     
     // 温馨提示
     UILabel *warningTitleLabel = [[UILabel alloc] init];
@@ -88,18 +88,18 @@
         make.centerY.equalTo(institutionTitleLabel);
         make.right.lessThanOrEqualTo(self).offset(-20);
     }];
-    [fundingTitleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(institutionTitleLabel.mas_bottom).offset(10);
-        make.left.equalTo(self).offset(20);
-    }];
-    [fundingContentLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(fundingTitleLabel.mas_right);
-        make.centerY.equalTo(fundingTitleLabel);
-        make.right.lessThanOrEqualTo(self).offset(-20);
-    }];
+//    [fundingTitleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+//        make.top.equalTo(institutionTitleLabel.mas_bottom).offset(10);
+//        make.left.equalTo(self).offset(20);
+//    }];
+//    [fundingContentLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+//        make.left.equalTo(fundingTitleLabel.mas_right);
+//        make.centerY.equalTo(fundingTitleLabel);
+//        make.right.lessThanOrEqualTo(self).offset(-20);
+//    }];
     
     [warningTitleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(fundingContentLabel.mas_bottom).offset(20);
+        make.top.equalTo(institutionContentLabel.mas_bottom).offset(20);
         make.left.equalTo(self).offset(20);
     }];
     

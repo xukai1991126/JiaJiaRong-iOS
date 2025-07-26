@@ -15,6 +15,7 @@
 #import "JJRToastTool.h"
 #import "JJRUserManager.h"
 #import "JJRIdCardViewController.h"
+#import "JJRQualificationViewController.h"
 
 @interface JJRRealNameAuthViewController () <RealNameAuthFormViewDelegate>
 
