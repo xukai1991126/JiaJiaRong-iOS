@@ -13,6 +13,7 @@
 #import "LoanAssessmentStep2View.h"
 #import "LoanAssessmentStep3View.h"
 #import "LoanAssessmentStep4View.h"
+#import "JJRRealNameAuthViewController.h"
 
 @interface LoanAssessmentStepView () <JJRLoanAssessmentViewModelDelegate>
 
@@ -162,9 +163,15 @@
 }
 
 - (void)viewModelDidCompleteAssessment {
-    // 评估完成，可以跳转到结果页面或其他处理
-    NSLog(@"评估完成！");
-    // TODO: 跳转到结果页面
+    // 评估完成，跳转到实名认证页面
+    NSLog(@"评估完成！跳转到实名认证页面");
+    
+    UIViewController *currentVC = [self findViewController];
+    if (currentVC) {
+        JJRRealNameAuthViewController *realNameAuthVC = [[JJRRealNameAuthViewController alloc] init];
+        realNameAuthVC.hidesBottomBarWhenPushed = YES;
+        [currentVC.navigationController pushViewController:realNameAuthVC animated:YES];
+    }
 }
 
 #pragma mark - Private Methods
