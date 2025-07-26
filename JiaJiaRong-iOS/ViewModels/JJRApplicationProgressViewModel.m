@@ -20,15 +20,15 @@
 
 - (void)setupMockData {
     // 成功消息
-    _successMessage = @"恭喜！上海善语金服贷款申请成功！";
+    _successMessage = @"恭喜！广东南枫贷款申请成功！";
     
     // 额度信息
     _approvedAmount = @"200,000";
     _processingTime = @"60分钟内";
     
     // 机构信息
-    _institutionName = @"上海善语金服";
-    _institutionFullName = @"善语互联网金融信息服务（上海）有限公司";
+    _institutionName = @"广东南枫";
+    _institutionFullName = @"广东南枫融资担保集团有限公司";
     
     // 提醒信息
     _phoneReminderText = @"请保持您的电话畅通注意接听 审核服务电话！";

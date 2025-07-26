@@ -41,29 +41,29 @@
     // 特色数据
     self.featureData = @[
         @{@"title": @"额度高", @"icon": @"img_f1d1b5668854"},
-        @{@"title": @"利率低", @"icon": @"img_83692599799e"},
+        @{@"title": @"利率低", @"icon": @"img_80f5ebcf6e04"},
         @{@"title": @"放款快", @"icon": @"img_08208c762476"}
     ];
     
     // 用户证明数据 - 20条自动滚动数据
     self.testimonialData = @[
-        @{@"name": @"张先生", @"phone": @"175****3374", @"time": @"1分钟前", @"status": @"提交成功", @"avatar": @"img_e91c0ba3be4d"},
-        @{@"name": @"刘女士", @"phone": @"155****5533", @"time": @"2分钟前", @"status": @"提交成功", @"avatar": @"img_e91c0ba3be4d"},
-        @{@"name": @"王先生", @"phone": @"138****9733", @"time": @"3分钟前", @"status": @"提交成功", @"avatar": @"img_e91c0ba3be4d"},
-        @{@"name": @"李女士", @"phone": @"189****4537", @"time": @"5分钟前", @"status": @"提交成功", @"avatar": @"img_e91c0ba3be4d"},
-        @{@"name": @"陈先生", @"phone": @"136****7830", @"time": @"7分钟前", @"status": @"提交成功", @"avatar": @"img_e91c0ba3be4d"},
-        @{@"name": @"赵女士", @"phone": @"158****3416", @"time": @"8分钟前", @"status": @"提交成功", @"avatar": @"img_e91c0ba3be4d"},
-        @{@"name": @"黄先生", @"phone": @"177****6923", @"time": @"10分钟前", @"status": @"提交成功", @"avatar": @"img_e91c0ba3be4d"},
-        @{@"name": @"周女士", @"phone": @"159****2878", @"time": @"12分钟前", @"status": @"提交成功", @"avatar": @"img_e91c0ba3be4d"},
-        @{@"name": @"吴先生", @"phone": @"185****1447", @"time": @"15分钟前", @"status": @"提交成功", @"avatar": @"img_e91c0ba3be4d"},
-        @{@"name": @"郑女士", @"phone": @"176****8024", @"time": @"18分钟前", @"status": @"提交成功", @"avatar": @"img_e91c0ba3be4d"},
-        @{@"name": @"孙先生", @"phone": @"139****5791", @"time": @"20分钟前", @"status": @"提交成功", @"avatar": @"img_e91c0ba3be4d"},
-        @{@"name": @"马女士", @"phone": @"187****3642", @"time": @"22分钟前", @"status": @"提交成功", @"avatar": @"img_e91c0ba3be4d"},
-        @{@"name": @"朱先生", @"phone": @"156****9517", @"time": @"25分钟前", @"status": @"提交成功", @"avatar": @"img_e91c0ba3be4d"},
-        @{@"name": @"胡女士", @"phone": @"178****7428", @"time": @"28分钟前", @"status": @"提交成功", @"avatar": @"img_e91c0ba3be4d"},
+        @{@"name": @"张先生", @"phone": @"175****3374", @"time": @"1分钟前", @"status": @"提交成功", @"avatar": @"avatar-0"},
+        @{@"name": @"刘女士", @"phone": @"155****5533", @"time": @"2分钟前", @"status": @"提交成功", @"avatar": @"avatar-1"},
+        @{@"name": @"王小姐", @"phone": @"138****9733", @"time": @"3分钟前", @"status": @"提交成功", @"avatar": @"avatar-2"},
+        @{@"name": @"李女士", @"phone": @"189****4537", @"time": @"5分钟前", @"status": @"提交成功", @"avatar": @"avatar-3"},
+        @{@"name": @"陈先生", @"phone": @"136****7830", @"time": @"7分钟前", @"status": @"提交成功", @"avatar": @"avatar-4"},
+        @{@"name": @"赵女士", @"phone": @"158****3416", @"time": @"8分钟前", @"status": @"提交成功", @"avatar": @"avatar-5"},
+        @{@"name": @"黄先生", @"phone": @"177****6923", @"time": @"10分钟前", @"status": @"提交成功", @"avatar": @"avatar-6"},
+        @{@"name": @"周女士", @"phone": @"159****2878", @"time": @"12分钟前", @"status": @"提交成功", @"avatar": @"avatar-7"},
+        @{@"name": @"吴先生", @"phone": @"185****1447", @"time": @"15分钟前", @"status": @"提交成功", @"avatar": @"avatar-8"},
+        @{@"name": @"郑女士", @"phone": @"176****8024", @"time": @"18分钟前", @"status": @"提交成功", @"avatar": @"avatar"},
+        @{@"name": @"孙先生", @"phone": @"139****5791", @"time": @"20分钟前", @"status": @"提交成功", @"avatar": @"avatar-6"},
+        @{@"name": @"马女士", @"phone": @"187****3642", @"time": @"22分钟前", @"status": @"提交成功", @"avatar": @"avatar-1"},
+        @{@"name": @"朱先生", @"phone": @"156****9517", @"time": @"25分钟前", @"status": @"提交成功", @"avatar": @"avatar-4"},
+        @{@"name": @"胡女士", @"phone": @"178****7428", @"time": @"28分钟前", @"status": @"提交成功", @"avatar": @"avatar-2"},
         @{@"name": @"林先生", @"phone": @"135****6184", @"time": @"30分钟前", @"status": @"提交成功", @"avatar": @"img_e91c0ba3be4d"},
         @{@"name": @"何女士", @"phone": @"188****2973", @"time": @"32分钟前", @"status": @"提交成功", @"avatar": @"img_e91c0ba3be4d"},
-        @{@"name": @"高先生", @"phone": @"157****4816", @"time": @"35分钟前", @"status": @"提交成功", @"avatar": @"img_e91c0ba3be4d"},
+        @{@"name": @"高先生", @"phone": @"157****4816", @"time": @"35分钟前", @"status": @"提交成功", @"avatar": @"avatar-8"},
         @{@"name": @"梁女士", @"phone": @"186****5739", @"time": @"38分钟前", @"status": @"提交成功", @"avatar": @"img_e91c0ba3be4d"},
         @{@"name": @"徐先生", @"phone": @"134****8205", @"time": @"40分钟前", @"status": @"提交成功", @"avatar": @"img_e91c0ba3be4d"},
         @{@"name": @"罗女士", @"phone": @"183****1647", @"time": @"42分钟前", @"status": @"提交成功", @"avatar": @"img_e91c0ba3be4d"}

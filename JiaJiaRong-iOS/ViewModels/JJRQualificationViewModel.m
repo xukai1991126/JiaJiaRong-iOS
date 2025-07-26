@@ -29,9 +29,9 @@
     _yearlyRate = @"7%起";
     
     // 服务机构信息
-    _institutionName = @"上海善语金服";
-    _institutionFullName = @"善语互联网金融信息服务（上海）有限公司";
-    _institutionIcon = @"institution_icon";
+    _institutionName = @"广东南枫";
+    _institutionFullName = @"广东南枫融资担保集团有限公司";
+    _institutionIcon = @"img_akfjfkjakjfjk";
     
     // 步骤信息
     _processSteps = @[

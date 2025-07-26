@@ -24,6 +24,7 @@ typedef NS_ENUM(NSInteger, QualificationSectionType) {
 @property (nonatomic, strong) JJRQualificationViewModel *viewModel;
 @property (nonatomic, strong) UITableView *tableView;
 @property (nonatomic, strong) CAGradientLayer *gradientLayer;
+@property (nonatomic, strong) CAGradientLayer *amountGradientLayer;
 
 @end
 
@@ -39,6 +40,25 @@ typedef NS_ENUM(NSInteger, QualificationSectionType) {
     [self setupGradientBackground];
     [self setupTableView];
 }
+
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    // 显示导航栏并设置样式
+    [self.navigationController setNavigationBarHidden:NO animated:animated];
+    self.navigationController.navigationBar.barTintColor = [UIColor colorWithHexString:@"#F2582B"];
+    self.navigationController.navigationBar.tintColor = [UIColor whiteColor];
+    self.navigationController.navigationBar.titleTextAttributes = @{NSForegroundColorAttributeName: [UIColor whiteColor]};
+    self.navigationController.navigationBar.translucent = YES;
+}
+
+- (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+    // 恢复导航栏样式
+    self.navigationController.navigationBar.barTintColor = nil;
+    self.navigationController.navigationBar.tintColor = nil;
+    self.navigationController.navigationBar.titleTextAttributes = nil;
+}
+
 
 - (void)viewDidLayoutSubviews {
     [super viewDidLayoutSubviews];
@@ -90,7 +110,7 @@ typedef NS_ENUM(NSInteger, QualificationSectionType) {
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     switch (section) {
         case QualificationSectionTypeSteps:
-            return self.viewModel.processSteps.count;
+            return 1; // 只显示一个cell，包含所有步骤
         default:
             return 1;
     }
@@ -132,7 +152,7 @@ typedef NS_ENUM(NSInteger, QualificationSectionType) {
 - (void)setupHeaderCell:(UITableViewCell *)cell {
     // 盾牌图标
     UIImageView *shieldIcon = [[UIImageView alloc] init];
-    shieldIcon.image = [UIImage systemImageNamed:@"shield.checkered"];
+    shieldIcon.image = [UIImage imageNamed:@"me_ico_ilike_icon"];
     shieldIcon.tintColor = [UIColor whiteColor];
     [cell.contentView addSubview:shieldIcon];
     
@@ -205,7 +225,7 @@ typedef NS_ENUM(NSInteger, QualificationSectionType) {
     
     // 额度背景
     UIView *amountBg = [[UIView alloc] init];
-    amountBg.backgroundColor = [UIColor colorWithHexString:@"#4A90E2"];
+    amountBg.backgroundColor = [UIColor colorWithHexString:@"#FF772C"];
     amountBg.layer.cornerRadius = 8;
     [cardView addSubview:amountBg];
     
@@ -327,7 +347,7 @@ typedef NS_ENUM(NSInteger, QualificationSectionType) {
     
     // 机构图标
     UIImageView *iconView = [[UIImageView alloc] init];
-    iconView.image = [UIImage imageNamed:@"img_29938b72a413"];
+    iconView.image = [UIImage imageNamed:@"img_akfjfkjakjfjk"];
     iconView.contentMode = UIViewContentModeScaleAspectFit;
     iconView.layer.cornerRadius = 25;
     [cardView addSubview:iconView];
@@ -346,26 +366,34 @@ typedef NS_ENUM(NSInteger, QualificationSectionType) {
     fullNameLabel.textColor = [UIColor colorWithHexString:@"#666666"];
     [cardView addSubview:fullNameLabel];
     
+    // 特别提醒背景容器
+    UIView *reminderBgView = [[UIView alloc] init];
+    reminderBgView.backgroundColor = [UIColor colorWithHexString:@"#FFF8E1"];
+    reminderBgView.layer.cornerRadius = 8;
+    reminderBgView.layer.borderWidth = 1;
+    reminderBgView.layer.borderColor = [UIColor colorWithHexString:@"#FFE082"].CGColor;
+    [cardView addSubview:reminderBgView];
+    
     // 提醒图标
     UIImageView *warningIcon = [[UIImageView alloc] init];
     warningIcon.image = [UIImage systemImageNamed:@"exclamationmark.triangle.fill"];
     warningIcon.tintColor = [UIColor colorWithHexString:@"#FF8C00"];
-    [cardView addSubview:warningIcon];
+    [reminderBgView addSubview:warningIcon];
     
     // 特别提醒标题
     UILabel *warningTitleLabel = [[UILabel alloc] init];
     warningTitleLabel.text = @"特别提醒";
     warningTitleLabel.font = FONT_BOLD(16);
     warningTitleLabel.textColor = [UIColor colorWithHexString:@"#FF8C00"];
-    [cardView addSubview:warningTitleLabel];
+    [reminderBgView addSubview:warningTitleLabel];
     
     // 提醒内容
     UILabel *reminderLabel = [[UILabel alloc] init];
     reminderLabel.text = self.viewModel.reminderText;
     reminderLabel.font = FONT_REGULAR(14);
-    reminderLabel.textColor = [UIColor colorWithHexString:@"#666666"];
+    reminderLabel.textColor = [UIColor colorWithHexString:@"#E65100"];
     reminderLabel.numberOfLines = 2;
-    [cardView addSubview:reminderLabel];
+    [reminderBgView addSubview:reminderLabel];
     
     // 约束设置
     [cardView mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -412,9 +440,15 @@ typedef NS_ENUM(NSInteger, QualificationSectionType) {
         make.height.mas_equalTo(20);
     }];
     
-    [warningIcon mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(cardView).offset(20);
+    [reminderBgView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.right.equalTo(cardView).inset(20);
         make.top.equalTo(iconView.mas_bottom).offset(20);
+        make.bottom.equalTo(cardView).offset(-20);
+    }];
+    
+    [warningIcon mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(reminderBgView).offset(15);
+        make.top.equalTo(reminderBgView).offset(15);
         make.width.height.mas_equalTo(20);
     }];
     
@@ -425,17 +459,18 @@ typedef NS_ENUM(NSInteger, QualificationSectionType) {
     }];
     
     [reminderLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(cardView).offset(20);
-        make.right.equalTo(cardView).offset(-20);
-        make.top.equalTo(warningTitleLabel.mas_bottom).offset(10);
-        make.bottom.equalTo(cardView).offset(-20);
+        make.left.equalTo(reminderBgView).offset(15);
+        make.right.equalTo(reminderBgView).offset(-15);
+        make.top.equalTo(warningTitleLabel.mas_bottom).offset(8);
+        make.bottom.equalTo(reminderBgView).offset(-15);
         make.height.mas_equalTo(40);
     }];
 }
 
 - (void)setupStepCell:(UITableViewCell *)cell atIndex:(NSInteger)index {
+    // 只在第一个cell中显示所有内容
     if (index == 0) {
-        // 第一个步骤cell包含标题
+        // 卡片容器
         UIView *cardView = [[UIView alloc] init];
         cardView.backgroundColor = [UIColor whiteColor];
         cardView.layer.cornerRadius = 12;
@@ -464,8 +499,16 @@ typedef NS_ENUM(NSInteger, QualificationSectionType) {
         titleLabel.textAlignment = NSTextAlignmentCenter;
         [cardView addSubview:titleLabel];
         
-        [self setupStepContentInCard:cardView atIndex:index];
+        // 步骤容器
+        UIView *stepsContainer = [[UIView alloc] init];
+        [cardView addSubview:stepsContainer];
         
+        // 添加所有三个步骤
+        for (NSInteger i = 0; i < self.viewModel.processSteps.count; i++) {
+            [self addStepToContainer:stepsContainer atIndex:i];
+        }
+        
+        // 约束设置
         [cardView mas_makeConstraints:^(MASConstraintMaker *make) {
             make.left.right.equalTo(cell.contentView).inset(20);
             make.top.bottom.equalTo(cell.contentView).inset(5);
@@ -490,15 +533,17 @@ typedef NS_ENUM(NSInteger, QualificationSectionType) {
             make.centerX.equalTo(cardView);
             make.height.mas_equalTo(22);
         }];
-    } else {
-        // 其他步骤cell
-        UIView *cardView = cell.contentView.superview;
-        // 假设在第一个cell的cardView中
-        [self setupStepContentInCard:cell.contentView atIndex:index];
+        
+        [stepsContainer mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.top.equalTo(titleLabel.mas_bottom).offset(30);
+            make.left.right.equalTo(cardView);
+            make.bottom.equalTo(cardView).offset(-20);
+            make.height.mas_equalTo(120);
+        }];
     }
 }
 
-- (void)setupStepContentInCard:(UIView *)container atIndex:(NSInteger)index {
+- (void)addStepToContainer:(UIView *)container atIndex:(NSInteger)index {
     NSDictionary *stepInfo = self.viewModel.processSteps[index];
     
     // 步骤图标
@@ -515,10 +560,11 @@ typedef NS_ENUM(NSInteger, QualificationSectionType) {
     // 步骤标题
     UILabel *stepLabel = [[UILabel alloc] init];
     stepLabel.text = stepInfo[@"title"];
-    stepLabel.font = FONT_MEDIUM(16);
+    stepLabel.font = FONT_MEDIUM(14);
     stepLabel.textColor = [stepInfo[@"status"] isEqualToString:@"completed"] ? 
                          [UIColor colorWithHexString:@"#333333"] : 
                          [UIColor colorWithHexString:@"#999999"];
+    stepLabel.textAlignment = NSTextAlignmentCenter;
     [container addSubview:stepLabel];
     
     // 状态标签
@@ -530,7 +576,8 @@ typedef NS_ENUM(NSInteger, QualificationSectionType) {
         statusLabel.text = @"请保持电话畅通";
         statusLabel.textColor = [UIColor colorWithHexString:@"#FF8C00"];
     }
-    statusLabel.font = FONT_REGULAR(14);
+    statusLabel.font = FONT_REGULAR(12);
+    statusLabel.textAlignment = NSTextAlignmentCenter;
     [container addSubview:statusLabel];
     
     // 箭头（除了最后一个步骤）
@@ -540,32 +587,37 @@ typedef NS_ENUM(NSInteger, QualificationSectionType) {
         arrowIcon.tintColor = [UIColor colorWithHexString:@"#FF772C"];
         [container addSubview:arrowIcon];
         
+        CGFloat arrowX = 40 + index * 100 + 45; // 调整箭头位置
         [arrowIcon mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.centerX.equalTo(container).multipliedBy(1.0 + 0.5 * (index + 1));
+            make.left.equalTo(container).offset(arrowX);
             make.centerY.equalTo(stepIcon);
             make.width.height.mas_equalTo(16);
         }];
     }
     
-    CGFloat baseOffset = 60 + index * 120;
+    // 计算每个步骤的X位置，确保在屏幕内合理分布
+    CGFloat stepWidth = (SCREEN_WIDTH - 80) / 3; // 减去左右边距
+    CGFloat stepX = 20 + index * stepWidth + stepWidth / 2 - 20; // 居中对齐
     
     [stepIcon mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(container).offset(baseOffset);
-        make.top.equalTo(container).offset(index == 0 ? 80 : 30);
+        make.left.equalTo(container).offset(stepX);
+        make.top.equalTo(container).offset(20);
         make.width.height.mas_equalTo(40);
     }];
     
     [stepLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.centerX.equalTo(stepIcon);
         make.top.equalTo(stepIcon.mas_bottom).offset(10);
-        make.height.mas_equalTo(22);
+        make.width.mas_equalTo(80);
+        make.height.mas_equalTo(20);
     }];
     
     [statusLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.centerX.equalTo(stepIcon);
         make.top.equalTo(stepLabel.mas_bottom).offset(5);
-        make.bottom.equalTo(container).offset(index == self.viewModel.processSteps.count - 1 ? -20 : -10);
-        make.height.mas_equalTo(20);
+        make.bottom.equalTo(container).offset(-20);
+        make.width.mas_equalTo(80);
+        make.height.mas_equalTo(18);
     }];
 }
 
@@ -614,7 +666,7 @@ typedef NS_ENUM(NSInteger, QualificationSectionType) {
         make.left.right.equalTo(cell.contentView).inset(20);
         make.top.equalTo(checkboxButton.mas_bottom).offset(30);
         make.bottom.equalTo(cell.contentView).offset(-40);
-        make.height.mas_equalTo(50);
+        make.height.mas_equalTo(46);
     }];
 }
 
@@ -627,9 +679,9 @@ typedef NS_ENUM(NSInteger, QualificationSectionType) {
         case QualificationSectionTypeAmount:
             return 200;
         case QualificationSectionTypeInstitution:
-            return 220;
+            return 250;
         case QualificationSectionTypeSteps:
-            return indexPath.row == 0 ? 180 : 0; // 只显示第一个，其他步骤在同一个cell中
+            return indexPath.row == 0 ? 200 : 0; // 只显示第一个，其他步骤在同一个cell中
         case QualificationSectionTypeButton:
             return 150;
         default:
