@@ -263,7 +263,7 @@ typedef NS_ENUM(NSInteger, QualificationSectionType) {
     // 约束设置
     [cardView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.right.equalTo(cell.contentView).inset(20);
-        make.top.bottom.equalTo(cell.contentView).inset(5);
+        make.top.bottom.equalTo(cell.contentView).inset(2.5);
     }];
     
     [leftLine mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -401,7 +401,7 @@ typedef NS_ENUM(NSInteger, QualificationSectionType) {
     // 约束设置
     [cardView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.right.equalTo(cell.contentView).inset(20);
-        make.top.bottom.equalTo(cell.contentView).inset(5);
+        make.top.bottom.equalTo(cell.contentView).inset(2.5);
     }];
     
     [leftLine mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -514,7 +514,7 @@ typedef NS_ENUM(NSInteger, QualificationSectionType) {
         // 约束设置
         [cardView mas_makeConstraints:^(MASConstraintMaker *make) {
             make.left.right.equalTo(cell.contentView).inset(20);
-            make.top.bottom.equalTo(cell.contentView).inset(3);
+            make.top.bottom.equalTo(cell.contentView).inset(1.5);
         }];
         
         [leftLine mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -541,7 +541,7 @@ typedef NS_ENUM(NSInteger, QualificationSectionType) {
             make.top.equalTo(titleLabel.mas_bottom).offset(25);
             make.left.right.equalTo(cardView);
             make.bottom.equalTo(cardView).offset(-15);
-            make.height.mas_equalTo(170); // 增加高度以容纳更多文字
+            make.height.mas_equalTo(110); 
         }];
     }
 }
@@ -576,22 +576,7 @@ typedef NS_ENUM(NSInteger, QualificationSectionType) {
     stepLabel.minimumScaleFactor = 0.8; // 最小缩放比例
     [container addSubview:stepLabel];
     
-    // 状态标签
-    UILabel *statusLabel = [[UILabel alloc] init];
-    if ([stepInfo[@"status"] isEqualToString:@"completed"]) {
-        statusLabel.text = @"已通过";
-        statusLabel.textColor = [UIColor colorWithHexString:@"#4CAF50"];
-    } else {
-        statusLabel.text = @"请保持电话联系";
-        statusLabel.textColor = [UIColor colorWithHexString:@"#FF8C00"];
-    }
-    statusLabel.font = FONT_REGULAR(10); // 减小字体确保显示完整
-    statusLabel.textAlignment = NSTextAlignmentCenter;
-    statusLabel.numberOfLines = 0; // 允许多行
-    statusLabel.lineBreakMode = NSLineBreakByCharWrapping; // 按字符换行
-    statusLabel.adjustsFontSizeToFitWidth = YES; // 自动调整字体大小
-    statusLabel.minimumScaleFactor = 0.7; // 最小缩放比例
-    [container addSubview:statusLabel];
+
     
     // 箭头（除了最后一个步骤）
     if (index < self.viewModel.processSteps.count - 1) {
@@ -624,15 +609,8 @@ typedef NS_ENUM(NSInteger, QualificationSectionType) {
     [stepLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.centerX.equalTo(stepIcon);
         make.top.equalTo(stepIcon.mas_bottom).offset(8);
-        make.width.mas_equalTo(stepWidth - 20); // 使用更大的宽度，避免文字截断
-        make.height.greaterThanOrEqualTo(@35); // 增加最小高度
-    }];
-    
-    [statusLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.centerX.equalTo(stepIcon);
-        make.top.equalTo(stepLabel.mas_bottom).offset(5);
         make.bottom.lessThanOrEqualTo(container).offset(-10);
-        make.width.mas_equalTo(stepWidth - 10); // 给状态标签更多宽度
+        make.width.mas_equalTo(stepWidth - 20); // 使用更大的宽度，避免文字截断
         make.height.greaterThanOrEqualTo(@35); // 增加最小高度
     }];
 }
@@ -706,7 +684,7 @@ typedef NS_ENUM(NSInteger, QualificationSectionType) {
         case QualificationSectionTypeInstitution:
             return 280;
         case QualificationSectionTypeSteps:
-            return indexPath.row == 0 ? 250 : 0; // 只显示第一个，其他步骤在同一个cell中
+            return indexPath.row == 0 ? 170 : 0;
         case QualificationSectionTypeButton:
             return 150;
         default:

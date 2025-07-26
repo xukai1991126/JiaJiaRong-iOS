@@ -45,6 +45,24 @@ typedef NS_ENUM(NSInteger, ProgressSectionType) {
     self.gradientLayer.frame = self.view.bounds;
 }
 
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    // 显示导航栏并设置样式
+    [self.navigationController setNavigationBarHidden:NO animated:animated];
+    self.navigationController.navigationBar.barTintColor = [UIColor colorWithHexString:@"#F2582B"];
+    self.navigationController.navigationBar.tintColor = [UIColor whiteColor];
+    self.navigationController.navigationBar.titleTextAttributes = @{NSForegroundColorAttributeName: [UIColor whiteColor]};
+    self.navigationController.navigationBar.translucent = YES;
+}
+
+- (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+    // 恢复导航栏样式
+    self.navigationController.navigationBar.barTintColor = nil;
+    self.navigationController.navigationBar.tintColor = nil;
+    self.navigationController.navigationBar.titleTextAttributes = nil;
+}
+
 #pragma mark - Setup
 
 - (void)setupViewModel {
@@ -159,7 +177,7 @@ typedef NS_ENUM(NSInteger, ProgressSectionType) {
     
     [cardView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.right.equalTo(cell.contentView).inset(20);
-        make.top.bottom.equalTo(cell.contentView).inset(10);
+        make.top.bottom.equalTo(cell.contentView).inset(3.3);
     }];
     
     [successIcon mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -190,17 +208,23 @@ typedef NS_ENUM(NSInteger, ProgressSectionType) {
     // 额度数字
     UILabel *amountLabel = [[UILabel alloc] init];
     amountLabel.text = self.viewModel.approvedAmount;
-    amountLabel.font = FONT_BOLD(48);
+    amountLabel.font = FONT_BOLD(32); // 减小字体确保显示完整
     amountLabel.textColor = [UIColor colorWithHexString:@"#3B82F6"];
     amountLabel.textAlignment = NSTextAlignmentLeft;
+    amountLabel.numberOfLines = 1;
+    amountLabel.adjustsFontSizeToFitWidth = YES;
+    amountLabel.minimumScaleFactor = 0.5;
     [cardView addSubview:amountLabel];
     
     // 时间信息
     UILabel *timeLabel = [[UILabel alloc] init];
     timeLabel.text = [NSString stringWithFormat:@"%@", self.viewModel.processingTime];
-    timeLabel.font = FONT_BOLD(48);
+    timeLabel.font = FONT_BOLD(32); // 减小字体确保显示完整
     timeLabel.textColor = [UIColor colorWithHexString:@"#3B82F6"];
     timeLabel.textAlignment = NSTextAlignmentRight;
+    timeLabel.numberOfLines = 1;
+    timeLabel.adjustsFontSizeToFitWidth = YES;
+    timeLabel.minimumScaleFactor = 0.5;
     [cardView addSubview:timeLabel];
     
     // 额度说明
@@ -221,7 +245,7 @@ typedef NS_ENUM(NSInteger, ProgressSectionType) {
     
     [cardView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.right.equalTo(cell.contentView).inset(20);
-        make.top.bottom.equalTo(cell.contentView).inset(10);
+        make.top.bottom.equalTo(cell.contentView).inset(3.3);
     }];
     
     [amountLabel mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -284,11 +308,6 @@ typedef NS_ENUM(NSInteger, ProgressSectionType) {
     fullNameLabel.textColor = [UIColor colorWithHexString:@"#666666"];
     [cardView addSubview:fullNameLabel];
     
-    [cardView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.right.equalTo(cell.contentView).inset(20);
-        make.top.bottom.equalTo(cell.contentView).inset(10);
-    }];
-    
     [iconView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(cardView).offset(20);
         make.centerY.equalTo(cardView);
@@ -306,6 +325,11 @@ typedef NS_ENUM(NSInteger, ProgressSectionType) {
         make.left.right.equalTo(nameLabel);
         make.top.equalTo(nameLabel.mas_bottom).offset(5);
         make.height.mas_equalTo(20);
+    }];
+    
+    [cardView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.right.equalTo(cell.contentView).inset(20);
+        make.top.bottom.equalTo(cell.contentView).inset(3.3);
     }];
 }
 
@@ -332,11 +356,6 @@ typedef NS_ENUM(NSInteger, ProgressSectionType) {
     reminderLabel.numberOfLines = 2;
     [cardView addSubview:reminderLabel];
     
-    [cardView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.right.equalTo(cell.contentView).inset(20);
-        make.top.bottom.equalTo(cell.contentView).inset(10);
-    }];
-    
     [warningIcon mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(cardView).offset(20);
         make.centerY.equalTo(cardView);
@@ -348,6 +367,11 @@ typedef NS_ENUM(NSInteger, ProgressSectionType) {
         make.right.equalTo(cardView).offset(-20);
         make.centerY.equalTo(cardView);
         make.height.mas_equalTo(44);
+    }];
+    
+    [cardView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.right.equalTo(cell.contentView).inset(20);
+        make.top.bottom.equalTo(cell.contentView).inset(3.3);
     }];
 }
 
@@ -393,7 +417,7 @@ typedef NS_ENUM(NSInteger, ProgressSectionType) {
         
         [cardView mas_makeConstraints:^(MASConstraintMaker *make) {
             make.left.right.equalTo(cell.contentView).inset(20);
-            make.top.bottom.equalTo(cell.contentView).inset(5);
+            make.top.bottom.equalTo(cell.contentView).inset(1.7);
         }];
         
         [leftLine mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -543,11 +567,6 @@ typedef NS_ENUM(NSInteger, ProgressSectionType) {
     locationLabel.textColor = [UIColor colorWithHexString:@"#3B82F6"];
     [cardView addSubview:locationLabel];
     
-    [cardView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.right.equalTo(cell.contentView).inset(20);
-        make.top.bottom.equalTo(cell.contentView).inset(10);
-    }];
-    
     [phoneIcon mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(cardView).offset(20);
         make.centerY.equalTo(cardView);
@@ -570,6 +589,11 @@ typedef NS_ENUM(NSInteger, ProgressSectionType) {
         make.right.equalTo(cardView).offset(-20);
         make.centerY.equalTo(cardView);
         make.height.mas_equalTo(22);
+    }];
+    
+    [cardView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.right.equalTo(cell.contentView).inset(20);
+        make.top.bottom.equalTo(cell.contentView).inset(3.3);
     }];
 }
 
