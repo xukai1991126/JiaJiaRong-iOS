@@ -89,7 +89,7 @@
     
     // 下一步按钮
     self.nextButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [self.nextButton setTitle:@"获取授信额度" forState:UIControlStateNormal];
+    [self.nextButton setTitle:@"下一步" forState:UIControlStateNormal];
     [self.nextButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     self.nextButton.titleLabel.font = FONT_BOLD(16);
     self.nextButton.backgroundColor = [UIColor colorWithHexString:@"#FF772C"];

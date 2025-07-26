@@ -72,9 +72,12 @@
     // 额度数字
     self.amountLabel = [[UILabel alloc] init];
     self.amountLabel.text = self.viewModel.maxAmount;
-    self.amountLabel.font = FONT_BOLD(36);
-    self.amountLabel.textColor = [UIColor colorWithHexString:@"#3B82F6"];
+    self.amountLabel.font = FONT_BOLD(32);
+    self.amountLabel.textColor = [UIColor colorWithHexString:@"#FF772C"];
     self.amountLabel.textAlignment = NSTextAlignmentCenter;
+    self.amountLabel.numberOfLines = 1;
+    self.amountLabel.adjustsFontSizeToFitWidth = YES;
+    self.amountLabel.minimumScaleFactor = 0.5;
     [amountBgView addSubview:self.amountLabel];
     
     // 期限信息容器
@@ -126,37 +129,39 @@
     [self.titleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.cardContainer).offset(30);
         make.centerX.equalTo(self.cardContainer);
-        make.height.mas_equalTo(20);
+        make.height.mas_equalTo(22);
     }];
     
     // 额度背景容器
     UIView *amountBgView = self.cardContainer.subviews[2];
     [amountBgView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.titleLabel.mas_bottom).offset(20);
+        make.top.equalTo(self.titleLabel.mas_bottom).offset(15);
         make.left.right.equalTo(self.cardContainer).inset(20);
-        make.height.mas_equalTo(80);
+        make.height.mas_equalTo(60);
     }];
     
     [self.amountLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.center.equalTo(amountBgView);
+        make.centerX.equalTo(amountBgView);
+        make.top.equalTo(amountBgView.mas_bottom).offset(10);
+        make.left.right.equalTo(amountBgView).inset(15);
         make.height.mas_equalTo(40);
     }];
     
     [self.periodContainer mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(amountBgView.mas_bottom).offset(20);
+        make.top.equalTo(self.amountLabel.mas_bottom).offset(15);
         make.left.right.equalTo(self.cardContainer).inset(20);
-        make.bottom.equalTo(self.cardContainer).offset(-30);
-        make.height.mas_equalTo(20);
+        make.bottom.equalTo(self.cardContainer).offset(-25);
+        make.height.mas_equalTo(22);
     }];
     
     [self.periodTitleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.centerY.equalTo(self.periodContainer);
-        make.height.mas_equalTo(20);
+        make.height.mas_equalTo(22);
     }];
     
     [self.periodValueLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.right.centerY.equalTo(self.periodContainer);
-        make.height.mas_equalTo(20);
+        make.height.mas_equalTo(22);
     }];
 }
 

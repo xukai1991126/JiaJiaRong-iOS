@@ -177,19 +177,19 @@
     [self.titleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.cardContainer).offset(30);
         make.left.right.equalTo(self.cardContainer).inset(20);
-        make.height.mas_equalTo(20);
+        make.height.mas_equalTo(22);
     }];
     
     [self.subtitleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.titleLabel.mas_bottom).offset(10);
         make.left.right.equalTo(self.cardContainer).inset(20);
-        make.height.mas_equalTo(20);
+        make.height.mas_equalTo(22);
     }];
     
     [self.privacyLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.subtitleLabel.mas_bottom).offset(5);
         make.left.right.equalTo(self.cardContainer).inset(20);
-        make.height.mas_equalTo(20);
+        make.height.mas_equalTo(22);
     }];
     
     [self.nameTextField mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -201,20 +201,20 @@
     [self.ageTextField mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.nameTextField.mas_bottom).offset(15);
         make.left.equalTo(self.cardContainer).offset(20);
-        make.width.mas_equalTo(150);
+        make.width.mas_equalTo(180);
         make.height.mas_equalTo(46);
     }];
     
     [self.maleButton mas_makeConstraints:^(MASConstraintMaker *make) {
         make.centerY.equalTo(self.ageTextField);
-        make.right.equalTo(self.cardContainer.mas_centerX).offset(-10);
+        make.left.equalTo(self.ageTextField.mas_right).offset(15);
         make.width.mas_equalTo(60);
         make.height.mas_equalTo(46);
     }];
     
     [self.femaleButton mas_makeConstraints:^(MASConstraintMaker *make) {
         make.centerY.equalTo(self.ageTextField);
-        make.left.equalTo(self.cardContainer.mas_centerX).offset(10);
+        make.left.equalTo(self.maleButton.mas_right).offset(10);
         make.width.mas_equalTo(60);
         make.height.mas_equalTo(46);
     }];
@@ -229,7 +229,7 @@
     // 城市按钮内部布局
     UIImageView *locationIcon = self.cityButton.subviews[0];
     [locationIcon mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(self.cityButton).offset(15);
+        make.left.equalTo(self.cityButton).offset(5);
         make.centerY.equalTo(self.cityButton);
         make.width.height.mas_equalTo(20);
     }];
@@ -238,21 +238,21 @@
     [cityLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(locationIcon.mas_right).offset(10);
         make.centerY.equalTo(self.cityButton);
-        make.height.mas_equalTo(20);
+        make.height.mas_equalTo(22);
     }];
     
     UILabel *cityNameLabel = self.cityButton.subviews[2];
     [cityNameLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(cityLabel.mas_right).offset(5);
         make.centerY.equalTo(self.cityButton);
-        make.height.mas_equalTo(20);
+        make.height.mas_equalTo(22);
     }];
     
     UILabel *switchCityLabel = self.cityButton.subviews[3];
     [switchCityLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.right.equalTo(self.cityButton).offset(-15);
         make.centerY.equalTo(self.cityButton);
-        make.height.mas_equalTo(20);
+        make.height.mas_equalTo(22);
     }];
     
     [self.submitButton mas_makeConstraints:^(MASConstraintMaker *make) {

@@ -12,6 +12,8 @@
 #import "RealNameAuthFormView.h"
 #import "JJRCityPickerViewController.h"
 #import "JJRNetworkService.h"
+#import "JJRToastTool.h"
+#import "JJRUserManager.h"
 
 @interface JJRRealNameAuthViewController () <RealNameAuthFormViewDelegate>
 
@@ -31,21 +33,40 @@
     self.title = @"实名认证";
     self.view.backgroundColor = [UIColor whiteColor];
     
+    // 设置导航栏
+    [self setupNavigationBar];
     [self setupGradientBackground];
     [self setupViewModel];
     [self setupUI];
 }
 
+- (void)setupNavigationBar {
+    // 设置导航栏样式
+    self.navigationController.navigationBar.barTintColor = [UIColor colorWithHexString:@"#F2582B"];
+    self.navigationController.navigationBar.tintColor = [UIColor whiteColor];
+    self.navigationController.navigationBar.titleTextAttributes = @{NSForegroundColorAttributeName: [UIColor whiteColor]};
+    self.navigationController.navigationBar.translucent = YES;
+    
+    // 确保显示返回按钮
+    self.navigationItem.hidesBackButton = NO;
+}
+
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    // 隐藏导航栏
-    [self.navigationController setNavigationBarHidden:YES animated:animated];
+    // 显示导航栏并设置样式
+    [self.navigationController setNavigationBarHidden:NO animated:animated];
+    self.navigationController.navigationBar.barTintColor = [UIColor colorWithHexString:@"#F2582B"];
+    self.navigationController.navigationBar.tintColor = [UIColor whiteColor];
+    self.navigationController.navigationBar.titleTextAttributes = @{NSForegroundColorAttributeName: [UIColor whiteColor]};
+    self.navigationController.navigationBar.translucent = YES;
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
-    // 显示导航栏
-    [self.navigationController setNavigationBarHidden:NO animated:animated];
+    // 恢复导航栏样式
+    self.navigationController.navigationBar.barTintColor = nil;
+    self.navigationController.navigationBar.tintColor = nil;
+    self.navigationController.navigationBar.titleTextAttributes = nil;
 }
 
 #pragma mark - Setup
@@ -61,6 +82,11 @@
     gradientLayer.endPoint = CGPointMake(0.5, 1);
     gradientLayer.frame = self.view.bounds;
     [self.view.layer insertSublayer:gradientLayer atIndex:0];
+    
+    // 在 viewDidLayoutSubviews 中更新 frame
+    dispatch_async(dispatch_get_main_queue(), ^{
+        gradientLayer.frame = self.view.bounds;
+    });
 }
 
 - (void)setupViewModel {
@@ -101,7 +127,7 @@
     }];
     
     [self.amountCardView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.contentView).offset(STATUS_BAR_HEIGHT + 60);
+        make.top.equalTo(self.contentView).offset(20);
         make.left.right.equalTo(self.contentView).inset(20);
     }];
     
@@ -120,9 +146,101 @@
 
 - (void)formViewDidTapSubmit {
     // 提交实名认证
-    NSLog(@"提交实名认证");
-    // TODO: 实现提交逻辑
+    [self submitForm];
 }
+
+#pragma mark - Form Submission
+
+- (void)submitForm {
+    // 验证姓名信息
+    if (!self.viewModel.realName || self.viewModel.realName.length == 0) {
+        [JJRToastTool showToast:@"请填写正确的姓名"];
+        return;
+    }
+    
+    // 验证年龄信息
+    if (!self.viewModel.age || self.viewModel.age.length == 0) {
+        [JJRToastTool showToast:@"请填写正确的年龄"];
+        return;
+    }
+    
+    // 年龄范围校验
+    NSInteger ageValue = [self.viewModel.age integerValue];
+    if (ageValue < 18 || ageValue > 65) {
+        [JJRToastTool showToast:@"年龄需在18-65岁之间"];
+        return;
+    }
+    
+    // 验证城市信息
+    if (!self.viewModel.cityCode || self.viewModel.cityCode.length == 0) {
+        [JJRToastTool showToast:@"请选择所在城市"];
+        return;
+    }
+    
+    // 显示担保额度说明确认弹窗
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"担保额度说明"
+                                                                   message:@"本平台专注融资担保服务，不收取任何隐藏费用，所有费用均透明公开。最终担保额度以金融机构审批为准，您有权拒绝任何不合理的收费。确认继续申请担保额度吗？"
+                                                            preferredStyle:UIAlertControllerStyleAlert];
+    
+    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil];
+    UIAlertAction *confirmAction = [UIAlertAction actionWithTitle:@"确认申请" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        [self performFormSubmission];
+    }];
+    
+    [alert addAction:cancelAction];
+    [alert addAction:confirmAction];
+    [self presentViewController:alert animated:YES completion:nil];
+}
+
+- (void)performFormSubmission {
+    // 构建提交参数
+    NSMutableDictionary *params = [NSMutableDictionary dictionary];
+    params[@"cityCode"] = self.viewModel.cityCode;
+    params[@"cityName"] = self.viewModel.cityName;
+    params[@"realName"] = self.viewModel.realName;
+    params[@"age"] = self.viewModel.age;
+    params[@"gender"] = self.viewModel.isMale ? @"男" : @"女";
+    params[@"maxAmount"] = self.viewModel.maxAmount;
+    params[@"ios"] = @YES;
+    
+    // 显示loading
+    [JJRNetworkService showLoading];
+    
+    // 提交表单 - 这里使用已有的网络接口
+    [[JJRNetworkService sharedInstance] submitFormApplyWithParams:params success:^(NSDictionary *responseObject) {
+        [JJRNetworkService hideLoading];
+        
+        if ([responseObject[@"code"] integerValue] == 0) {
+            [JJRToastTool showSuccess:@"提交成功"];
+            
+            // 更新用户信息
+            NSDictionary *userInfo = [[JJRUserManager sharedManager] userInfo];
+            NSMutableDictionary *updatedUserInfo = [userInfo mutableCopy] ?: [NSMutableDictionary dictionary];
+            updatedUserInfo[@"realNameAuth"] = @YES;
+            updatedUserInfo[@"realName"] = self.viewModel.realName;
+            updatedUserInfo[@"age"] = self.viewModel.age;
+            updatedUserInfo[@"gender"] = self.viewModel.isMale ? @"男" : @"女";
+            [[JJRUserManager sharedManager] updateUserInfo:updatedUserInfo];
+            
+            // 延迟跳转到下一个页面（如身份证验证或结果页面）
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                // TODO: 跳转到下一个页面，这里可以根据需要跳转到不同页面
+                [self.navigationController popViewControllerAnimated:YES];
+            });
+        } else {
+            [JJRToastTool showError:responseObject[@"err"][@"msg"] ?: @"提交失败"];
+        }
+    } failure:^(NSError *error) {
+        [JJRNetworkService hideLoading];
+        
+        NSString *errorMessage = error.localizedDescription;
+        if (!errorMessage || errorMessage.length == 0) {
+            errorMessage = @"提交失败，请重试";
+        }
+        [JJRToastTool showError:errorMessage];
+    }];
+}
+
 
 #pragma mark - City Selection
 
