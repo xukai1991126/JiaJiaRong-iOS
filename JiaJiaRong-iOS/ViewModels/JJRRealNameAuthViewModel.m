@@ -21,8 +21,8 @@
         _realName = @"";
         _age = @"";
         _isMale = YES; // 默认选择男
-        _cityName = @"上海市";
-        _cityCode = @"310100";
+        _cityName = @""; // 默认不选择城市
+        _cityCode = @"";
     }
     return self;
 }

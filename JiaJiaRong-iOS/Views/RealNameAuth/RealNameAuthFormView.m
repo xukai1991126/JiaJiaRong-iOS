@@ -20,7 +20,7 @@
 @property (nonatomic, strong) UITextField *ageTextField;
 @property (nonatomic, strong) UIButton *maleButton;
 @property (nonatomic, strong) UIButton *femaleButton;
-@property (nonatomic, strong) UIButton *cityButton;
+@property (nonatomic, strong) UIView *cityView;
 @property (nonatomic, strong) UIButton *submitButton;
 
 @end
@@ -119,41 +119,48 @@
     [self.femaleButton addTarget:self action:@selector(femaleButtonTapped) forControlEvents:UIControlEventTouchUpInside];
     [self.cardContainer addSubview:self.femaleButton];
     
-    // 城市选择按钮
-    self.cityButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [self.cityButton setTitleColor:[UIColor colorWithHexString:@"#333333"] forState:UIControlStateNormal];
-    self.cityButton.titleLabel.font = FONT_REGULAR(16);
-    self.cityButton.backgroundColor = [UIColor colorWithHexString:@"#F5F5F5"];
-    self.cityButton.layer.cornerRadius = 8;
-    self.cityButton.contentHorizontalAlignment = UIControlContentHorizontalAlignmentLeft;
-    self.cityButton.titleEdgeInsets = UIEdgeInsetsMake(0, 15, 0, 0);
-    [self.cityButton addTarget:self action:@selector(cityButtonTapped) forControlEvents:UIControlEventTouchUpInside];
-    [self.cardContainer addSubview:self.cityButton];
+    // 城市选择视图
+    self.cityView = [[UIView alloc] init];
+    self.cityView.backgroundColor = [UIColor colorWithHexString:@"#F5F5F5"];
+    self.cityView.layer.cornerRadius = 8;
     
-    // 城市按钮图标和文字
+    // 添加点击手势
+    UITapGestureRecognizer *cityTapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(cityViewTapped)];
+    [self.cityView addGestureRecognizer:cityTapGesture];
+    [self.cardContainer addSubview:self.cityView];
+    
+    // 城市视图图标和文字
     UIImageView *locationIcon = [[UIImageView alloc] init];
-    locationIcon.image = [UIImage systemImageNamed:@"location.fill"];
+    // 先尝试使用本地图片，如果没有则使用系统图标
+    UIImage *locationImage = [UIImage imageNamed:@"location_icon"];
+    if (!locationImage) {
+        locationImage = [UIImage systemImageNamed:@"location.fill"];
+    }
+    locationIcon.image = locationImage;
     locationIcon.tintColor = [UIColor colorWithHexString:@"#3B82F6"];
-    [self.cityButton addSubview:locationIcon];
+    locationIcon.contentMode = UIViewContentModeScaleAspectFit;
+    [self.cityView addSubview:locationIcon];
     
     UILabel *cityLabel = [[UILabel alloc] init];
     cityLabel.text = @"所在城市：";
     cityLabel.font = FONT_REGULAR(16);
     cityLabel.textColor = [UIColor colorWithHexString:@"#666666"];
-    [self.cityButton addSubview:cityLabel];
+    [self.cityView addSubview:cityLabel];
     
     UILabel *cityNameLabel = [[UILabel alloc] init];
-    cityNameLabel.text = self.viewModel.cityName;
+    // 默认不选择城市，显示切换城市文案
+    cityNameLabel.text = @"";
     cityNameLabel.font = FONT_REGULAR(16);
     cityNameLabel.textColor = [UIColor colorWithHexString:@"#333333"];
     cityNameLabel.tag = 100; // 用于更新
-    [self.cityButton addSubview:cityNameLabel];
+    [self.cityView addSubview:cityNameLabel];
     
     UILabel *switchCityLabel = [[UILabel alloc] init];
     switchCityLabel.text = @"切换城市";
     switchCityLabel.font = FONT_REGULAR(14);
     switchCityLabel.textColor = [UIColor colorWithHexString:@"#3B82F6"];
-    [self.cityButton addSubview:switchCityLabel];
+    switchCityLabel.tag = 101; // 用于更新
+    [self.cityView addSubview:switchCityLabel];
     
     // 提交按钮
     self.submitButton = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -219,39 +226,39 @@
         make.height.mas_equalTo(46);
     }];
     
-    [self.cityButton mas_makeConstraints:^(MASConstraintMaker *make) {
+    [self.cityView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.ageTextField.mas_bottom).offset(15);
         make.left.right.equalTo(self.cardContainer).inset(20);
         make.height.mas_equalTo(60);
         make.bottom.equalTo(self.cardContainer).offset(-30);
     }];
     
-    // 城市按钮内部布局
-    UIImageView *locationIcon = self.cityButton.subviews[0];
+    // 城市视图内部布局
+    UIImageView *locationIcon = self.cityView.subviews[0];
     [locationIcon mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(self.cityButton).offset(5);
-        make.centerY.equalTo(self.cityButton);
+        make.left.equalTo(self.cityView).offset(15);
+        make.centerY.equalTo(self.cityView);
         make.width.height.mas_equalTo(20);
     }];
     
-    UILabel *cityLabel = self.cityButton.subviews[1];
+    UILabel *cityLabel = self.cityView.subviews[1];
     [cityLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(locationIcon.mas_right).offset(10);
-        make.centerY.equalTo(self.cityButton);
+        make.centerY.equalTo(self.cityView);
         make.height.mas_equalTo(22);
     }];
     
-    UILabel *cityNameLabel = self.cityButton.subviews[2];
+    UILabel *cityNameLabel = self.cityView.subviews[2];
     [cityNameLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(cityLabel.mas_right).offset(5);
-        make.centerY.equalTo(self.cityButton);
+        make.centerY.equalTo(self.cityView);
         make.height.mas_equalTo(22);
     }];
     
-    UILabel *switchCityLabel = self.cityButton.subviews[3];
+    UILabel *switchCityLabel = self.cityView.subviews[3];
     [switchCityLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.right.equalTo(self.cityButton).offset(-15);
-        make.centerY.equalTo(self.cityButton);
+        make.right.equalTo(self.cityView).offset(-15);
+        make.centerY.equalTo(self.cityView);
         make.height.mas_equalTo(22);
     }];
     
@@ -275,7 +282,7 @@
     [self updateGenderButtonsAppearance];
 }
 
-- (void)cityButtonTapped {
+- (void)cityViewTapped {
     if ([self.delegate respondsToSelector:@selector(formViewDidTapCitySelection)]) {
         [self.delegate formViewDidTapCitySelection];
     }
@@ -298,8 +305,16 @@
 #pragma mark - Public Methods
 
 - (void)updateCityDisplay {
-    UILabel *cityNameLabel = [self.cityButton viewWithTag:100];
-    cityNameLabel.text = self.viewModel.cityName;
+    UILabel *cityNameLabel = [self.cityView viewWithTag:100];
+    UILabel *switchCityLabel = [self.cityView viewWithTag:101];
+    
+    if (self.viewModel.cityName && self.viewModel.cityName.length > 0) {
+        cityNameLabel.text = self.viewModel.cityName;
+        switchCityLabel.text = @"切换城市";
+    } else {
+        cityNameLabel.text = @"";
+        switchCityLabel.text = @"切换城市";
+    }
 }
 
 #pragma mark - Private Methods
