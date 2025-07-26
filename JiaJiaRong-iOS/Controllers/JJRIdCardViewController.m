@@ -11,12 +11,12 @@
 #import "JJRIdCardModel.h"
 #import "JJRNetworkService.h"
 #import "JJRShouquanshuViewController.h"
-#import "JJRFaceVerifyManager.h"
 #import "WebViewController.h"
 #import <Photos/Photos.h>
 #import <AVFoundation/AVFoundation.h>
+#import "JJRQualificationViewController.h"
 
-@interface JJRIdCardViewController ()<UINavigationControllerDelegate,UIImagePickerControllerDelegate,JJRFaceVerifyManagerDelegate>
+@interface JJRIdCardViewController ()<UINavigationControllerDelegate,UIImagePickerControllerDelegate>
 
 @property (nonatomic, strong) JJRIdCardView *idCardView;
 @property (nonatomic, strong) JJRIdCardModel *form;
@@ -25,8 +25,6 @@
 @property (nonatomic, copy) NSString *certifyData;
 @property (nonatomic, copy) NSString *metaInfo;
 @property (nonatomic, copy) NSString *currentUploadType; // 记录当前上传的图片类型
-@property (nonatomic, strong) JJRFaceVerifyManager *faceVerifyManager; // 人脸识别管理器
-@property (nonatomic, strong) NSDictionary *certifyInfo; // 人脸识别认证信息
 
 @end
 
@@ -37,7 +35,6 @@
     [self setupUI];
     [self setupData];
     [self checkPermissions];
-    [self setupFaceVerifyManager];
 }
 
 - (void)setupUI {
@@ -153,8 +150,8 @@
         return;
     }
     
-    // 开始人脸识别
-    [self startFaceVerify];
+    // 人脸识别功能已移除
+    [JJRToastTool showToast:@"人脸识别功能暂不可用"];
 }
 
 - (void)idCardViewDidTapAgreement:(NSString *)type title:(NSString *)title {
@@ -163,6 +160,10 @@
 }
 
 - (void)idCardViewDidTapGoShouquanshu {
+    JJRQualificationViewController *qualificationVC = [[JJRQualificationViewController alloc] init];
+    qualificationVC.hidesBottomBarWhenPushed = YES;
+    [self.navigationController pushViewController:qualificationVC animated:YES];
+    return;
     // 跳转到授权书页面
     JJRShouquanshuViewController *shouquanshuVC = [[JJRShouquanshuViewController alloc] init];
     shouquanshuVC.hidesBottomBarWhenPushed = YES; // 隐藏tabbar
@@ -223,12 +224,13 @@
         [JJRNetworkService hideLoading];
         
         if ([responseObject[@"code"] integerValue] == 0) {
-            // 保存成功，进入人脸识别步骤
+            // 保存成功，直接跳转到结果页面
             [JJRToastTool showSuccess:@"上传成功"];
             
-            // 延迟跳转到人脸识别页面
+            // 延迟跳转到结果页面
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                [self.idCardView setStep:JJRIdCardStepFaceVerify animated:YES];
+                [self.idCardView setStep:JJRIdCardStepResult animated:YES];
+                [self.idCardView showResult:YES];
             });
         } else {
             [JJRToastTool showError:responseObject[@"err"][@"msg"] ?: @"保存失败"];
@@ -243,94 +245,7 @@
     }];
 }
 
-- (void)setupFaceVerifyManager {
-    // 初始化人脸识别管理器
-    self.faceVerifyManager = [JJRFaceVerifyManager sharedManager];
-    self.faceVerifyManager.delegate = self;
-    self.faceVerifyManager.presentingViewController = self;
-    
-    // 初始化阿里云SDK
-    [self.faceVerifyManager initializeSDK];
-    
-    NSLog(@"🎯 人脸识别管理器初始化完成");
-}
 
-- (void)startFaceVerify {
-    // 获取设备信息
-    NSDictionary *metaInfoDict = [self.faceVerifyManager getMetaInfo];
-    
-    // 将设备信息转换为JSON字符串（与uni-app保持一致）
-    NSError *error;
-    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:metaInfoDict options:0 error:&error];
-    NSString *metaInfo = @"";
-    if (!error && jsonData) {
-        metaInfo = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
-    }
-    
-    [JJRNetworkService showLoading];
-    
-    // 调用后台初始化人脸识别接口
-    [[JJRNetworkService sharedInstance] initFaceVerifyWithParams:@{@"metaInfo": metaInfo} success:^(NSDictionary *responseObject) {
-        [JJRNetworkService hideLoading];
-        
-        if ([responseObject[@"code"] integerValue] == 0) {
-            // 保存认证信息
-            self.certifyInfo = responseObject[@"data"];
-            NSString *certifyId = self.certifyInfo[@"certifyId"];
-            
-            if (certifyId && certifyId.length > 0) {
-                // 配置extParams，必须传入当前控制器
-                NSMutableDictionary *extParams = [NSMutableDictionary dictionary];
-                [extParams setValue:self forKey:@"currentCtr"];
-                
-                // 调用人脸识别SDK
-                [self.faceVerifyManager startFaceVerifyWithCertifyId:certifyId extParams:extParams];
-            } else {
-                [JJRToastTool showError:@"认证ID获取失败"];
-            }
-        } else {
-            [JJRToastTool showError:responseObject[@"err"][@"msg"] ?: @"人脸识别初始化失败"];
-        }
-    } failure:^(NSError *error) {
-        [JJRNetworkService hideLoading];
-        NSString *errorMessage = error.localizedDescription;
-        if (!errorMessage || errorMessage.length == 0) {
-            errorMessage = @"网络错误，请重试";
-        }
-        [JJRToastTool showError:errorMessage];
-    }];
-}
-
-#pragma mark - JJRFaceVerifyManagerDelegate
-
-- (void)faceVerifyManager:(JJRFaceVerifyManager *)manager 
-        didCompleteWithResult:(JJRFaceVerifyResult)result 
-                      message:(NSString *)message {
-    
-    NSLog(@"🎯 人脸识别结果: %ld, 消息: %@", (long)result, message);
-    
-    dispatch_async(dispatch_get_main_queue(), ^{
-        if (result == JJRFaceVerifyResultSuccess) {
-            // 人脸识别成功
-            [JJRToastTool showSuccess:@"人脸识别成功"];
-            
-            // 延迟显示结果页面
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                [self.idCardView setStep:JJRIdCardStepResult animated:YES];
-                [self.idCardView showResult:YES];
-            });
-        } else {
-            // 人脸识别失败
-            [JJRToastTool showError:message];
-        }
-    });
-}
-
-- (void)faceVerifyManager:(JJRFaceVerifyManager *)manager 
-             didProgress:(CGFloat)progress 
-                     tip:(NSString *)tip {
-    NSLog(@"🎯 人脸识别进度: %.2f, 提示: %@", progress, tip);
-}
 
 - (void)openAgreement:(NSString *)type title:(NSString *)title {
     NSLog(@"🎯 打开协议页面: %@", title);

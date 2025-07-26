@@ -33,12 +33,9 @@
 @property (nonatomic, strong) JJRButton *nextButton;
 
 // 人脸识别页面
-@property (nonatomic, strong) UIView *faceVerifyContainer;
-@property (nonatomic, strong) UIImageView *faceVerifyImageView;
-@property (nonatomic, strong) UILabel *faceVerifyTipLabel;
-@property (nonatomic, strong) UIView *agreementContainer;
-@property (nonatomic, strong) UIButton *agreementCheckbox;
-@property (nonatomic, strong) JJRButton *faceVerifyButton;
+
+
+
 
 // 结果页面
 @property (nonatomic, strong) UIView *resultContainer;
@@ -73,7 +70,7 @@
     [self setupUploadPage];
     
     // 人脸识别页面
-    [self setupFaceVerifyPage];
+    
     
     // 结果页面
     [self setupResultPage];
@@ -396,140 +393,9 @@
     }
 }
 
-- (void)setupFaceVerifyPage {
-    self.faceVerifyContainer = [[UIView alloc] init];
-    [self addSubview:self.faceVerifyContainer];
-    
-    // 标题
-    UILabel *faceVerifyTitleLabel = [[UILabel alloc] init];
-    faceVerifyTitleLabel.text = @"即将进行人脸识别";
-    faceVerifyTitleLabel.font = [UIFont boldSystemFontOfSize:18];
-    faceVerifyTitleLabel.textColor = [UIColor colorWithHexString:@"#333333"];
-    faceVerifyTitleLabel.textAlignment = NSTextAlignmentCenter;
-    [self.faceVerifyContainer addSubview:faceVerifyTitleLabel];
-    
-    // 副标题
-    UILabel *faceVerifySubtitleLabel = [[UILabel alloc] init];
-    faceVerifySubtitleLabel.text = @"请衣着整齐，平视屏幕，请保持光线充足";
-    faceVerifySubtitleLabel.font = [UIFont systemFontOfSize:14];
-    faceVerifySubtitleLabel.textColor = [UIColor colorWithHexString:@"#666666"];
-    faceVerifySubtitleLabel.textAlignment = NSTextAlignmentCenter;
-    faceVerifySubtitleLabel.numberOfLines = 0;
-    [self.faceVerifyContainer addSubview:faceVerifySubtitleLabel];
-    
-    // 人脸识别图片
-    self.faceVerifyImageView = [[UIImageView alloc] init];
-    self.faceVerifyImageView.image = [UIImage imageNamed:@"face_verify_image"];
-    self.faceVerifyImageView.contentMode = UIViewContentModeScaleAspectFit;
-    [self.faceVerifyContainer addSubview:self.faceVerifyImageView];
-    
-    // 提示文字
-    self.faceVerifyTipLabel = [[UILabel alloc] init];
-    self.faceVerifyTipLabel.text = @"请确保是本人操作";
-    self.faceVerifyTipLabel.font = [UIFont systemFontOfSize:16];
-    self.faceVerifyTipLabel.textColor = [UIColor colorWithHexString:@"#666666"];
-    self.faceVerifyTipLabel.textAlignment = NSTextAlignmentCenter;
-    [self.faceVerifyContainer addSubview:self.faceVerifyTipLabel];
-    
-    // 协议
-    [self setupAgreementContainer];
-    
-    // 开始识别按钮
-    self.faceVerifyButton = [[JJRButton alloc] initWithTitle:@"开始识别" type:JJRButtonTypePrimary];
-    [self.faceVerifyButton setCornerRadius:23];
-    WeakSelf
-    [self.faceVerifyButton setClickAction:^(JJRButton *button) {
-        StrongSelf
-        if ([strongSelf.delegate respondsToSelector:@selector(idCardViewDidTapFaceVerify)]) {
-            [strongSelf.delegate idCardViewDidTapFaceVerify];
-        }
-    }];
-    [self.faceVerifyContainer addSubview:self.faceVerifyButton];
-    
-    // 约束
-    [faceVerifyTitleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.faceVerifyContainer);
-        make.left.right.equalTo(self.faceVerifyContainer);
-        make.height.mas_equalTo(22);
-    }];
-    
-    [faceVerifySubtitleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(faceVerifyTitleLabel.mas_bottom).offset(10);
-        make.left.right.equalTo(self.faceVerifyContainer);
-        make.height.mas_equalTo(20);
-    }];
-    
-    [self.faceVerifyImageView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(faceVerifySubtitleLabel.mas_bottom).offset(30);
-        make.centerX.equalTo(self.faceVerifyContainer);
-        make.width.height.mas_equalTo(200);
-    }];
-    
-    [self.faceVerifyTipLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.faceVerifyImageView.mas_bottom).offset(20);
-        make.left.right.equalTo(self.faceVerifyContainer);
-        make.height.mas_equalTo(20);
-    }];
-}
 
-- (void)setupAgreementContainer {
-    self.agreementContainer = [[UIView alloc] init];
-    [self.faceVerifyContainer addSubview:self.agreementContainer];
-    
-    self.agreementCheckbox = [UIButton buttonWithType:UIButtonTypeCustom];
-    [self.agreementCheckbox setImage:[UIImage imageNamed:@"img_2a5bf1c39141_unselect"] forState:UIControlStateNormal];
-    [self.agreementCheckbox setImage:[UIImage imageNamed:@"img_2a5bf1c39141"] forState:UIControlStateSelected];
-    [self.agreementCheckbox addTarget:self action:@selector(agreementCheckboxTapped) forControlEvents:UIControlEventTouchUpInside];
-    [self.agreementContainer addSubview:self.agreementCheckbox];
-    
-    // 创建一个容器来放置协议文本
-    UILabel *agreementPrefixLabel = [[UILabel alloc] init];
-    agreementPrefixLabel.text = @"我已阅读并同意";
-    agreementPrefixLabel.font = [UIFont systemFontOfSize:12];
-    agreementPrefixLabel.textColor = [UIColor colorWithHexString:@"#97999E"];
-    [self.agreementContainer addSubview:agreementPrefixLabel];
-    
-    // 用户服务协议按钮
-    UIButton *userAgreementButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [userAgreementButton setTitle:@" 《用户服务协议》" forState:UIControlStateNormal];
-    [userAgreementButton setTitleColor:[UIColor colorWithHexString:@"#FF772C"] forState:UIControlStateNormal];
-    userAgreementButton.titleLabel.font = [UIFont systemFontOfSize:12];
-    [userAgreementButton addTarget:self action:@selector(userAgreementTapped) forControlEvents:UIControlEventTouchUpInside];
-    [self.agreementContainer addSubview:userAgreementButton];
-    
-    // 隐私协议按钮
-    UIButton *privacyAgreementButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [privacyAgreementButton setTitle:@" 《隐私协议》" forState:UIControlStateNormal];
-    [privacyAgreementButton setTitleColor:[UIColor colorWithHexString:@"#FF772C"] forState:UIControlStateNormal];
-    privacyAgreementButton.titleLabel.font = [UIFont systemFontOfSize:12];
-    [privacyAgreementButton addTarget:self action:@selector(privacyAgreementTapped) forControlEvents:UIControlEventTouchUpInside];
-    [self.agreementContainer addSubview:privacyAgreementButton];
-    
-    // 设置约束
-    [self.agreementCheckbox mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.centerY.equalTo(self.agreementContainer);
-        make.width.height.mas_equalTo(20);
-    }];
-    
-    [agreementPrefixLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(self.agreementCheckbox.mas_right).offset(10);
-        make.centerY.equalTo(self.agreementContainer);
-        make.height.mas_equalTo(20);
-    }];
-    
-    [userAgreementButton mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(agreementPrefixLabel.mas_right).offset(0);
-        make.centerY.equalTo(self.agreementContainer);
-        make.height.mas_equalTo(20);
-    }];
-    
-    [privacyAgreementButton mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(userAgreementButton.mas_right).offset(0);
-        make.centerY.equalTo(self.agreementContainer);
-        make.height.mas_equalTo(20);
-        make.right.lessThanOrEqualTo(self.agreementContainer).offset(-10);
-    }];
-}
+
+
 
 
 - (void)handleAgreement:(NSString *)type title:(NSString *)title {
@@ -697,42 +563,7 @@
     // 上传页面约束
     // 这些约束已经移至setupUploadPageConstraints
     
-    // 人脸识别页面约束
-    [self.faceVerifyContainer mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.stepTitleLabels.firstObject.mas_bottom).offset(20);
-        make.left.right.equalTo(self).inset(20);
-        make.bottom.equalTo(self).offset(-100);
-    }];
-    
-    // 修复头像位置：头像应该在副标题下方，而不是在容器顶部
-    [self.faceVerifyImageView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.faceVerifyContainer).offset(80); // 为标题和副标题留出空间
-        make.centerX.equalTo(self.faceVerifyContainer);
-        make.width.height.mas_equalTo(200);
-    }];
-    
-    [self.faceVerifyTipLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.faceVerifyImageView.mas_bottom).offset(20);
-        make.left.right.equalTo(self.faceVerifyContainer);
-        make.height.mas_equalTo(20);
-    }];
-    
-    [self.agreementContainer mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.faceVerifyTipLabel.mas_bottom).offset(30);
-        make.left.right.equalTo(self.faceVerifyContainer);
-        make.height.mas_equalTo(40);
-    }];
-    
-    [self.agreementCheckbox mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.centerY.equalTo(self.agreementContainer);
-        make.width.height.mas_equalTo(20);
-    }];
-    
-    [self.faceVerifyButton mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.bottom.equalTo(self.faceVerifyContainer).offset(-30);
-        make.left.right.equalTo(self.faceVerifyContainer);
-        make.height.mas_equalTo(46);
-    }];
+
     
     // 结果页面约束
     [self.resultContainer mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -818,17 +649,12 @@
     
     // 隐藏所有容器
     self.uploadContainer.hidden = YES;
-    self.faceVerifyContainer.hidden = YES;
     self.resultContainer.hidden = YES;
     
     // 显示对应容器
     switch (step) {
         case JJRIdCardStepUpload:
             self.uploadContainer.hidden = NO;
-            break;
-            
-        case JJRIdCardStepFaceVerify:
-            self.faceVerifyContainer.hidden = NO;
             break;
             
         case JJRIdCardStepResult:
@@ -1034,10 +860,7 @@
     }
 }
 
-- (void)agreementCheckboxTapped {
-    self.agreementCheckbox.selected = !self.agreementCheckbox.selected;
-    self.isAgreementChecked = self.agreementCheckbox.selected;
-}
+
 
 - (void)userAgreementTapped {
     if ([self.delegate respondsToSelector:@selector(idCardViewDidTapAgreement:title:)]) {

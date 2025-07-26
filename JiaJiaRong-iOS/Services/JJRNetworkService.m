@@ -417,11 +417,7 @@
     [self POST:JJR_IDENTITY_SAVE params:params success:success failure:failure];
 }
 
-- (void)initFaceVerifyWithParams:(NSDictionary *)params 
-                        success:(JJRSuccessBlock)success 
-                        failure:(JJRFailureBlock)failure {
-    [self POST:JJR_IDENTITY_INIT_FACE_VERIFY params:params success:success failure:failure];
-}
+
 
 #pragma mark - 银行卡相关接口
 

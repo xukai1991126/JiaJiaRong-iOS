@@ -13,7 +13,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 typedef NS_ENUM(NSInteger, JJRIdCardStep) {
     JJRIdCardStepUpload = 0,    // 身份证上传
-    JJRIdCardStepFaceVerify,    // 人脸识别
     JJRIdCardStepResult         // 认证结果
 };
 
@@ -21,7 +20,7 @@ typedef NS_ENUM(NSInteger, JJRIdCardStep) {
 
 - (void)idCardViewDidTapUpload:(UIImageView *)imageView type:(NSString *)type;
 - (void)idCardViewDidTapNextStep;
-- (void)idCardViewDidTapFaceVerify;
+
 - (void)idCardViewDidTapGoShouquanshu;
 - (void)idCardViewDidChangeForm:(JJRIdCardModel *)form;
 // 协议跳转的委托方法

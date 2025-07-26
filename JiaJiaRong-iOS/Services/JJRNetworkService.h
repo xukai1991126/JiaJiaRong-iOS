@@ -110,9 +110,7 @@ typedef void(^JJRFailureBlock)(NSError *error);
                         failure:(JJRFailureBlock)failure;
 
 // 初始化人脸识别
-- (void)initFaceVerifyWithParams:(NSDictionary *)params 
-                        success:(JJRSuccessBlock)success 
-                        failure:(JJRFailureBlock)failure;
+
 
 #pragma mark - 银行卡相关接口
 // 获取银行卡列表

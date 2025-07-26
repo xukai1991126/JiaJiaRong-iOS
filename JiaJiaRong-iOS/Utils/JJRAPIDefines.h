@@ -65,7 +65,7 @@
 #define JJR_IDENTITY_SAVE @"/app/identity/save"
 
 // 初始化人脸识别
-#define JJR_IDENTITY_INIT_FACE_VERIFY @"/app/identity/initFaceVerify"
+
 
 #pragma mark - 银行卡相关接口
 // 获取银行卡列表

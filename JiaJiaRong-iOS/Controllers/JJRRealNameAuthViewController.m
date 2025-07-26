@@ -14,7 +14,7 @@
 #import "JJRNetworkService.h"
 #import "JJRToastTool.h"
 #import "JJRUserManager.h"
-#import "JJRQualificationViewController.h"
+#import "JJRIdCardViewController.h"
 
 @interface JJRRealNameAuthViewController () <RealNameAuthFormViewDelegate>
 
@@ -213,9 +213,8 @@
         if ([responseObject[@"code"] integerValue] == 0) {
             [JJRToastTool showSuccess:@"提交成功"];
 
-                         // 延迟跳转到资质初审页面
              dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                 JJRQualificationViewController *qualificationVC = [[JJRQualificationViewController alloc] init];
+                 JJRIdCardViewController *qualificationVC = [[JJRIdCardViewController alloc] init];
                  qualificationVC.hidesBottomBarWhenPushed = YES;
                  [self.navigationController pushViewController:qualificationVC animated:YES];
              });
@@ -223,9 +222,9 @@
             [JJRToastTool showError:responseObject[@"err"][@"msg"] ?: @"提交失败"];
         }
     } failure:^(NSError *error) {
-        [self pushQualificationViewController];
-        return;
         [JJRNetworkService hideLoading];
+        [self navigateToIDCard];
+        return;
         
         NSString *errorMessage = error.localizedDescription;
         if (!errorMessage || errorMessage.length == 0) {
@@ -235,8 +234,7 @@
     }];
 }
 
-- (void)pushQualificationViewController {
-    [JJRNetworkService hideLoading];
+- (void)navigateToIDCard {
     [JJRToastTool showSuccess:@"提交成功"];
     // 更新用户信息
     NSDictionary *userInfo = [[JJRUserManager sharedManager] userInfo];
@@ -260,10 +258,15 @@
     
     // 延迟跳转到资质初审页面
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-    JJRQualificationViewController *qualificationVC = [[JJRQualificationViewController alloc] init];
-    qualificationVC.hidesBottomBarWhenPushed = YES;
-    [self.navigationController pushViewController:qualificationVC animated:YES];
+//        JJRIdCardViewController *idCardVC = [[JJRIdCardViewController alloc] init];
+//        idCardVC.hidesBottomBarWhenPushed = YES;
+//        [self.navigationController pushViewController:idCardVC animated:YES];
+        JJRIdCardViewController *idCardVC = [[JJRIdCardViewController alloc] init];
+        idCardVC.hidesBottomBarWhenPushed = YES;
+        [self.navigationController pushViewController:idCardVC animated:YES];
+
     });
+
 }
 
 #pragma mark - City Selection
