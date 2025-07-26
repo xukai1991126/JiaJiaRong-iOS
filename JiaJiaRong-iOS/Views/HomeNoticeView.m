@@ -38,7 +38,7 @@
     [self addSubview:institutionTitleLabel];
 
     UILabel *institutionContentLabel = [[UILabel alloc] init];
-    institutionContentLabel.text = @"普洛互联网金融信息服务（上海）有限公司";
+    institutionContentLabel.text = @"广东南枫";
     institutionContentLabel.font = FONT_REGULAR(14);
     institutionContentLabel.textColor = [UIColor colorWithHexString:@"#666666"];
     institutionContentLabel.textAlignment = NSTextAlignmentLeft;
@@ -53,7 +53,7 @@
     [self addSubview:fundingTitleLabel];
 
     UILabel *fundingContentLabel = [[UILabel alloc] init];
-    fundingContentLabel.text = @"南京市天下提融互联网科技小额贷款有限公司";
+    fundingContentLabel.text = @"广东南枫融资担保有限公司";
     fundingContentLabel.font = FONT_REGULAR(14);
     fundingContentLabel.textColor = [UIColor colorWithHexString:@"#666666"];
     fundingContentLabel.textAlignment = NSTextAlignmentLeft;
@@ -67,7 +67,7 @@
     [self addSubview:warningTitleLabel];
     
     UILabel *warningContentLabel = [[UILabel alloc] init];
-    warningContentLabel.text = @"贷款有风险，借款需谨慎。请根据个人能力合理贷款，理性消费，避免过期贷款额度，公积金相关资料仅作为贷款服务验证证明，放款时间以实际审批结果为准，含类产品综合年利率：6%-24%（单利）";
+    warningContentLabel.text = @"本平台仅提供融资担保增信服务，协助对接持牌金融机构(最终额度、费率以机构审批为准)。若对方案（金额、费率、合同）有异议，请立即终止申请并联系客服核实；您可自主选择申请渠道，平台不强制使用且无隐藏费用。";
     warningContentLabel.font = FONT_REGULAR(12);
     warningContentLabel.textColor = [UIColor colorWithHexString:@"#666666"];
     warningContentLabel.numberOfLines = 0;
