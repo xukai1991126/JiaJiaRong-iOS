@@ -113,32 +113,48 @@
     self.agreementView = [[UIView alloc] init];
     [self.contentView addSubview:self.agreementView];
     
-    // 金融资质声明
+    // 担保资质声明
     UILabel *qualificationLabel = [[UILabel alloc] init];
-    qualificationLabel.text = @"金融资质声明";
+    qualificationLabel.text = @"融资担保资质声明";
     qualificationLabel.font = [UIFont boldSystemFontOfSize:16];
     qualificationLabel.textColor = [UIColor blackColor];
     qualificationLabel.textAlignment = NSTextAlignmentCenter;
     [self.contentView addSubview:qualificationLabel];
     
     UILabel *qualificationDescLabel = [[UILabel alloc] init];
-    qualificationDescLabel.text = @"本平台为合规融资担保机构，严格遵循国家金融监管要求，为用户提供安全、透明的金融服务。所有业务均在监管部门备案，用户资金安全有保障。";
+    qualificationDescLabel.text = @"本平台为持牌融资担保服务机构，依法依规开展融资担保业务。严格遵循国家金融监管要求，为中小微企业和个人客户提供专业、安全、透明的担保服务。所有业务均在金融监管部门备案监督，担保资金由第三方银行托管，客户权益受法律保护。";
     qualificationDescLabel.font = [UIFont systemFontOfSize:14];
     qualificationDescLabel.textColor = [UIColor grayColor];
     qualificationDescLabel.textAlignment = NSTextAlignmentLeft;
     qualificationDescLabel.numberOfLines = 0;
     [self.contentView addSubview:qualificationDescLabel];
     
+    // 业务说明
+    UILabel *businessLabel = [[UILabel alloc] init];
+    businessLabel.text = @"业务范围说明";
+    businessLabel.font = [UIFont boldSystemFontOfSize:16];
+    businessLabel.textColor = [UIColor colorWithHexString:@"#FF772C"];
+    businessLabel.textAlignment = NSTextAlignmentCenter;
+    [self.contentView addSubview:businessLabel];
+    
+    UILabel *businessDescLabel = [[UILabel alloc] init];
+    businessDescLabel.text = @"我们专注于为客户提供融资担保服务，包括银行贷款担保、信用增进服务等。通过专业的风险评估和担保服务，帮助客户获得更优质的融资条件。我们不是放贷机构，不直接放贷，而是作为第三方担保机构为客户提供增信服务。";
+    businessDescLabel.font = [UIFont systemFontOfSize:14];
+    businessDescLabel.textColor = [UIColor colorWithHexString:@"#666666"];
+    businessDescLabel.textAlignment = NSTextAlignmentLeft;
+    businessDescLabel.numberOfLines = 0;
+    [self.contentView addSubview:businessDescLabel];
+    
     // 风险提示
     UILabel *riskLabel = [[UILabel alloc] init];
-    riskLabel.text = @"风险提示";
+    riskLabel.text = @"重要提示";
     riskLabel.font = [UIFont boldSystemFontOfSize:16];
     riskLabel.textColor = [UIColor redColor];
     riskLabel.textAlignment = NSTextAlignmentCenter;
     [self.contentView addSubview:riskLabel];
     
     UILabel *riskDescLabel = [[UILabel alloc] init];
-    riskDescLabel.text = @"借款有风险，申请需谨慎。请根据个人实际情况合理借贷，避免过度负债。如遇困难，请及时与我们联系寻求帮助。";
+    riskDescLabel.text = @"融资担保服务存在一定风险，请客户根据自身实际情况谨慎申请。担保费用公开透明，无任何隐性收费。如有疑问或需要帮助，请及时联系我们的客服团队。";
     riskDescLabel.font = [UIFont systemFontOfSize:14];
     riskDescLabel.textColor = [UIColor redColor];
     riskDescLabel.textAlignment = NSTextAlignmentLeft;
@@ -146,7 +162,7 @@
     [self.contentView addSubview:riskDescLabel];
 
     // 创建协议按钮
-    [self createAgreementButtonWithTitle:@"用户服务协议" type:@"user" tag:100];
+    [self createAgreementButtonWithTitle:@"融资担保服务协议" type:@"user" tag:100];
     [self createAgreementButtonWithTitle:@"个人信息授权书" type:@"authorization" tag:101];
     [self createAgreementButtonWithTitle:@"隐私服务协议" type:@"privacy" tag:102];
     
@@ -218,28 +234,34 @@
         make.bottom.equalTo(self.appInfoView).offset(-30); // 60rpx -> 30pt
     }];
     
-    // 获取金融资质声明和风险提示标签
+    // 获取担保资质声明、业务说明和重要提示标签
     UILabel *qualificationLabel = nil;
     UILabel *qualificationDescLabel = nil;
+    UILabel *businessLabel = nil;
+    UILabel *businessDescLabel = nil;
     UILabel *riskLabel = nil;
     UILabel *riskDescLabel = nil;
     
     for (UIView *subview in self.contentView.subviews) {
         if ([subview isKindOfClass:[UILabel class]]) {
             UILabel *label = (UILabel *)subview;
-            if ([label.text isEqualToString:@"金融资质声明"]) {
+            if ([label.text isEqualToString:@"融资担保资质声明"]) {
                 qualificationLabel = label;
-            } else if ([label.text containsString:@"本平台为合规融资担保机构"]) {
+            } else if ([label.text containsString:@"本平台为持牌融资担保服务机构"]) {
                 qualificationDescLabel = label;
-            } else if ([label.text isEqualToString:@"风险提示"]) {
+            } else if ([label.text isEqualToString:@"业务范围说明"]) {
+                businessLabel = label;
+            } else if ([label.text containsString:@"我们专注于为客户提供融资担保服务"]) {
+                businessDescLabel = label;
+            } else if ([label.text isEqualToString:@"重要提示"]) {
                 riskLabel = label;
-            } else if ([label.text containsString:@"借款有风险"]) {
+            } else if ([label.text containsString:@"融资担保服务存在一定风险"]) {
                 riskDescLabel = label;
             }
         }
     }
     
-    // 设置金融资质声明约束
+    // 设置担保资质声明约束
     if (qualificationLabel) {
         [qualificationLabel mas_makeConstraints:^(MASConstraintMaker *make) {
             make.top.equalTo(self.appInfoView.mas_bottom).offset(30);
@@ -254,10 +276,25 @@
         }];
     }
     
-    // 设置风险提示约束
+    // 设置业务说明约束
+    if (businessLabel) {
+        [businessLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.top.equalTo(qualificationDescLabel.mas_bottom).offset(20);
+            make.left.right.equalTo(self.contentView).inset(15);
+        }];
+    }
+    
+    if (businessDescLabel) {
+        [businessDescLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.top.equalTo(businessLabel.mas_bottom).offset(10);
+            make.left.right.equalTo(self.contentView).inset(15);
+        }];
+    }
+    
+    // 设置重要提示约束
     if (riskLabel) {
         [riskLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.top.equalTo(qualificationDescLabel.mas_bottom).offset(20);
+            make.top.equalTo(businessDescLabel.mas_bottom).offset(20);
             make.left.right.equalTo(self.contentView).inset(15);
         }];
     }
