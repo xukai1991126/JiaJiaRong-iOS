@@ -29,15 +29,35 @@
     titleLabel.textAlignment = NSTextAlignmentCenter;
     [self addSubview:titleLabel];
     
-    // 助贷机构信息
-    UIView *institutionView = [self createInfoRowWithTitle:@"助贷机构：" 
-                                                   content:@"普洛互联网金融信息服务（上海）有限公司"];
-    [self addSubview:institutionView];
-    
-    // 资金来源信息
-    UIView *fundingView = [self createInfoRowWithTitle:@"资金来源：" 
-                                                content:@"南京市天下提融互联网科技小额贷款有限公司"];
-    [self addSubview:fundingView];
+    // 助贷机构
+    UILabel *institutionTitleLabel = [[UILabel alloc] init];
+    institutionTitleLabel.text = @"助贷机构：";
+    institutionTitleLabel.font = FONT_REGULAR(14);
+    institutionTitleLabel.textColor = [UIColor colorWithHexString:@"#333333"];
+    institutionTitleLabel.textAlignment = NSTextAlignmentLeft;
+    [self addSubview:institutionTitleLabel];
+
+    UILabel *institutionContentLabel = [[UILabel alloc] init];
+    institutionContentLabel.text = @"普洛互联网金融信息服务（上海）有限公司";
+    institutionContentLabel.font = FONT_REGULAR(14);
+    institutionContentLabel.textColor = [UIColor colorWithHexString:@"#666666"];
+    institutionContentLabel.textAlignment = NSTextAlignmentLeft;
+    [self addSubview:institutionContentLabel];
+
+    // 资金来源
+    UILabel *fundingTitleLabel = [[UILabel alloc] init];
+    fundingTitleLabel.text = @"资金来源：";
+    fundingTitleLabel.font = FONT_REGULAR(14);
+    fundingTitleLabel.textColor = [UIColor colorWithHexString:@"#333333"];
+    fundingTitleLabel.textAlignment = NSTextAlignmentLeft;
+    [self addSubview:fundingTitleLabel];
+
+    UILabel *fundingContentLabel = [[UILabel alloc] init];
+    fundingContentLabel.text = @"南京市天下提融互联网科技小额贷款有限公司";
+    fundingContentLabel.font = FONT_REGULAR(14);
+    fundingContentLabel.textColor = [UIColor colorWithHexString:@"#666666"];
+    fundingContentLabel.textAlignment = NSTextAlignmentLeft;
+    [self addSubview:fundingContentLabel];
     
     // 温馨提示
     UILabel *warningTitleLabel = [[UILabel alloc] init];
@@ -59,20 +79,27 @@
         make.centerX.equalTo(self);
     }];
     
-    [institutionView mas_makeConstraints:^(MASConstraintMaker *make) {
+    [institutionTitleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(titleLabel.mas_bottom).offset(20);
-        make.left.right.equalTo(self).inset(20);
-        make.height.mas_equalTo(20);
+        make.left.equalTo(self).offset(20);
     }];
-    
-    [fundingView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(institutionView.mas_bottom).offset(10);
-        make.left.right.equalTo(self).inset(20);
-        make.height.mas_equalTo(20);
+    [institutionContentLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(institutionTitleLabel.mas_right);
+        make.centerY.equalTo(institutionTitleLabel);
+        make.right.lessThanOrEqualTo(self).offset(-20);
+    }];
+    [fundingTitleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(institutionTitleLabel.mas_bottom).offset(10);
+        make.left.equalTo(self).offset(20);
+    }];
+    [fundingContentLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(fundingTitleLabel.mas_right);
+        make.centerY.equalTo(fundingTitleLabel);
+        make.right.lessThanOrEqualTo(self).offset(-20);
     }];
     
     [warningTitleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(fundingView.mas_bottom).offset(20);
+        make.top.equalTo(fundingContentLabel.mas_bottom).offset(20);
         make.left.equalTo(self).offset(20);
     }];
     
@@ -95,6 +122,7 @@
     UILabel *contentLabel = [[UILabel alloc] init];
     contentLabel.text = content;
     contentLabel.font = FONT_REGULAR(14);
+    contentLabel.textAlignment = NSTextAlignmentLeft;
     contentLabel.textColor = [UIColor colorWithHexString:@"#666666"];
     [rowView addSubview:contentLabel];
     

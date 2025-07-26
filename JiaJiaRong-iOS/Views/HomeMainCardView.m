@@ -53,7 +53,7 @@
     // 金额数值
     self.amountValueLabel = [[UILabel alloc] init];
     self.amountValueLabel.font = FONT_BOLD(42);
-    self.amountValueLabel.textColor = [UIColor colorWithHexString:@"#3366FF"];
+    self.amountValueLabel.textColor = [UIColor colorWithHexString:@"#FF772C"];
     self.amountValueLabel.textAlignment = NSTextAlignmentCenter;
     [self.cardContainer addSubview:self.amountValueLabel];
     

@@ -169,7 +169,7 @@
     
     [nameLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(avatarView.mas_right).offset(10);
-        make.top.equalTo(testimonialView).offset(12);
+        make.top.equalTo(testimonialView).offset(6);
     }];
     
     [phoneLabel mas_makeConstraints:^(MASConstraintMaker *make) {

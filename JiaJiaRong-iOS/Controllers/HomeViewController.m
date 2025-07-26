@@ -267,7 +267,7 @@
 - (void)handleUserFlow {
     // 根据用户状态跳转不同页面
     // 这里暂时使用假数据，实际应该从网络获取用户状态
-    [self navigateToForm];
+        [self navigateToForm];
 }
 
 #pragma mark - Navigation
