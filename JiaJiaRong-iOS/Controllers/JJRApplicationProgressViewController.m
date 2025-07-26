@@ -209,7 +209,7 @@ typedef NS_ENUM(NSInteger, ProgressSectionType) {
     UILabel *amountLabel = [[UILabel alloc] init];
     amountLabel.text = self.viewModel.approvedAmount;
     amountLabel.font = FONT_BOLD(32); // 减小字体确保显示完整
-    amountLabel.textColor = [UIColor colorWithHexString:@"#3B82F6"];
+    amountLabel.textColor = [UIColor colorWithHexString:@"#FF772C"];
     amountLabel.textAlignment = NSTextAlignmentLeft;
     amountLabel.numberOfLines = 1;
     amountLabel.adjustsFontSizeToFitWidth = YES;
@@ -218,13 +218,27 @@ typedef NS_ENUM(NSInteger, ProgressSectionType) {
     
     // 时间信息
     UILabel *timeLabel = [[UILabel alloc] init];
-    timeLabel.text = [NSString stringWithFormat:@"%@", self.viewModel.processingTime];
-    timeLabel.font = FONT_BOLD(32); // 减小字体确保显示完整
-    timeLabel.textColor = [UIColor colorWithHexString:@"#3B82F6"];
+    
+    // 创建富文本，60字体32号，分钟内字体20号
+    NSMutableAttributedString *timeAttributedString = [[NSMutableAttributedString alloc] init];
+    
+    // "60"部分 - 32号字体
+    NSAttributedString *numberPart = [[NSAttributedString alloc] initWithString:@"60" attributes:@{
+        NSFontAttributeName: FONT_BOLD(32),
+        NSForegroundColorAttributeName: [UIColor colorWithHexString:@"#FF772C"]
+    }];
+    [timeAttributedString appendAttributedString:numberPart];
+    
+    // "分钟内"部分 - 20号字体
+    NSAttributedString *unitPart = [[NSAttributedString alloc] initWithString:@"分钟内" attributes:@{
+        NSFontAttributeName: FONT_BOLD(20),
+        NSForegroundColorAttributeName: [UIColor colorWithHexString:@"#FF772C"]
+    }];
+    [timeAttributedString appendAttributedString:unitPart];
+    
+    timeLabel.attributedText = timeAttributedString;
     timeLabel.textAlignment = NSTextAlignmentRight;
     timeLabel.numberOfLines = 1;
-    timeLabel.adjustsFontSizeToFitWidth = YES;
-    timeLabel.minimumScaleFactor = 0.5;
     [cardView addSubview:timeLabel];
     
     // 额度说明
@@ -251,14 +265,14 @@ typedef NS_ENUM(NSInteger, ProgressSectionType) {
     [amountLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(cardView).offset(20);
         make.top.equalTo(cardView).offset(20);
-        make.width.mas_equalTo(SCREEN_WIDTH/2 - 40);
+        make.width.mas_equalTo(SCREEN_WIDTH/2 - 50); // 减少10px，给timeLabel更多空间
         make.height.mas_equalTo(60);
     }];
     
     [timeLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.right.equalTo(cardView).offset(-20);
         make.centerY.equalTo(amountLabel);
-        make.width.mas_equalTo(SCREEN_WIDTH/2 - 40);
+        make.width.mas_equalTo(SCREEN_WIDTH/2 - 30); // 增加10px空间
         make.height.mas_equalTo(60);
     }];
     
@@ -441,9 +455,10 @@ typedef NS_ENUM(NSInteger, ProgressSectionType) {
         }];
         
         [stepsContainer mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.top.equalTo(titleLabel.mas_bottom).offset(20);
+            make.top.equalTo(titleLabel.mas_bottom).offset(25);
             make.left.right.equalTo(cardView);
-            make.bottom.equalTo(cardView).offset(-20);
+            make.bottom.equalTo(cardView).offset(-15);
+            make.height.mas_equalTo(130); // 减少高度，因为移除了状态标签
         }];
     }
 }
@@ -451,16 +466,15 @@ typedef NS_ENUM(NSInteger, ProgressSectionType) {
 - (void)addStepToContainer:(UIView *)container atIndex:(NSInteger)index {
     NSDictionary *stepInfo = self.viewModel.progressSteps[index];
     
-    // 步骤图标
+    // 步骤图标 - 使用ViewModel中的图标数据
     UIImageView *stepIcon = [[UIImageView alloc] init];
+    stepIcon.image = [UIImage imageNamed:stepInfo[@"icon"]];
+    stepIcon.contentMode = UIViewContentModeScaleAspectFit;
+    
+    // 根据状态设置图标颜色
     if ([stepInfo[@"status"] isEqualToString:@"completed"]) {
-        stepIcon.image = [UIImage systemImageNamed:@"checkmark.circle.fill"];
         stepIcon.tintColor = [UIColor colorWithHexString:@"#4CAF50"];
-    } else if ([stepInfo[@"status"] isEqualToString:@"current"]) {
-        stepIcon.image = [UIImage systemImageNamed:@"phone.circle.fill"];
-        stepIcon.tintColor = [UIColor colorWithHexString:@"#3B82F6"];
     } else {
-        stepIcon.image = [UIImage systemImageNamed:@"dollarsign.circle"];
         stepIcon.tintColor = [UIColor colorWithHexString:@"#CCCCCC"];
     }
     [container addSubview:stepIcon];
@@ -468,45 +482,37 @@ typedef NS_ENUM(NSInteger, ProgressSectionType) {
     // 步骤标题
     UILabel *stepLabel = [[UILabel alloc] init];
     stepLabel.text = stepInfo[@"title"];
-    stepLabel.font = FONT_MEDIUM(14);
-    stepLabel.textColor = [stepInfo[@"status"] isEqualToString:@"pending"] ? 
-                         [UIColor colorWithHexString:@"#999999"] : 
-                         [UIColor colorWithHexString:@"#333333"];
+    stepLabel.font = FONT_MEDIUM(12); // 减小字体确保显示完整
+    stepLabel.textColor = [stepInfo[@"status"] isEqualToString:@"completed"] ? 
+                         [UIColor colorWithHexString:@"#333333"] : 
+                         [UIColor colorWithHexString:@"#999999"];
     stepLabel.textAlignment = NSTextAlignmentCenter;
+    stepLabel.numberOfLines = 0; // 允许多行
+    stepLabel.lineBreakMode = NSLineBreakByCharWrapping; // 按字符换行
+    stepLabel.adjustsFontSizeToFitWidth = YES; // 自动调整字体大小
+    stepLabel.minimumScaleFactor = 0.8; // 最小缩放比例
     [container addSubview:stepLabel];
-    
-    // 状态标签
-    UILabel *statusLabel = [[UILabel alloc] init];
-    if ([stepInfo[@"status"] isEqualToString:@"completed"]) {
-        statusLabel.text = @"已通过";
-        statusLabel.textColor = [UIColor colorWithHexString:@"#4CAF50"];
-    } else if ([stepInfo[@"status"] isEqualToString:@"current"]) {
-        statusLabel.text = @"请保持电话畅通";
-        statusLabel.textColor = [UIColor colorWithHexString:@"#3B82F6"];
-    } else {
-        statusLabel.text = @"放款到账";
-        statusLabel.textColor = [UIColor colorWithHexString:@"#999999"];
-    }
-    statusLabel.font = FONT_REGULAR(12);
-    statusLabel.textAlignment = NSTextAlignmentCenter;
-    [container addSubview:statusLabel];
     
     // 箭头（除了最后一个步骤）
     if (index < self.viewModel.progressSteps.count - 1) {
         UIImageView *arrowIcon = [[UIImageView alloc] init];
-        arrowIcon.image = [UIImage systemImageNamed:@"chevron.right"];
-        arrowIcon.tintColor = [UIColor colorWithHexString:@"#FF772C"];
+        arrowIcon.image = [UIImage imageNamed:@"aboutClassSchedule_right_bg"];
         [container addSubview:arrowIcon];
         
-        CGFloat arrowX = 80 + index * 110 + 50;
+        // 箭头位置在两个步骤之间
+        CGFloat stepWidth = (SCREEN_WIDTH - 40) / 3;
+        CGFloat arrowX = 20 + (index + 1) * stepWidth - 8; // 箭头位置优化
         [arrowIcon mas_makeConstraints:^(MASConstraintMaker *make) {
             make.left.equalTo(container).offset(arrowX);
             make.centerY.equalTo(stepIcon);
-            make.width.height.mas_equalTo(16);
+            make.width.mas_equalTo(8);
+            make.height.mas_equalTo(16);
         }];
     }
     
-    CGFloat stepX = 60 + index * 110;
+    // 计算每个步骤的X位置，确保在屏幕内合理分布
+    CGFloat stepWidth = (SCREEN_WIDTH - 40) / 3; // 减去左右边距20px
+    CGFloat stepX = 20 + index * stepWidth + stepWidth / 2 - 30; // 居中对齐
     
     [stepIcon mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(container).offset(stepX);
@@ -516,17 +522,10 @@ typedef NS_ENUM(NSInteger, ProgressSectionType) {
     
     [stepLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.centerX.equalTo(stepIcon);
-        make.top.equalTo(stepIcon.mas_bottom).offset(10);
-        make.width.mas_equalTo(80);
-        make.height.mas_equalTo(20);
-    }];
-    
-    [statusLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.centerX.equalTo(stepIcon);
-        make.top.equalTo(stepLabel.mas_bottom).offset(5);
-        make.bottom.equalTo(container).offset(-10);
-        make.width.mas_equalTo(80);
-        make.height.mas_equalTo(18);
+        make.top.equalTo(stepIcon.mas_bottom).offset(8);
+        make.bottom.lessThanOrEqualTo(container).offset(-10);
+        make.width.mas_equalTo(stepWidth - 20); // 使用更大的宽度，避免文字截断
+        make.height.greaterThanOrEqualTo(@35); // 增加最小高度
     }];
 }
 
@@ -610,7 +609,7 @@ typedef NS_ENUM(NSInteger, ProgressSectionType) {
         case ProgressSectionTypeReminder:
             return 80;
         case ProgressSectionTypeSteps:
-            return indexPath.row == 0 ? 160 : 0; // 只显示第一个，包含所有步骤
+            return indexPath.row == 0 ? 170 : 0; // 只显示第一个，包含所有步骤
         case ProgressSectionTypeContact:
             return 80;
         default:
