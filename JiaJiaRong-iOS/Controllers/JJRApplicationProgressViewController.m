@@ -38,6 +38,7 @@ typedef NS_ENUM(NSInteger, ProgressSectionType) {
     [self setupViewModel];
     [self setupGradientBackground];
     [self setupTableView];
+    [self setupCustomBackButton];
 }
 
 - (void)viewDidLayoutSubviews {
@@ -97,6 +98,26 @@ typedef NS_ENUM(NSInteger, ProgressSectionType) {
     
     // 注册cell
     [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:@"Cell"];
+}
+
+- (void)setupCustomBackButton {
+    // 创建自定义返回按钮，使用arrow_left图片
+    UIImage *backImage = [UIImage imageNamed:@"arrow_left"];
+    UIBarButtonItem *backButton = [[UIBarButtonItem alloc] initWithImage:backImage
+                                                                   style:UIBarButtonItemStylePlain 
+                                                                  target:self 
+                                                                  action:@selector(backToRootViewController)];
+    
+    // 设置按钮颜色
+    backButton.tintColor = [UIColor whiteColor];
+    
+    // 设置为左侧按钮
+    self.navigationItem.leftBarButtonItem = backButton;
+}
+
+- (void)backToRootViewController {
+    // 返回到根视图控制器
+    [self.navigationController popToRootViewControllerAnimated:YES];
 }
 
 #pragma mark - UITableViewDataSource
@@ -563,7 +584,7 @@ typedef NS_ENUM(NSInteger, ProgressSectionType) {
     UILabel *locationLabel = [[UILabel alloc] init];
     locationLabel.text = self.viewModel.serviceLocation;
     locationLabel.font = FONT_MEDIUM(16);
-    locationLabel.textColor = [UIColor colorWithHexString:@"#FF772C"];
+    locationLabel.textColor = [UIColor colorWithHexString:@"#3B82F6"];
     [cardView addSubview:locationLabel];
     
     [phoneIcon mas_makeConstraints:^(MASConstraintMaker *make) {

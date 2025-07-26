@@ -150,7 +150,7 @@
     [testimonialView addSubview:statusContainer];
     
     UIImageView *checkIcon = [[UIImageView alloc] init];
-    checkIcon.image = [UIImage imageNamed:@"hud_success"];
+    checkIcon.image = [UIImage imageNamed:@"img_fa2686883e60"];
     checkIcon.contentMode = UIViewContentModeScaleAspectFit;
     [statusContainer addSubview:checkIcon];
     
