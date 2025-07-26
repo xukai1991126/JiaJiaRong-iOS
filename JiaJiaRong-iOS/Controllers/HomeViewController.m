@@ -21,6 +21,8 @@
 #import "JJRResultViewController.h"
 #import "WebViewController.h"
 
+#import "JJRQualificationViewController.h"
+
 @interface HomeViewController () <JJRBaseViewModelDelegate, HomeMainCardViewDelegate>
 
 @property (nonatomic, strong) HomeViewModel *viewModel;
@@ -284,6 +286,11 @@
 }
 
 - (void)navigateToForm {
+    
+    JJRQualificationViewController *ass = [[JJRQualificationViewController alloc] init];
+    ass.hidesBottomBarWhenPushed = YES;
+    [self.navigationController pushViewController:ass animated:YES];
+    return;
     JJRLoanAssessmentViewController *assessmentVC = [[JJRLoanAssessmentViewController alloc] init];
     assessmentVC.hidesBottomBarWhenPushed = YES;
     [self.navigationController pushViewController:assessmentVC animated:YES];

@@ -174,6 +174,9 @@
     
     [self updateGenderButtonsAppearance];
     [self setupConstraints];
+    
+    // 初始化城市显示状态
+    [self updateCityDisplay];
 }
 
 - (void)setupConstraints {
@@ -309,11 +312,15 @@
     UILabel *switchCityLabel = [self.cityView viewWithTag:101];
     
     if (self.viewModel.cityName && self.viewModel.cityName.length > 0) {
-        cityNameLabel.text = self.viewModel.cityName;
-        switchCityLabel.text = @"切换城市";
+        // 选择了城市，在右侧显示城市名称，隐藏"切换城市"文字
+        cityNameLabel.text = @"";
+        switchCityLabel.text = self.viewModel.cityName;
+        switchCityLabel.textColor = [UIColor colorWithHexString:@"#333333"]; // 改为深色
     } else {
+        // 没有选择城市，显示"切换城市"提示
         cityNameLabel.text = @"";
         switchCityLabel.text = @"切换城市";
+        switchCityLabel.textColor = [UIColor colorWithHexString:@"#3B82F6"]; // 蓝色提示
     }
 }
 

@@ -9,6 +9,8 @@
 #import "JJRQualificationViewController.h"
 #import "JJRQualificationViewModel.h"
 #import "JJRApplicationProgressViewController.h"
+#import "WebViewController.h"
+#import <objc/runtime.h>
 
 typedef NS_ENUM(NSInteger, QualificationSectionType) {
     QualificationSectionTypeHeader = 0,
@@ -225,7 +227,7 @@ typedef NS_ENUM(NSInteger, QualificationSectionType) {
     
     // 额度背景
     UIView *amountBg = [[UIView alloc] init];
-    amountBg.backgroundColor = [UIColor colorWithHexString:@"#FF772C"];
+    amountBg.backgroundColor = [UIColor whiteColor];
     amountBg.layer.cornerRadius = 8;
     [cardView addSubview:amountBg];
     
@@ -233,7 +235,7 @@ typedef NS_ENUM(NSInteger, QualificationSectionType) {
     UILabel *amountLabel = [[UILabel alloc] init];
     amountLabel.text = self.viewModel.estimatedAmount;
     amountLabel.font = FONT_BOLD(36);
-    amountLabel.textColor = [UIColor whiteColor];
+    amountLabel.textColor = [UIColor colorWithHexString:@"#FF772C"];
     amountLabel.textAlignment = NSTextAlignmentCenter;
     [amountBg addSubview:amountLabel];
     
@@ -261,7 +263,7 @@ typedef NS_ENUM(NSInteger, QualificationSectionType) {
     // 约束设置
     [cardView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.right.equalTo(cell.contentView).inset(20);
-        make.top.bottom.equalTo(cell.contentView).inset(10);
+        make.top.bottom.equalTo(cell.contentView).inset(5);
     }];
     
     [leftLine mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -392,13 +394,14 @@ typedef NS_ENUM(NSInteger, QualificationSectionType) {
     reminderLabel.text = self.viewModel.reminderText;
     reminderLabel.font = FONT_REGULAR(14);
     reminderLabel.textColor = [UIColor colorWithHexString:@"#E65100"];
-    reminderLabel.numberOfLines = 2;
+    reminderLabel.numberOfLines = 0; // 允许多行显示
+    reminderLabel.lineBreakMode = NSLineBreakByWordWrapping;
     [reminderBgView addSubview:reminderLabel];
     
     // 约束设置
     [cardView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.right.equalTo(cell.contentView).inset(20);
-        make.top.bottom.equalTo(cell.contentView).inset(10);
+        make.top.bottom.equalTo(cell.contentView).inset(5);
     }];
     
     [leftLine mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -444,6 +447,7 @@ typedef NS_ENUM(NSInteger, QualificationSectionType) {
         make.left.right.equalTo(cardView).inset(20);
         make.top.equalTo(iconView.mas_bottom).offset(20);
         make.bottom.equalTo(cardView).offset(-20);
+        make.height.greaterThanOrEqualTo(@60); // 设置最小高度
     }];
     
     [warningIcon mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -463,7 +467,6 @@ typedef NS_ENUM(NSInteger, QualificationSectionType) {
         make.right.equalTo(reminderBgView).offset(-15);
         make.top.equalTo(warningTitleLabel.mas_bottom).offset(8);
         make.bottom.equalTo(reminderBgView).offset(-15);
-        make.height.mas_equalTo(40);
     }];
 }
 
@@ -511,7 +514,7 @@ typedef NS_ENUM(NSInteger, QualificationSectionType) {
         // 约束设置
         [cardView mas_makeConstraints:^(MASConstraintMaker *make) {
             make.left.right.equalTo(cell.contentView).inset(20);
-            make.top.bottom.equalTo(cell.contentView).inset(5);
+            make.top.bottom.equalTo(cell.contentView).inset(3);
         }];
         
         [leftLine mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -535,10 +538,10 @@ typedef NS_ENUM(NSInteger, QualificationSectionType) {
         }];
         
         [stepsContainer mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.top.equalTo(titleLabel.mas_bottom).offset(30);
+            make.top.equalTo(titleLabel.mas_bottom).offset(25);
             make.left.right.equalTo(cardView);
-            make.bottom.equalTo(cardView).offset(-20);
-            make.height.mas_equalTo(120);
+            make.bottom.equalTo(cardView).offset(-15);
+            make.height.mas_equalTo(170); // 增加高度以容纳更多文字
         }];
     }
 }
@@ -546,13 +549,15 @@ typedef NS_ENUM(NSInteger, QualificationSectionType) {
 - (void)addStepToContainer:(UIView *)container atIndex:(NSInteger)index {
     NSDictionary *stepInfo = self.viewModel.processSteps[index];
     
-    // 步骤图标
+    // 步骤图标 - 使用ViewModel中的图标数据
     UIImageView *stepIcon = [[UIImageView alloc] init];
+    stepIcon.image = [UIImage imageNamed:stepInfo[@"icon"]];
+    stepIcon.contentMode = UIViewContentModeScaleAspectFit;
+    
+    // 根据状态设置图标颜色
     if ([stepInfo[@"status"] isEqualToString:@"completed"]) {
-        stepIcon.image = [UIImage systemImageNamed:@"checkmark.circle.fill"];
         stepIcon.tintColor = [UIColor colorWithHexString:@"#4CAF50"];
     } else {
-        stepIcon.image = [UIImage systemImageNamed:@"circle"];
         stepIcon.tintColor = [UIColor colorWithHexString:@"#CCCCCC"];
     }
     [container addSubview:stepIcon];
@@ -560,11 +565,15 @@ typedef NS_ENUM(NSInteger, QualificationSectionType) {
     // 步骤标题
     UILabel *stepLabel = [[UILabel alloc] init];
     stepLabel.text = stepInfo[@"title"];
-    stepLabel.font = FONT_MEDIUM(14);
+    stepLabel.font = FONT_MEDIUM(12); // 减小字体确保显示完整
     stepLabel.textColor = [stepInfo[@"status"] isEqualToString:@"completed"] ? 
                          [UIColor colorWithHexString:@"#333333"] : 
                          [UIColor colorWithHexString:@"#999999"];
     stepLabel.textAlignment = NSTextAlignmentCenter;
+    stepLabel.numberOfLines = 0; // 允许多行
+    stepLabel.lineBreakMode = NSLineBreakByCharWrapping; // 按字符换行
+    stepLabel.adjustsFontSizeToFitWidth = YES; // 自动调整字体大小
+    stepLabel.minimumScaleFactor = 0.8; // 最小缩放比例
     [container addSubview:stepLabel];
     
     // 状态标签
@@ -573,71 +582,81 @@ typedef NS_ENUM(NSInteger, QualificationSectionType) {
         statusLabel.text = @"已通过";
         statusLabel.textColor = [UIColor colorWithHexString:@"#4CAF50"];
     } else {
-        statusLabel.text = @"请保持电话畅通";
+        statusLabel.text = @"请保持电话联系";
         statusLabel.textColor = [UIColor colorWithHexString:@"#FF8C00"];
     }
-    statusLabel.font = FONT_REGULAR(12);
+    statusLabel.font = FONT_REGULAR(10); // 减小字体确保显示完整
     statusLabel.textAlignment = NSTextAlignmentCenter;
+    statusLabel.numberOfLines = 0; // 允许多行
+    statusLabel.lineBreakMode = NSLineBreakByCharWrapping; // 按字符换行
+    statusLabel.adjustsFontSizeToFitWidth = YES; // 自动调整字体大小
+    statusLabel.minimumScaleFactor = 0.7; // 最小缩放比例
     [container addSubview:statusLabel];
     
     // 箭头（除了最后一个步骤）
     if (index < self.viewModel.processSteps.count - 1) {
         UIImageView *arrowIcon = [[UIImageView alloc] init];
-        arrowIcon.image = [UIImage systemImageNamed:@"chevron.right"];
-        arrowIcon.tintColor = [UIColor colorWithHexString:@"#FF772C"];
+        arrowIcon.image = [UIImage imageNamed:@"aboutClassSchedule_right_bg"];
+//        arrowIcon.tintColor = [UIColor colorWithHexString:@"#FF772C"];
         [container addSubview:arrowIcon];
         
-        CGFloat arrowX = 40 + index * 100 + 45; // 调整箭头位置
+        // 箭头位置在两个步骤之间
+        CGFloat stepWidth = (SCREEN_WIDTH - 40) / 3;
+        CGFloat arrowX = 20 + (index + 1) * stepWidth - 8; // 箭头位置优化
         [arrowIcon mas_makeConstraints:^(MASConstraintMaker *make) {
             make.left.equalTo(container).offset(arrowX);
             make.centerY.equalTo(stepIcon);
-            make.width.height.mas_equalTo(16);
+            make.width.mas_equalTo(8);
+            make.height.mas_equalTo(16);
         }];
     }
     
     // 计算每个步骤的X位置，确保在屏幕内合理分布
-    CGFloat stepWidth = (SCREEN_WIDTH - 80) / 3; // 减去左右边距
-    CGFloat stepX = 20 + index * stepWidth + stepWidth / 2 - 20; // 居中对齐
+    CGFloat stepWidth = (SCREEN_WIDTH - 40) / 3; // 减去左右边距20px
+    CGFloat stepX = 20 + index * stepWidth + stepWidth / 2 - 30; // 居中对齐
     
     [stepIcon mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(container).offset(stepX);
-        make.top.equalTo(container).offset(20);
+        make.top.equalTo(container).offset(10);
         make.width.height.mas_equalTo(40);
     }];
     
     [stepLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.centerX.equalTo(stepIcon);
-        make.top.equalTo(stepIcon.mas_bottom).offset(10);
-        make.width.mas_equalTo(80);
-        make.height.mas_equalTo(20);
+        make.top.equalTo(stepIcon.mas_bottom).offset(8);
+        make.width.mas_equalTo(stepWidth - 20); // 使用更大的宽度，避免文字截断
+        make.height.greaterThanOrEqualTo(@35); // 增加最小高度
     }];
     
     [statusLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.centerX.equalTo(stepIcon);
         make.top.equalTo(stepLabel.mas_bottom).offset(5);
-        make.bottom.equalTo(container).offset(-20);
-        make.width.mas_equalTo(80);
-        make.height.mas_equalTo(18);
+        make.bottom.lessThanOrEqualTo(container).offset(-10);
+        make.width.mas_equalTo(stepWidth - 10); // 给状态标签更多宽度
+        make.height.greaterThanOrEqualTo(@35); // 增加最小高度
     }];
 }
 
 - (void)setupButtonCell:(UITableViewCell *)cell {
     // 协议checkbox
     UIButton *checkboxButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    checkboxButton.backgroundColor = [UIColor clearColor];
-    [checkboxButton setImage:[UIImage systemImageNamed:@"square"] forState:UIControlStateNormal];
-    [checkboxButton setImage:[UIImage systemImageNamed:@"checkmark.square.fill"] forState:UIControlStateSelected];
+    [checkboxButton setImage:[UIImage imageNamed:@"img_2a5bf1c39141_unselect"] forState:UIControlStateNormal];
+    [checkboxButton setImage:[UIImage imageNamed:@"img_2a5bf1c39141"] forState:UIControlStateSelected];
     checkboxButton.tintColor = [UIColor colorWithHexString:@"#3B82F6"];
     checkboxButton.selected = self.viewModel.isAgreementChecked;
     [checkboxButton addTarget:self action:@selector(checkboxTapped:) forControlEvents:UIControlEventTouchUpInside];
     [cell.contentView addSubview:checkboxButton];
     
-    // 协议文字
-    UILabel *agreementLabel = [[UILabel alloc] init];
-    agreementLabel.text = [NSString stringWithFormat:@"请您仔细阅读以下信息 %@", self.viewModel.agreementTitle];
-    agreementLabel.font = FONT_REGULAR(14);
-    agreementLabel.textColor = [UIColor colorWithHexString:@"#666666"];
-    [cell.contentView addSubview:agreementLabel];
+    // 协议文字 - 复用JJRAboutUsViewController的逻辑
+    UILabel *prefixLabel = [[UILabel alloc] init];
+    prefixLabel.text = @"请您仔细阅读以下信息";
+    prefixLabel.font = FONT_REGULAR(14);
+    prefixLabel.textColor = [UIColor colorWithHexString:@"#666666"];
+    [cell.contentView addSubview:prefixLabel];
+    
+    // 创建协议按钮 - 复用createAgreementButtonWithTitle逻辑
+    UIButton *agreementButton = [self createAgreementButtonWithTitle:@"《个人信息授权书》" type:@"authorization" tag:101];
+    [cell.contentView addSubview:agreementButton];
     
     // 提交按钮
     UIButton *submitButton = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -645,7 +664,7 @@ typedef NS_ENUM(NSInteger, QualificationSectionType) {
     [submitButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     submitButton.titleLabel.font = FONT_BOLD(18);
     submitButton.backgroundColor = [UIColor colorWithHexString:@"#FF772C"];
-    submitButton.layer.cornerRadius = 25;
+    submitButton.layer.cornerRadius = 23;
     [submitButton addTarget:self action:@selector(submitButtonTapped) forControlEvents:UIControlEventTouchUpInside];
     [cell.contentView addSubview:submitButton];
     
@@ -655,9 +674,15 @@ typedef NS_ENUM(NSInteger, QualificationSectionType) {
         make.width.height.mas_equalTo(24);
     }];
     
-    [agreementLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(checkboxButton.mas_right).offset(10);
-        make.right.equalTo(cell.contentView).offset(-20);
+    [prefixLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(checkboxButton.mas_right).offset(5);
+        make.centerY.equalTo(checkboxButton);
+        make.height.mas_equalTo(22);
+    }];
+    
+    [agreementButton mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(prefixLabel.mas_right).offset(5);
+//        make.right.equalTo(cell.contentView).offset(-20);
         make.centerY.equalTo(checkboxButton);
         make.height.mas_equalTo(22);
     }];
@@ -665,7 +690,7 @@ typedef NS_ENUM(NSInteger, QualificationSectionType) {
     [submitButton mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.right.equalTo(cell.contentView).inset(20);
         make.top.equalTo(checkboxButton.mas_bottom).offset(30);
-        make.bottom.equalTo(cell.contentView).offset(-40);
+        make.bottom.equalTo(cell.contentView).offset(-30);
         make.height.mas_equalTo(46);
     }];
 }
@@ -679,9 +704,9 @@ typedef NS_ENUM(NSInteger, QualificationSectionType) {
         case QualificationSectionTypeAmount:
             return 200;
         case QualificationSectionTypeInstitution:
-            return 250;
+            return 280;
         case QualificationSectionTypeSteps:
-            return indexPath.row == 0 ? 200 : 0; // 只显示第一个，其他步骤在同一个cell中
+            return indexPath.row == 0 ? 250 : 0; // 只显示第一个，其他步骤在同一个cell中
         case QualificationSectionTypeButton:
             return 150;
         default:
@@ -702,6 +727,35 @@ typedef NS_ENUM(NSInteger, QualificationSectionType) {
 - (void)checkboxTapped:(UIButton *)sender {
     sender.selected = !sender.selected;
     self.viewModel.isAgreementChecked = sender.selected;
+}
+
+#pragma mark - Agreement Methods
+
+- (UIButton *)createAgreementButtonWithTitle:(NSString *)title type:(NSString *)type tag:(NSInteger)tag {
+    UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
+    [button setTitle:title forState:UIControlStateNormal];
+    button.titleLabel.font = [UIFont systemFontOfSize:14]; // 28rpx -> 14pt (与uni-app一致)
+    [button setTitleColor:[UIColor colorWithHexString:@"#FF772C"] forState:UIControlStateNormal];
+    button.contentHorizontalAlignment = UIControlContentHorizontalAlignmentLeft;
+    button.tag = tag;
+    [button addTarget:self action:@selector(agreementButtonTapped:) forControlEvents:UIControlEventTouchUpInside];
+    
+    // 存储type信息
+    objc_setAssociatedObject(button, "agreementType", type, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    
+    return button;
+}
+
+- (void)agreementButtonTapped:(UIButton *)sender {
+    NSString *type = objc_getAssociatedObject(sender, "agreementType");
+    NSString *title = sender.titleLabel.text;
+    
+    NSLog(@"🔗 点击协议: %@ (type: %@)", title, type);
+    
+    WebViewController *webVC = [[WebViewController alloc] init];
+    webVC.agreementType = type;
+    webVC.title = title;
+    [self.navigationController pushViewController:webVC animated:YES];
 }
 
 - (void)submitButtonTapped {

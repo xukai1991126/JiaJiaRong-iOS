@@ -265,7 +265,7 @@ typedef NS_ENUM(NSInteger, ProgressSectionType) {
     
     // 机构图标
     UIImageView *iconView = [[UIImageView alloc] init];
-    iconView.image = [UIImage imageNamed:@"img_29938b72a413"];
+    iconView.image = [UIImage imageNamed:@"img_akfjfkjakjfjk"];
     iconView.contentMode = UIViewContentModeScaleAspectFit;
     iconView.layer.cornerRadius = 25;
     [cardView addSubview:iconView];

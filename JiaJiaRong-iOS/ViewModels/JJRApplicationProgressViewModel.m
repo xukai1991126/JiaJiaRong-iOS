@@ -35,9 +35,9 @@
     
     // 步骤信息
     _progressSteps = @[
-        @{@"title": @"智能资质审核", @"status": @"completed", @"icon": @"step_check"},
-        @{@"title": @"人工电话复审", @"status": @"current", @"icon": @"step_phone"},
-        @{@"title": @"放款到账", @"status": @"pending", @"icon": @"step_money"}
+        @{@"title": @"智能资质审核", @"status": @"completed", @"icon": @"img_7a757391618c"},
+        @{@"title": @"人工电话复审", @"status": @"current", @"icon": @"img_1ccf22ec22d9"},
+        @{@"title": @"放款到账", @"status": @"pending", @"icon": @"img_5d69ae6da46f"}
     ];
     
     // 联系信息
