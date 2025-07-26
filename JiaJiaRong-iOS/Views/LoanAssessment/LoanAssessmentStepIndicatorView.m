@@ -55,39 +55,30 @@
 
 - (void)setupConstraints {
     CGFloat dotSize = 12;
-    CGFloat lineWidth = 20;
     
+    // 使用等分布局
     for (int i = 0; i < self.stepDots.count; i++) {
         UIView *dot = self.stepDots[i];
         [dot mas_makeConstraints:^(MASConstraintMaker *make) {
             make.centerY.equalTo(self);
             make.width.height.mas_equalTo(dotSize);
             
-            if (i == 0) {
-                make.left.equalTo(self);
-            } else {
-                UIView *prevLine = self.stepLines[i - 1];
-                make.left.equalTo(prevLine.mas_right);
-            }
+            // 等分布局：每个点占据 1/4 的宽度，居中对齐
+            make.centerX.equalTo(self).multipliedBy((2 * i + 1) / 4.0);
         }];
         
         // 连接线
         if (i < self.stepLines.count) {
             UIView *line = self.stepLines[i];
+            UIView *nextDot = self.stepDots[i + 1];
             [line mas_makeConstraints:^(MASConstraintMaker *make) {
                 make.centerY.equalTo(self);
                 make.left.equalTo(dot.mas_right);
-                make.width.mas_equalTo(lineWidth);
+                make.right.equalTo(nextDot.mas_left);
                 make.height.mas_equalTo(2);
             }];
         }
     }
-    
-    // 设置最后一个点的右约束
-    UIView *lastDot = self.stepDots.lastObject;
-    [lastDot mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.right.equalTo(self);
-    }];
 }
 
 - (void)updateWithCurrentStep:(LoanAssessmentStep)currentStep {
