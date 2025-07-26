@@ -15,6 +15,7 @@
 #import "JJRUserManager.h"
 #import "LoginViewController.h"
 #import "JJRApplyFormViewController.h"
+#import "JJRLoanAssessmentViewController.h"
 #import "JJRIdCardViewController.h"
 #import "JJRAuthorizationViewController.h"
 #import "JJRResultViewController.h"
@@ -283,9 +284,9 @@
 }
 
 - (void)navigateToForm {
-    JJRApplyFormViewController *formVC = [[JJRApplyFormViewController alloc] init];
-    formVC.hidesBottomBarWhenPushed = YES;
-    [self.navigationController pushViewController:formVC animated:YES];
+    JJRLoanAssessmentViewController *assessmentVC = [[JJRLoanAssessmentViewController alloc] init];
+    assessmentVC.hidesBottomBarWhenPushed = YES;
+    [self.navigationController pushViewController:assessmentVC animated:YES];
 }
 
 - (void)navigateToIDCard {
