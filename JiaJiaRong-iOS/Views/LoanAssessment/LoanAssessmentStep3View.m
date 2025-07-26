@@ -103,7 +103,7 @@
 }
 
 - (void)createOptionButtons {
-    NSArray<NSString *> *options = [self.viewModel optionsForCurrentStep];
+    NSArray<NSString *> *options = self.viewModel.allOptions[2]; // 直接使用第三步的选项
     
     for (int i = 0; i < options.count; i++) {
         UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -199,7 +199,7 @@
     } else {
         // 选中
         sender.selected = YES;
-        sender.backgroundColor = [UIColor colorWithHexString:@"#3B82F6"];
+        sender.backgroundColor = [UIColor colorWithHexString:@"#FF772C"];
         [self.viewModel selectOptionAtIndex:selectedIndex];
     }
     
@@ -232,7 +232,7 @@
         UIButton *button = self.optionButtons[i];
         if ([selectedSet containsObject:@(i)]) {
             button.selected = YES;
-            button.backgroundColor = [UIColor colorWithHexString:@"#3B82F6"];
+            button.backgroundColor = [UIColor colorWithHexString:@"#FF772C"];
         } else {
             button.selected = NO;
             button.backgroundColor = [UIColor colorWithHexString:@"#F5F5F5"];
