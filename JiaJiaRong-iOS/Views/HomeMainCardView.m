@@ -98,7 +98,7 @@
     [self.protocolTextView addSubview:protocolPrefixLabel];
     
     UIButton *privacyButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [privacyButton setTitle:@"《隐私协议》" forState:UIControlStateNormal];
+    [privacyButton setTitle:@" 《隐私协议》" forState:UIControlStateNormal];
     [privacyButton setTitleColor:[UIColor colorWithHexString:@"#FF772C"] forState:UIControlStateNormal];
     privacyButton.titleLabel.font = FONT_REGULAR(12);
     [privacyButton addTarget:self action:@selector(privacyAgreementTapped) forControlEvents:UIControlEventTouchUpInside];
@@ -148,6 +148,7 @@
     [self.protocolTextView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(self.protocolCheckbox.mas_right).offset(8);
         make.right.centerY.equalTo(self.protocolView);
+        make.height.equalTo(self.protocolView); // 保证高度一致
     }];
     
     [protocolPrefixLabel mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -157,6 +158,8 @@
     [privacyButton mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(protocolPrefixLabel.mas_right);
         make.centerY.equalTo(self.protocolTextView);
+        make.height.equalTo(@20);
+        make.width.greaterThanOrEqualTo(@60); // 增加最小宽度，保证可点
     }];
 }
 

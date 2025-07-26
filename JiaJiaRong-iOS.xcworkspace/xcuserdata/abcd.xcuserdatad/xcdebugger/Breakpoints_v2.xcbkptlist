@@ -19,33 +19,47 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "908095C2-F96C-416E-9A28-1CEB8646815B"
+            uuid = "7045A523-70D4-4CB2-9013-325489065BFB"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "JiaJiaRong-iOS/Controllers/HomeViewController.m"
+            filePath = "JiaJiaRong-iOS/Views/HomeMainCardView.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "255"
-            endingLineNumber = "255"
-            landmarkName = "-mainCardViewDidTapPrivacyAgreement"
+            startingLineNumber = "206"
+            endingLineNumber = "206"
+            landmarkName = "-protocolCheckboxTapped"
             landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "A62D9983-83FA-46C9-8C68-79A3BF57B686"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "JiaJiaRong-iOS/Controllers/HomeViewController.m"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "249"
-            endingLineNumber = "249"
-            landmarkName = "-mainCardViewDidTapServiceAgreement"
-            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "7045A523-70D4-4CB2-9013-325489065BFB - 3e894a21f71fb5cc"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "-[HomeMainCardView privacyAgreementTapped]"
+                  moduleName = "JiaJiaRong-iOS"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/abcd/Desktop/JiaJiaRong-iOS/JiaJiaRong-iOS/Views/HomeMainCardView.m"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "206"
+                  endingLineNumber = "206">
+               </Location>
+               <Location
+                  uuid = "7045A523-70D4-4CB2-9013-325489065BFB - 6bb538a713cc11c3"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "-[HomeMainCardView protocolCheckboxTapped]"
+                  moduleName = "JiaJiaRong-iOS"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/abcd/Desktop/JiaJiaRong-iOS/JiaJiaRong-iOS/Views/HomeMainCardView.m"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "206"
+                  endingLineNumber = "206">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>
