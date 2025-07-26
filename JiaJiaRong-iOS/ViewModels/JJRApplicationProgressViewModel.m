@@ -7,6 +7,7 @@
 //
 
 #import "JJRApplicationProgressViewModel.h"
+#import "JJRUserManager.h"
 
 @implementation JJRApplicationProgressViewModel
 
@@ -40,9 +41,29 @@
         @{@"title": @"放款到账", @"status": @"pending", @"icon": @"img_5d69ae6da46f"}
     ];
     
-    // 联系信息
+    // 联系信息 - 根据用户选择的城市动态生成
     _servicePhone = @"审核服务电话归属地：";
-    _serviceLocation = @"上海市";
+    _serviceLocation = [self getUserSelectedCity];
+}
+
+#pragma mark - Private Methods
+
+- (NSString *)getUserSelectedCity {
+    // 从NSUserDefaults获取用户选择的城市信息
+    NSDictionary *userData = [[JJRUserManager sharedManager] getUserDataFromDefaults];
+    NSString *cityName = userData[@"cityName"];
+    
+    // 如果没有选择城市，使用默认值
+    if (!cityName || cityName.length == 0) {
+        return @"上海市";
+    }
+    
+    // 确保城市名以"市"结尾，如果不是则添加
+    if (![cityName hasSuffix:@"市"] && ![cityName hasSuffix:@"区"] && ![cityName hasSuffix:@"县"]) {
+        return [NSString stringWithFormat:@"%@市", cityName];
+    }
+    
+    return cityName;
 }
 
 @end 

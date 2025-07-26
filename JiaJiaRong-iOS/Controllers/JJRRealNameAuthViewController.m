@@ -212,16 +212,7 @@
         [JJRNetworkService hideLoading];
         if ([responseObject[@"code"] integerValue] == 0) {
             [JJRToastTool showSuccess:@"提交成功"];
-            
-            // 更新用户信息
-            NSDictionary *userInfo = [[JJRUserManager sharedManager] userInfo];
-            NSMutableDictionary *updatedUserInfo = [userInfo mutableCopy] ?: [NSMutableDictionary dictionary];
-            updatedUserInfo[@"realNameAuth"] = @YES;
-            updatedUserInfo[@"realName"] = self.viewModel.realName;
-            updatedUserInfo[@"age"] = self.viewModel.age;
-            updatedUserInfo[@"gender"] = self.viewModel.isMale ? @"男" : @"女";
-            [[JJRUserManager sharedManager] updateUserInfo:updatedUserInfo];
-            
+
                          // 延迟跳转到资质初审页面
              dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
                  JJRQualificationViewController *qualificationVC = [[JJRQualificationViewController alloc] init];
@@ -247,6 +238,26 @@
 - (void)pushQualificationViewController {
     [JJRNetworkService hideLoading];
     [JJRToastTool showSuccess:@"提交成功"];
+    // 更新用户信息
+    NSDictionary *userInfo = [[JJRUserManager sharedManager] userInfo];
+    NSMutableDictionary *updatedUserInfo = [userInfo mutableCopy] ?: [NSMutableDictionary dictionary];
+    updatedUserInfo[@"realNameAuth"] = @YES;
+    updatedUserInfo[@"realName"] = self.viewModel.realName;
+    updatedUserInfo[@"age"] = self.viewModel.age;
+    updatedUserInfo[@"gender"] = self.viewModel.isMale ? @"男" : @"女";
+    updatedUserInfo[@"cityName"] = self.viewModel.cityName;
+    updatedUserInfo[@"cityCode"] = self.viewModel.cityCode;
+    [[JJRUserManager sharedManager] updateUserInfo:updatedUserInfo];
+    
+         // 同时保存到NSUserDefaults中，与token关联
+     [[JJRUserManager sharedManager] saveUserDataToDefaults:@{
+         @"realName": self.viewModel.realName ?: @"",
+         @"age": self.viewModel.age ?: @"",
+         @"gender": self.viewModel.isMale ? @"男" : @"女",
+         @"cityName": self.viewModel.cityName ?: @"",
+         @"cityCode": self.viewModel.cityCode ?: @""
+     }];
+    
     // 延迟跳转到资质初审页面
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
     JJRQualificationViewController *qualificationVC = [[JJRQualificationViewController alloc] init];
@@ -283,5 +294,7 @@
         [JJRToastTool showToast:@"获取城市数据失败"];
     }];
 }
+
+
 
 @end 

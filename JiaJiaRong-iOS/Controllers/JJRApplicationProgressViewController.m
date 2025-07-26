@@ -563,7 +563,7 @@ typedef NS_ENUM(NSInteger, ProgressSectionType) {
     UILabel *locationLabel = [[UILabel alloc] init];
     locationLabel.text = self.viewModel.serviceLocation;
     locationLabel.font = FONT_MEDIUM(16);
-    locationLabel.textColor = [UIColor colorWithHexString:@"#3B82F6"];
+    locationLabel.textColor = [UIColor colorWithHexString:@"#FF772C"];
     [cardView addSubview:locationLabel];
     
     [phoneIcon mas_makeConstraints:^(MASConstraintMaker *make) {

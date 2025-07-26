@@ -241,6 +241,11 @@
     }
     
     NSLog(@"🎯 用户已登录，进入申请表单页面");
+    if ([[JJRUserManager sharedManager] realFinish]) {
+        [self navigateToQualification];
+        return;
+    }
+    
     [self navigateToForm];
 }
 
@@ -285,16 +290,23 @@
     [self presentViewController:navController animated:YES completion:nil];
 }
 
-- (void)navigateToForm {
+
+- (void)navigateToQualification {
     
     JJRQualificationViewController *ass = [[JJRQualificationViewController alloc] init];
     ass.hidesBottomBarWhenPushed = YES;
     [self.navigationController pushViewController:ass animated:YES];
-    return;
+
+}
+
+- (void)navigateToForm {
+    
     JJRLoanAssessmentViewController *assessmentVC = [[JJRLoanAssessmentViewController alloc] init];
     assessmentVC.hidesBottomBarWhenPushed = YES;
     [self.navigationController pushViewController:assessmentVC animated:YES];
 }
+
+
 
 - (void)navigateToIDCard {
     JJRIdCardViewController *idCardVC = [[JJRIdCardViewController alloc] init];

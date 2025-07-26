@@ -164,7 +164,7 @@
     
     // 提交按钮
     self.submitButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [self.submitButton setTitle:@"领取授信额度" forState:UIControlStateNormal];
+    [self.submitButton setTitle:@"进行身份证认证" forState:UIControlStateNormal];
     [self.submitButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     self.submitButton.titleLabel.font = FONT_BOLD(16);
     self.submitButton.backgroundColor = [UIColor colorWithHexString:@"#FF772C"];

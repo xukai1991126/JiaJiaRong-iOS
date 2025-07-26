@@ -116,6 +116,9 @@ static NSString * const kMobileKey = @"mobile";
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:kMobileKey];
     [[NSUserDefaults standardUserDefaults] synchronize];
     
+    // 同时清除NSUserDefaults中的用户数据
+    [self clearUserDataFromDefaults];
+    
     [self updateLoginStatus];
 }
 
@@ -178,6 +181,60 @@ static NSString * const kMobileKey = @"mobile";
     NSLog(@"🎯 - userInfo: %@", self.userInfo ? @"有" : @"无");
     NSLog(@"🎯 - token: %@", self.token ? @"有" : @"无");
     NSLog(@"🎯 - mobile: %@", self.mobile ?: @"无");
+}
+
+#pragma mark - 用户数据存储（NSUserDefaults）
+
+- (void)saveUserDataToDefaults:(NSDictionary *)userData {
+    // 获取当前用户token
+    NSString *token = [self getCurrentToken];
+    if (!token || token.length == 0) {
+        token = @"default_user"; // 如果没有token，使用默认key
+    }
+    
+    // 使用token作为key保存用户数据
+    NSString *userDataKey = [NSString stringWithFormat:@"user_data_%@", token];
+    [[NSUserDefaults standardUserDefaults] setObject:userData forKey:userDataKey];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+    
+    NSLog(@"💾 保存用户数据到NSUserDefaults: key=%@, data=%@", userDataKey, userData);
+}
+
+- (NSDictionary *)getUserDataFromDefaults {
+    // 获取当前用户token
+    NSString *token = [self getCurrentToken];
+    if (!token || token.length == 0) {
+        token = @"default_user"; // 如果没有token，使用默认key
+    }
+    
+    // 使用token作为key读取用户数据
+    NSString *userDataKey = [NSString stringWithFormat:@"user_data_%@", token];
+    NSDictionary *userData = [[NSUserDefaults standardUserDefaults] objectForKey:userDataKey];
+    
+    NSLog(@"📖 从NSUserDefaults读取用户数据: key=%@, data=%@", userDataKey, userData);
+    return userData;
+}
+
+- (void)clearUserDataFromDefaults {
+    // 获取当前用户token
+    NSString *token = [self getCurrentToken];
+    if (!token || token.length == 0) {
+        token = @"default_user"; // 如果没有token，使用默认key
+    }
+    
+    // 使用token作为key清除用户数据
+    NSString *userDataKey = [NSString stringWithFormat:@"user_data_%@", token];
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:userDataKey];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+    
+    NSLog(@"🗑️ 从NSUserDefaults清除用户数据: key=%@", userDataKey);
+}
+
+//完成实名认证
+- (BOOL)realFinish {
+    NSDictionary *userData = [[JJRUserManager sharedManager] getUserDataFromDefaults];
+    NSString *realName = userData[@"realName"];
+    return realName.length;
 }
 
 #pragma mark - 调试信息

@@ -8,6 +8,7 @@
 
 #import "HomeViewModel.h"
 #import "JJRNetworkService.h"
+#import "JJRUserManager.h"
 
 @interface HomeViewModel ()
 
@@ -84,7 +85,7 @@
         [self updateLoginButtonTitle];
         
         // 根据audit状态设置协议显示
-        self.showProtocolCheckbox = [self.userInfo[@"audit"] integerValue] == 0;
+        self.showProtocolCheckbox = [self.userInfo[@"audit"] integerValue] == 0 && ![[JJRUserManager sharedManager] realFinish];
         
         [self finishLoading];
         [self updateData];
@@ -103,7 +104,8 @@
 
 - (void)updateLoginButtonTitleWithLoginStatus:(BOOL)isLoggedIn {
     if (isLoggedIn) {
-        self.loginButtonTitle = @"领取授信额度";
+        
+        self.loginButtonTitle = [[JJRUserManager sharedManager] realFinish] ? @"查看额度申请": @"领取授信额度";
     } else {
         self.loginButtonTitle = @"本机号码一键登录";
     }

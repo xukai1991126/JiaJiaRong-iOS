@@ -40,6 +40,9 @@ NS_ASSUME_NONNULL_BEGIN
 // 清除所有用户数据
 - (void)clearAllUserData;
 
+//完成实名认证
+- (BOOL)realFinish;
+
 #pragma mark - Token管理
 // 保存token（和uni-app一致，只有一个token）
 - (void)saveToken:(NSString *)token;
@@ -60,6 +63,16 @@ NS_ASSUME_NONNULL_BEGIN
 
 // 从本地加载
 - (void)loadFromLocal;
+
+#pragma mark - 用户数据存储（NSUserDefaults）
+// 保存用户数据到NSUserDefaults（与token关联）
+- (void)saveUserDataToDefaults:(NSDictionary *)userData;
+
+// 从NSUserDefaults获取用户数据（根据当前token）
+- (NSDictionary * _Nullable)getUserDataFromDefaults;
+
+// 清除NSUserDefaults中的用户数据（根据当前token）
+- (void)clearUserDataFromDefaults;
 
 #pragma mark - 通知
 // 登录状态改变通知

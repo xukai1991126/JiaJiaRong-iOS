@@ -7,6 +7,7 @@
 //
 
 #import "JJRQualificationViewModel.h"
+#import "JJRUserManager.h"
 
 @implementation JJRQualificationViewModel
 
@@ -19,8 +20,8 @@
 }
 
 - (void)setupMockData {
-    // 用户信息
-    _userName = @"张女士";
+    // 用户信息 - 根据真实姓名和性别生成称呼
+    _userName = [self generateUserTitle];
     _qualificationMessage = @"恭喜您已通过资质初审！";
     
     // 预估额度信息
@@ -46,6 +47,31 @@
     // 协议信息
     _agreementTitle = @"《个人信息授权书》";
     _isAgreementChecked = NO;
+}
+
+#pragma mark - Private Methods
+
+- (NSString *)generateUserTitle {
+    // 从NSUserDefaults获取用户信息
+    NSDictionary *userData = [[JJRUserManager sharedManager] getUserDataFromDefaults];
+    NSString *realName = userData[@"realName"];
+    NSString *gender = userData[@"gender"];
+    
+    // 如果没有真实姓名，使用默认值
+    if (!realName || realName.length == 0) {
+        return @"张女士";
+    }
+    
+    // 提取姓氏（通常是第一个字符）
+    NSString *lastName = [realName substringToIndex:1];
+    
+    // 根据性别添加称呼
+    NSString *title = @"女士"; // 默认女士
+    if (gender && [gender isEqualToString:@"男"]) {
+        title = @"先生";
+    }
+    
+    return [NSString stringWithFormat:@"%@%@", lastName, title];
 }
 
 @end 
