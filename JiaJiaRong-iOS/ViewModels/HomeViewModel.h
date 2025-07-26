@@ -15,6 +15,8 @@ NS_ASSUME_NONNULL_BEGIN
 // 主要数据
 @property (nonatomic, strong, readonly) NSString *maxAmount;
 @property (nonatomic, strong, readonly) NSString *maxPeriod;
+@property (nonatomic, strong, readonly) NSString *rateInfo;
+@property (nonatomic, strong, readonly) NSString *combinedInfo;
 @property (nonatomic, strong, readonly) NSString *loginButtonTitle;
 @property (nonatomic, assign, readonly) BOOL showProtocolCheckbox;
 

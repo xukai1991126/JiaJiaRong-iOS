@@ -13,6 +13,8 @@
 
 @property (nonatomic, strong) NSString *maxAmount;
 @property (nonatomic, strong) NSString *maxPeriod;
+@property (nonatomic, strong) NSString *rateInfo;
+@property (nonatomic, strong) NSString *combinedInfo;
 @property (nonatomic, strong) NSString *loginButtonTitle;
 @property (nonatomic, assign) BOOL showProtocolCheckbox;
 @property (nonatomic, strong) NSArray *featureData;
@@ -27,6 +29,8 @@
     // 初始化融资担保相关数据
     self.maxAmount = @"200,000.00";
     self.maxPeriod = @"最高可分36期";
+    self.rateInfo = @"年化利率7.24%起";
+    self.combinedInfo = @"年化利率7.24%起，最高可分36期";
     
     // 根据登录状态设置按钮文字
     [self updateLoginButtonTitle];

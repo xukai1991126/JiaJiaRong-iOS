@@ -43,6 +43,7 @@
     [self setupViewModel];
     [self setupUI];
     [self loadData];
+    [self updateUIWithViewModel]; // 初始化时更新UI
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -154,7 +155,7 @@
     [self.mainCardView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.headerView.mas_bottom).offset(-30);
         make.left.right.equalTo(self.contentView);
-        make.height.mas_equalTo(300);
+        make.height.mas_equalTo(280);
     }];
     
     [self.testimonialView mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -183,6 +184,8 @@
     // 更新主卡片视图
     self.mainCardView.maxAmount = self.viewModel.maxAmount;
     self.mainCardView.maxPeriod = self.viewModel.maxPeriod;
+    self.mainCardView.rateInfo = self.viewModel.rateInfo;
+    self.mainCardView.combinedInfo = self.viewModel.combinedInfo;
     self.mainCardView.loginButtonTitle = self.viewModel.loginButtonTitle;
     self.mainCardView.showProtocolCheckbox = self.viewModel.showProtocolCheckbox;
     self.mainCardView.protocolChecked = self.viewModel.protocolChecked;

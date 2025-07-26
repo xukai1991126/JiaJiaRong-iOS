@@ -13,7 +13,7 @@
 @property (nonatomic, strong) UIView *cardContainer;
 @property (nonatomic, strong) UILabel *amountTitleLabel;
 @property (nonatomic, strong) UILabel *amountValueLabel;
-@property (nonatomic, strong) UILabel *periodLabel;
+@property (nonatomic, strong) UILabel *combinedInfoLabel;
 @property (nonatomic, strong) UIButton *loginButton;
 @property (nonatomic, strong) UIView *protocolView;
 @property (nonatomic, strong) UIButton *protocolCheckbox;
@@ -27,6 +27,7 @@
     self = [super initWithFrame:frame];
     if (self) {
         [self setupUI];
+        [self updateCardContent]; // 初始化时更新内容
     }
     return self;
 }
@@ -57,12 +58,13 @@
     self.amountValueLabel.textAlignment = NSTextAlignmentCenter;
     [self.cardContainer addSubview:self.amountValueLabel];
     
-    // 期限信息
-    self.periodLabel = [[UILabel alloc] init];
-    self.periodLabel.font = FONT_REGULAR(14);
-    self.periodLabel.textColor = [UIColor colorWithHexString:@"#666666"];
-    self.periodLabel.textAlignment = NSTextAlignmentCenter;
-    [self.cardContainer addSubview:self.periodLabel];
+    // 合并信息标签（利率+期限）
+    self.combinedInfoLabel = [[UILabel alloc] init];
+    self.combinedInfoLabel.text = @"年化利率7.24%起，最高可分36期"; // 设置初始文本
+    self.combinedInfoLabel.font = FONT_REGULAR(14);
+    self.combinedInfoLabel.textColor = [UIColor colorWithHexString:@"#666666"];
+    self.combinedInfoLabel.textAlignment = NSTextAlignmentCenter;
+    [self.cardContainer addSubview:self.combinedInfoLabel];
     
     // 登录按钮
     self.loginButton = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -96,7 +98,7 @@
     [self.protocolTextView addSubview:protocolPrefixLabel];
     
     UIButton *privacyButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [privacyButton setTitle:@"《隐私政策》" forState:UIControlStateNormal];
+    [privacyButton setTitle:@"《隐私协议》" forState:UIControlStateNormal];
     [privacyButton setTitleColor:[UIColor colorWithHexString:@"#FF772C"] forState:UIControlStateNormal];
     privacyButton.titleLabel.font = FONT_REGULAR(12);
     [privacyButton addTarget:self action:@selector(privacyAgreementTapped) forControlEvents:UIControlEventTouchUpInside];
@@ -110,28 +112,31 @@
     [self.amountTitleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.cardContainer).offset(40);
         make.centerX.equalTo(self.cardContainer);
+        make.height.equalTo(@14);
     }];
     
     [self.amountValueLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.amountTitleLabel.mas_bottom).offset(10);
         make.centerX.equalTo(self.cardContainer);
+        make.height.equalTo(@42);
     }];
     
-    [self.periodLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.amountValueLabel.mas_bottom).offset(20);
-        make.left.equalTo(self.cardContainer).offset(20);
+    [self.combinedInfoLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.amountValueLabel.mas_bottom).offset(12);
+        make.centerX.equalTo(self.cardContainer);
+        make.height.equalTo(@14);
     }];
     
     [self.loginButton mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.periodLabel.mas_bottom).offset(30);
+        make.top.equalTo(self.combinedInfoLabel.mas_bottom).offset(14);
         make.left.right.equalTo(self.cardContainer).inset(20);
         make.height.mas_equalTo(46);
     }];
     
     [self.protocolView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.loginButton.mas_bottom).offset(20);
+        make.top.equalTo(self.loginButton.mas_bottom).offset(14);
         make.left.right.equalTo(self.cardContainer).inset(20);
-        make.bottom.equalTo(self.cardContainer).offset(-20);
+        make.bottom.equalTo(self.cardContainer).offset(-10);
         make.height.mas_equalTo(24);
     }];
     
@@ -157,7 +162,12 @@
 
 - (void)updateCardContent {
     self.amountValueLabel.text = self.maxAmount ?: @"200,000.00";
-    self.periodLabel.text = self.maxPeriod ?: @"最高可分36期";
+    
+    // 合并利率和期限信息
+    NSString *rateText = self.rateInfo ?: @"年化利率7.24%起";
+    NSString *periodText = self.maxPeriod ?: @"最高可分36期";
+    self.combinedInfoLabel.text = [NSString stringWithFormat:@"%@，%@", rateText, periodText];
+    
     [self.loginButton setTitle:self.loginButtonTitle ?: @"本机号码一键登录" forState:UIControlStateNormal];
     
     self.protocolView.hidden = !self.showProtocolCheckbox;
