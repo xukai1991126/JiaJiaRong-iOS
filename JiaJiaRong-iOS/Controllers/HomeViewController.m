@@ -156,7 +156,7 @@
     [self.mainCardView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.headerView.mas_bottom).offset(-30);
         make.left.right.equalTo(self.contentView);
-        make.height.mas_equalTo(280);
+//        make.height.mas_equalTo(280);
     }];
     
     [self.testimonialView mas_makeConstraints:^(MASConstraintMaker *make) {

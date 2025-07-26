@@ -22,7 +22,7 @@
         _age = @"";
         _isMale = YES; // 默认选择男
         _cityName = @"上海市";
-        _cityCode = @"310000";
+        _cityCode = @"310100";
     }
     return self;
 }

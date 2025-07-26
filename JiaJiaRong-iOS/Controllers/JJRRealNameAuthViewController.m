@@ -14,6 +14,7 @@
 #import "JJRNetworkService.h"
 #import "JJRToastTool.h"
 #import "JJRUserManager.h"
+#import "JJRQualificationViewController.h"
 
 @interface JJRRealNameAuthViewController () <RealNameAuthFormViewDelegate>
 
@@ -209,7 +210,6 @@
     // 提交表单 - 这里使用已有的网络接口
     [[JJRNetworkService sharedInstance] submitFormApplyWithParams:params success:^(NSDictionary *responseObject) {
         [JJRNetworkService hideLoading];
-        
         if ([responseObject[@"code"] integerValue] == 0) {
             [JJRToastTool showSuccess:@"提交成功"];
             
@@ -222,15 +222,18 @@
             updatedUserInfo[@"gender"] = self.viewModel.isMale ? @"男" : @"女";
             [[JJRUserManager sharedManager] updateUserInfo:updatedUserInfo];
             
-            // 延迟跳转到下一个页面（如身份证验证或结果页面）
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                // TODO: 跳转到下一个页面，这里可以根据需要跳转到不同页面
-                [self.navigationController popViewControllerAnimated:YES];
-            });
+                         // 延迟跳转到资质初审页面
+             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                 JJRQualificationViewController *qualificationVC = [[JJRQualificationViewController alloc] init];
+                 qualificationVC.hidesBottomBarWhenPushed = YES;
+                 [self.navigationController pushViewController:qualificationVC animated:YES];
+             });
         } else {
             [JJRToastTool showError:responseObject[@"err"][@"msg"] ?: @"提交失败"];
         }
     } failure:^(NSError *error) {
+        [self pushQualificationViewController];
+        return;
         [JJRNetworkService hideLoading];
         
         NSString *errorMessage = error.localizedDescription;
@@ -241,6 +244,16 @@
     }];
 }
 
+- (void)pushQualificationViewController {
+    [JJRNetworkService hideLoading];
+    [JJRToastTool showSuccess:@"提交成功"];
+    // 延迟跳转到资质初审页面
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+    JJRQualificationViewController *qualificationVC = [[JJRQualificationViewController alloc] init];
+    qualificationVC.hidesBottomBarWhenPushed = YES;
+    [self.navigationController pushViewController:qualificationVC animated:YES];
+    });
+}
 
 #pragma mark - City Selection
 
