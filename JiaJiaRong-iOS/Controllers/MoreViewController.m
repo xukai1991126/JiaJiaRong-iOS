@@ -2,8 +2,8 @@
 //  MoreViewController.m
 //  JiaJiaRong-iOS
 //
-//  Created by Assistant on 2024/7/1.
-//  Copyright © 2024年 JiaJiaRong. All rights reserved.
+//  Created by xk on 2025/7/1.
+//  Copyright © 2025年 JiaJiaRong. All rights reserved.
 //
 
 #import "MoreViewController.h"

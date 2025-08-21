@@ -2,8 +2,8 @@
 //  JJREnums.h
 //  JiaJiaRong-iOS
 //
-//  Created by Assistant on 2024/01/01.
-//  Copyright © 2024 JiaJiaRong. All rights reserved.
+//  Created by xk on 2025/07/01.
+//  Copyright © 2025 JiaJiaRong. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>

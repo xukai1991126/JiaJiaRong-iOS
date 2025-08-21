@@ -2,8 +2,8 @@
 //  JJRFraudPreventionViewModel.h
 //  JiaJiaRong-iOS
 //
-//  Created by Assistant on 2024/12/19.
-//  Copyright © 2024年 JiaJiaRong. All rights reserved.
+//  Created by xinglei on 2025/10719.
+//  Copyright © 2025年 JiaJiaRong. All rights reserved.
 //
 
 #import "JJRBaseViewModel.h"

@@ -2,8 +2,8 @@
 //  JJRRealNameAuthViewController.m
 //  JiaJiaRong-iOS
 //
-//  Created by Assistant on 2024/12/20.
-//  Copyright © 2024年 JiaJiaRong. All rights reserved.
+//  Created by xk on 2025/07/20.
+//  Copyright © 2025年 JiaJiaRong. All rights reserved.
 //
 
 #import "JJRRealNameAuthViewController.h"
@@ -259,12 +259,12 @@
     
     // 延迟跳转到资质初审页面
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-//        JJRIdCardViewController *idCardVC = [[JJRIdCardViewController alloc] init];
-//        idCardVC.hidesBottomBarWhenPushed = YES;
-//        [self.navigationController pushViewController:idCardVC animated:YES];
         JJRIdCardViewController *idCardVC = [[JJRIdCardViewController alloc] init];
         idCardVC.hidesBottomBarWhenPushed = YES;
         [self.navigationController pushViewController:idCardVC animated:YES];
+//        JJRQualificationViewController *idCardVC = [[JJRQualificationViewController alloc] init];
+//        idCardVC.hidesBottomBarWhenPushed = YES;
+//        [self.navigationController pushViewController:idCardVC animated:YES];
 
     });
 

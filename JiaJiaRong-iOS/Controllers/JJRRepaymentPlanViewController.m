@@ -2,7 +2,7 @@
 //  JJRRepaymentPlanViewController.m
 //  JiaJiaRong-iOS
 //
-//  Created by Assistant on 2024/01/01.
+//  Created by xk on 2025/07/01.
 //
 
 #import "JJRRepaymentPlanViewController.h"
